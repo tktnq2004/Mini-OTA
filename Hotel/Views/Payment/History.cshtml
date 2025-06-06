@@ -1,0 +1,174 @@
+﻿@model IEnumerable<Hotel.Models.PaymentDisplay>
+@{
+    ViewBag.Title = "History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@foreach (var payment in Model)
+{
+    <div class="container3 mt-4 p-3 border rounded">
+        <h4 class="text-center">Booking ID: @payment.PaymentId</h4> <!-- Hiển thị Booking ID -->
+
+        <div class="row">
+            <!-- Cột trái (50%): Ảnh và thông tin phòng -->
+            <div class="col-md-4">
+                @foreach (var room in payment.RoomDetails)
+                {
+                    <div class="border p-2 mb-2 rounded">
+                        <h5>@room.RoomName</h5>
+                        <img class="main-image img-fluid border rounded"
+                             src="@room.RoomImages.FirstOrDefault().ImageURL"
+                             style="width: auto; max-height: 200px;">
+                        <p>
+                            <strong>Price: </strong>
+                            @if (room.Percent > 0)
+                            {
+                                <del class="old-price">@room.Price.ToString("N0") VND</del>
+                                <span class="text-danger"> @((room.Price - (room.Price * ((decimal)room.Percent / 100m))).ToString("N0")) VND</span>
+
+                            }
+                            else
+                            {
+                                <span>@room.Price.ToString("N0") VND</span>
+                            }
+                            / night
+                        </p>
+                    </div>
+                }
+            </div>
+
+            <!-- Cột phải (50%): Thông tin thanh toán -->
+            <div class="col-md-8 d-flex flex-column justify-content-center">
+                <p><strong>Check In:</strong> @payment.CheckIn.ToString("dd/MM/yyyy")</p>
+                <p><strong>Check Out:</strong> @payment.CheckOut.ToString("dd/MM/yyyy")</p>
+                <p><strong>Number of nights:</strong> @payment.SoDem</p>
+                <p><strong>Total Amount:</strong> @payment.Amount.ToString("N0") VND</p>
+                <p><strong>Last Update:</strong> @payment.LastUpdate.ToString("dd/MM/yyyy")</p>
+
+                <!-- Xử lý trạng thái thanh toán -->
+                @if (payment.Status == "Pending")
+                {
+                    <div class="d-flex justify-content-between">
+                        <!-- Nút Proceed to Payment, sẽ thay thành Paid khi nhấn -->
+                        <a href="javascript:void(0);" class="btn btn-success mt-3 proceedToPayment">Proceed to Payment</a>
+
+                        <!-- Nút Cancel Order -->
+                        <a href="javascript:void(0);" class="btn btn-danger mt-3 cancelOrder">Cancel Order</a>
+                    </div>
+
+                    <!-- Mã QR và Nút Confirm Payment Success, ban đầu ẩn -->
+                    <div class="qrCodeContainer" style="display: none; text-align:center;">
+                        <img src="@payment.QRCode" alt="QR Code" style="width:300px; height:300px;">
+                    </div>
+
+                    <!-- Nút Succeed Payment, ban đầu ẩn -->
+                    <div class="succeedPaymentContainer" style="display: none; text-align:center;">
+                        <button class="btn btn-primary mt-3">Succeed Payment</button>
+                    </div>
+                }
+                else if (payment.Status == "Confirm")
+                {
+                    <!-- Nếu thanh toán đã xác nhận, hiển thị nút Paid -->
+                    <button class="btn btn-secondary mt-3" disabled>Paid</button>
+                }
+
+
+
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    document.querySelectorAll(".cancelOrder").forEach(function (button, index) {
+        button.addEventListener("click", function () {
+            // Ẩn nút Proceed to Payment và QR Code
+            const proceedButton = button.closest('.d-flex').querySelector('.proceedToPayment');
+            const qrCodeContainer = button.closest('.container3').querySelector('.qrCodeContainer');
+
+            if (proceedButton) {
+                proceedButton.style.display = "none"; // Ẩn nút Proceed
+            }
+
+            if (qrCodeContainer) {
+                qrCodeContainer.style.display = "none"; // Ẩn QR Code
+            }
+
+            // Thay đổi nút Cancel thành "Canceled"
+            button.classList.remove("btn-danger");
+            button.classList.add("btn-secondary");
+            button.textContent = "Canceled";
+            button.disabled = true; // Disable nút Cancel sau khi nhấn
+        });
+    });
+    document.querySelectorAll(".proceedToPayment").forEach(function (button, index) {
+        button.addEventListener("click", function () {
+            // Tìm phần tử chứa mã QR và nút Succeed Payment tương ứng với nút vừa được nhấn
+            var qrCodeContainer = document.querySelectorAll(".qrCodeContainer")[index];
+            var succeedButtonContainer = document.querySelectorAll(".succeedPaymentContainer")[index];
+
+            // Hiển thị mã QR và nút Succeed Payment
+            qrCodeContainer.style.display = "block";
+            succeedButtonContainer.style.display = "block";
+
+            // Ẩn nút Proceed to Payment và Cancel Order sau khi nhấn
+            button.style.display = "none";
+            button.closest('.d-flex').querySelector('.cancelOrder').style.display = "none";
+        });
+    });
+    // Thêm sự kiện khi nhấn nút Succeed Payment
+    document.querySelectorAll(".succeedPaymentContainer button").forEach(function (button, index) {
+        button.addEventListener("click", function () {
+            // Tìm phần tử chứa mã QR và nút Cancel Order tương ứng với nút vừa được nhấn
+            var qrCodeContainer = document.querySelectorAll(".qrCodeContainer")[index];
+            var cancelButton = document.querySelectorAll(".cancelOrder")[index];
+            var succeedButtonContainer = document.querySelectorAll(".succeedPaymentContainer")[index];
+            var proceedButton = document.querySelectorAll(".proceedToPayment")[index];
+            
+            proceedButton.style.display = "block"; // Ẩn nút Proceed
+           
+            // Ẩn mã QR
+            qrCodeContainer.style.display = "none";
+
+            // Ẩn nút Cancel Order
+            cancelButton.style.display = "none";
+
+            // Thay nút Proceed to Payment thành nút Paid
+            proceedButton.innerHTML = 'Paid';
+            proceedButton.classList.remove("btn-success");
+            proceedButton.classList.add("btn-secondary");
+            proceedButton.setAttribute("disabled", "true");
+
+            // Ẩn nút Succeed Payment
+            succeedButtonContainer.style.display = "none";
+        });
+    });
+
+</script>
+<style>
+    .container3 {
+        max-width: 800px; /* Giảm kích thước container */
+        width: 90%; /* Tự động co giãn nhưng không quá lớn */
+        margin: 20px auto; /* Căn giữa */
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.6); /* Nền trong suốt nhẹ */
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .booking-btn {
+        background-color: #ff4b2b;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .wishlist-btn:hover, .booking-btn:hover {
+            background-color: #ff416c;
+            transform: scale(1.05);
+        }
+</style>

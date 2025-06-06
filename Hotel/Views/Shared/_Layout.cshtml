@@ -1,0 +1,176 @@
+﻿<!--
+      public dbHotelBrandDataContext():
+base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelBrandConnectionString"].ConnectionString, mappingSource)
+  {
+      OnCreated();
+  }
+-->
+@using Hotel.Models
+@{
+    User user = (User)Session["User"];
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/Content/Site.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light navbar-custom fixed-top">
+        <div class="container">
+            <img src="~/Content/images/logo.jpg" width="46" height="25" class="m-3" />
+            <a class="navbar-brand" href="/"> ZooZee </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    @if (Session["User"] == null)
+                    {
+                        <li class="nav-item">
+                            <a href="@Url.Action("Login", "User")" class="text-dark me-3">
+                                <i class="fa fa-sign-in-alt"></i> Log in
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Register", "User")" class="text-dark">
+                                <i class="fa fa-user-plus"></i> Register
+                            </a>
+                        </li>
+                    }
+                    else
+                        if (user.Role == "Customer")
+                    {
+                        <li class="nav-item">
+                            @Html.ActionLink("Home", "Index", "Room", new { area = "" }, new { @class = "nav-link custom-hover" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Wish List", "DisplayCart", "Booking", new { area = "" }, new { @class = "nav-link custom-hover" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Booked", "History", "Payment", new { area = "" }, new { @class = "nav-link custom-hover" })
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Profile", "User")" class="nav-link text-white">👤@(user.FullName) </a>
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Logout", "Logout", "User", new { area = "" }, new { @class = "nav-link custom-hover text-danger" })
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            @Html.ActionLink("Room List", "Index", "Admin", new { area = "" }, new { @class = "nav-link custom-hover" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Booking List", "BookingStatistic", "Admin", new { area = "" }, new { @class = "nav-link custom-hover" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Discount List", "DiscountStatistic", "Admin", new { area = "" }, new { @class = "nav-link custom-hover" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Logout", "Logout", "User", new { area = "" }, new { @class = "nav-link custom-hover text-danger" })
+                        </li>
+                    }
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+    
+    <div class="body-content" style="padding-top: 80px;">
+        @RenderBody()
+        <hr />
+        <style>
+            #mymap {
+                height: 600px;
+            }
+        </style>
+
+        <div id="mymap"></div>
+
+        <script>
+            var map = L.map('mymap', { minZoom: 7 }).setView([10.762622, 106.660172], 8);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; CARTO'
+            }).addTo(map);
+
+
+        </script>
+
+    </div>
+    <footer class="footer-custom text-center py-4">
+        <div class="container">
+            <p class="mb-1">&copy; @DateTime.Now.Year - Weng Hotel. All rights reserved.</p>
+            @*<p class="mb-1">Your one-stop destination for all your book needs.</p>*@
+
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Home</a></li>
+                        <li><a href="#" class="text-white">Shop</a></li>
+                        <li><a href="#" class="text-white">About Us</a></li>
+                        <li><a href="#" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Follow Us</h5>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/quangcter/" class="text-white mx-2"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white mx-2"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/_wen.gg/" class="text-white mx-2"><i class="fab fa-instagram"></i></a>
+                        <a href="https://youtu.be/SeWt7IpZ0CA?si=WVm94m8_iCpwX26g" class="text-white mx-2"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Us</h5>
+                    <p>Email: <a href="" class="text-white">tktnq2004@gmail.com</a></p>
+                    <p>Phone: <a href="" class="text-white">+09 47 53 59 06</a></p>
+                    <p>Address: Đường 35CL, phường Cát Lái, quận 2, thành phố Thủ Đức</p>
+                </div>
+            </div>
+
+            <hr class="my-3 border-light">
+            <p class="mt-2">Designed & Developed by <a href="#" class="text-white">Wengg</a></p>
+        </div>
+    </footer>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    @RenderSection("upload", required: false)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let navbar = document.querySelector(".navbar-custom");
+
+            window.addEventListener("scroll", function () {
+                if (window.scrollY > 40) { // Nếu cuộn xuống hơn 50px
+                    navbar.classList.add("shrink");
+                } else {
+                    navbar.classList.remove("shrink");
+                }
+            }); 
+        });
+
+    </script>
+    <!-- Bootstrap JavaScript (phải có để dropdown hoạt động) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
+

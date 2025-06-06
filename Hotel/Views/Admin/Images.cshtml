@@ -1,0 +1,120 @@
+﻿@model List<Hotel.Models.RoomImage>
+@{
+    ViewBag.Title = "Room Images";
+    var room = ViewBag.Room as Hotel.Models.Room;
+}
+
+<h2>Images for @room.RoomName</h2>
+
+<!-- Form Upload Ảnh Mới -->
+<!-- Danh sách ảnh của phòng -->
+<div class="row mt-4" id="imageContainer">
+    <!-- Nút thêm ảnh (+) -->
+    @foreach (var image in Model)
+    {
+        <div class="col-md-3 text-center position-relative image-box mt-3">
+            <img src="@image.ImageURL" class="img-thumbnail" style="width: 100%; height: 200px; object-fit: cover;">
+            <button class="btnDelete btn btn-danger position-absolute top-0 end-0 m-2"
+                    data-id="@image.ImageID">
+                &times;
+            </button>
+        </div>
+    }
+
+<div class="col-md-3 text-center image-box mt-3">
+    <label for="imageUpload" class="add-image-label" id="btnUpload">
+        <i class="fa fa-plus fa-2x"></i>
+    </label>
+    <input type="file" id="fileUpload" name="fileUpload" accept="image/*" style="display: none;">
+</div>
+            @section upload
+{
+                <script>
+                    $('#btnUpload').click(function () {
+                        $('#fileUpload').trigger('click'); // Kích hoạt input file
+                    });
+                $('#fileUpload').change(function () {
+    if (window.FormData !== undefined) {
+        var fileUpload = $('#fileUpload').get(0);
+        var files = fileUpload.files;
+        var formData = new FormData();
+        formData.append('file', files[0]);
+        formData.append('roomId', @room.RoomID); // Gửi RoomID để lưu vào DB
+
+        $.ajax({
+            type: 'POST',
+            url: '/Admin/ProcessUpload',
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (response) {
+                if(response.success) {
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert("Lỗi khi upload ảnh");
+            }
+        });
+    }
+});
+                </script>
+        }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".btnDelete").click(function () {
+            var imageId = $(this).data("id");
+            var button = $(this);
+
+                $.ajax({
+                    url: '/Admin/DeleteImage',
+                    type: 'POST',
+                    data: { id: imageId },
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert("Xóa không thành công!");
+                        }
+                    },
+                    error: function () {
+                        alert("Đã có lỗi xảy ra!");
+                    }
+                });
+        });
+    });
+</script>
+<style>
+    .add-image-label {
+        width: 100%;
+        height: 100%;
+        border: 2px dashed #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ccc;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .btnDelete {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: red;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+</style>

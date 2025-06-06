@@ -1,0 +1,205 @@
+﻿/* Set padding to keep content from hitting the edges */
+.body-content {
+    margin-top: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+.setting{
+        margin-left: 8%;
+    }
+html {
+    translate: no;
+}
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+body {
+    font-family: "Poppins",sans-serif;
+}
+
+.header {
+    position: relative;
+}
+
+    .header .row {
+        margin-top: 35%;
+    }
+
+}
+.topbar {
+    position: absolute; /* Đặt trên banner */
+    top: 10px; /* Cách trên 10px */
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.7); /* Nền mờ để dễ nhìn */
+    padding: 8px 0;
+    z-index: 15; /* Cao hơn banner */
+}
+
+.container {
+    max-width: 1300px;
+    margin: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.banner {
+    width: 100%;
+    height: auto;
+    display:block;
+    
+}
+
+.slogan {
+    position: absolute;
+    top: 300px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 200px;
+    z-index: 10;
+    background: transparent;
+}
+
+.col-2 {
+    position: absolute;
+    min-width: 1000px;
+}
+
+.col2 h1 {
+    font-size: 50px;
+    line-height: 60px;
+    margin: 25px 0;
+}
+.pagination-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.page-info {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+
+.Menu {
+    display: inline-block;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .Menu ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .Menu li {
+        display: inline-block;
+        margin: 0 5px;
+    }
+
+    .Menu a {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: white;
+        color: black;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+    }
+
+        .Menu a:hover {
+            background-color: darkcyan;
+            color: white;
+        }
+
+    .Menu .active {
+        color: red;
+        pointer-events: none;
+    }
+/*thanh nvbar*/
+.navbar-custom {
+    background: linear-gradient(to right, #f9c5d1, #fef4f4) !important;
+    border-bottom: 2px solid #f8a5c2 !important;
+    transition: all 0.3s ease-in-out;
+    height: 80px; /* Chiều cao ban đầu */
+    padding: 15px 20px;
+    display: flex;
+    align-items: center; /* Căn giữa nội dung */
+}
+
+    .navbar-custom.shrink {
+        height: 56px; /* Thu nhỏ chiều cao 30% */
+        padding: 5px 20px; /* Giảm padding để co nhỏ hơn */
+    }
+
+    .navbar-custom .navbar-brand {
+        color: #d63384 !important;
+        font-weight: bold;
+        font-size: 1.2rem; /* Kích thước chữ ban đầu */
+        transition: all 0.3s ease-in-out;
+    }
+
+    .navbar-custom.shrink .navbar-brand {
+        font-size: 1.0rem; /* Thu nhỏ chữ khi co */
+    }
+
+    .navbar-custom .navbar-nav .nav-link {
+        color: #b2225f !important;
+        font-weight: 500;
+        font-size: 1.0rem; /* Kích thước chữ ban đầu */
+        transition: all 0.3s ease-in-out;
+        padding: 10px 15px;
+    }
+
+    .navbar-custom.shrink .navbar-nav .nav-link {
+        font-size: 0.8rem; /* Thu nhỏ chữ */
+        padding: 5px 10px; /* Giảm padding */
+    }
+
+    .navbar-custom .navbar-nav .nav-link:hover {
+        color: #ff69b4 !important;
+    }
+
+/*anh background*/
+.body-content {
+    background: url('/Content/images/background.jpg') no-repeat center center;
+    background-size: cover; /* Ảnh phủ kín container */
+    background-position: center;
+    min-height: 500px; /* Độ cao tối thiểu để ảnh hiển thị */
+    padding: 20px; /* Tạo khoảng cách cho nội dung bên trong */
+    border-radius: 10px; /* Bo góc nhẹ nếu muốn */
+}
+/*footer*/
+.footer-custom {
+    background: linear-gradient(to right, #f9c5d1, #fef4f4) !important; /* Màu giống navbar */
+    border-top: 2px solid #f8a5c2 !important;
+    color: #b2225f !important;
+    padding: 20px 0;
+}
+
+    .footer-custom a {
+        color: #b2225f !important;
+        text-decoration: none;
+    }
+
+        .footer-custom a:hover {
+            color: #ff69b4 !important;
+        }
+

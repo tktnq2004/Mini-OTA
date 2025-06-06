@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Confirmation - WENGG HOTEL</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+    <table width="600" align="center" style="background-color:#ffffff; border:1px solid #dedede; border-radius:3px; padding:20px;">
+        <tr>
+            <td align="center" style="background-color:#96588a; color:#ffffff; padding:20px; border-radius:3px 3px 0 0;">
+                <h1>Booking Confirmation</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:20px;">
+                <p>Hello <strong>{{TenKhachHang}}</strong>,</p>
+                <p>Thank you for booking a room at <strong>Wengg Hotel</strong>. Here are your booking details:</p>
+
+                <h3>Booking Information</h3>
+                <p><strong>Order ID:</strong> {{MaDon}}</p>
+                <p><strong>Booking Date:</strong> {{NgayDatHang}}</p>
+
+                <h3>Room Details</h3>
+                <table width="100%" border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse;">
+                    <tr>
+                        <th>Room</th>
+                        <th>Room Type</th>
+                        <th>Price</th>
+                        <th>Check-in Date</th>
+                        <th>Check-out Date</th>
+                        <th>Nights</th>
+                    </tr>
+                    {{DanhSachPhong}}
+                </table>
+
+                <h3>Total Payment</h3>
+                <p><strong>Total Amount:</strong> {{TongTien}} VND</p>
+
+                <h3>Pay with QR Code</h3>
+                <p>Please scan the QR code below to make a payment:</p>
+                <p style="text-align:center"><img src="{{QRCode}}" alt="Payment QR Code" width="300" height="300"></p>
+
+                <h3>Customer Information</h3>
+                <p><strong>Full Name:</strong> {{TenKhachHang}}</p>
+                <p><strong>Phone Number:</strong> <a href="tel:{{Phone}}">{{Phone}}</a></p>
+                <p><strong>Email:</strong> <a href="mailto:{{Email}}">{{Email}}</a></p>
+
+                <h3>Hotel Policies</h3>
+                <p>- Check-in time: 14:00 | Check-out time: 12:00</p>
+                <p>- Please bring your ID for check-in.</p>
+                <p>- If you have any questions, feel free to contact us.</p>
+
+                <p>Thank you for choosing <strong>Wengg Hotel</strong>. We hope you have a great stay!</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,95 @@
+﻿@model PagedList.IPagedList<Hotel.Models.RoomDisplay>
+@using PagedList.Mvc;
+
+<div class="container row g-3">
+    @foreach (var item in Model)
+    {
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="card border-secondary">
+                <div class="card-header" style="text-align:center; background-color: #f7c8d7; color: #ffffff; font-weight: bold;">
+                    @if (item.Percent != 0)
+                    {<div class="discount-ribbon">@item.Percent%</div>
+                }
+                    <div>@item.RoomName</div>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Price: </strong>
+                        @if (item.Percent > 0)
+                        {
+                            <del class="old-price">@item.Price.ToString("N0") VND</del>
+                            <span class="text-danger"> @((item.Price - (item.Price * ((decimal)item.Percent / 100m))).ToString("N0")) VND</span>
+
+                        }
+                        else
+                        {
+                            <span>@item.Price.ToString("N0") VND</span>
+                        }
+                        / night
+                    </p>
+
+                    <p><strong>Capacity: </strong>@item.Capacity @(item.Capacity > 1 ? "people" : "person")</p>
+                    <p><strong>Description: </strong> @item.Description</p>
+                    <div class="text-center">
+                        <img class="room-img" src="@Url.Action("GetRoomImage", "Room", new { roomId = item.ID })"
+                             width="370" height="250"
+                             alt="Room Image"
+                             data-roomid="@item.ID"
+                             style="cursor: pointer;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.PageCount > 1)
+{
+    <div class="pagination-container">
+        <div class="page-info">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+        </div>
+
+        <div class="Menu">
+            @Html.PagedListPager(Model, page => "javascript:filterRooms(getCurrentFilters(" + page + "))", PagedListRenderOptions.Classic)
+
+        </div>
+    </div>
+}
+<script>
+    updatePaginationEvents();
+</script>
+<style>
+    .room-img {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .room-img:hover {
+            transform: scale(1.05); /* Phóng to ảnh */
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2); /* Thêm bóng mờ để tạo hiệu ứng nổi */
+        }
+
+    .discount-ribbon {
+        position: absolute;
+        top: 5px; /* Điều chỉnh vị trí cao hơn một chút */
+        left: -5px; /* Đẩy nhẹ vào để không bị tràn */
+        background: red;
+        color: white;
+        padding: 5px 12px; /* Giảm padding để ribbon nhỏ lại */
+        font-size: 12px; /* Giảm kích thước chữ */
+        font-weight: bold;
+        transform: rotate(-15deg); /* Giảm góc nghiêng để không quá chéo */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Nhẹ hơn để không bị quá đậm */
+    }
+
+    .text-danger {
+        font-weight: bold;
+        color: red;
+    }
+
+    .old-price {
+        font-size: 0.8em; /* Nhỏ hơn bình thường */
+        color: gray; /* Màu xám nhạt */
+        margin-right: 5px;
+    }
+</style>

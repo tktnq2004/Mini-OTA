@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Hotel.Models.Room>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Room List</h2>
+<a href="@Url.Action("Add", "Admin")" class="btn btn-primary float-end">Add room</a>
+<select asp-for="RoomTypeId" class="form-control" id="roomTypeSelect">
+    <option value="">-- Room Types --</option>
+    @foreach (var type in ViewBag.RoomTypes)
+    {
+        <option value="@type.RoomTypeId">@type.RoomTypeName</option>
+    }
+</select>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Room Name</th>
+            <th>Room Type</th>
+            <th>Price</th>
+            <th>Capacity</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model)
+        {
+            <tr>
+                <td>@room.RoomName</td>
+                <td>@room.RoomType.RoomTypeName</td>
+                <td>@room.Price.ToString("N0")</td>
+                <td>@room.Capacity</td>
+                <td>
+                    <a href="@Url.Action("Update", "Admin", new { id = room.RoomID })" class="btn btn-warning">Update</a>
+                    <form action="@Url.Action("Delete", "Admin")" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@room.RoomID" />
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete?');">Delete</button>
+                    </form>
+                    <a href="@Url.Action("Images", "Admin", new { id = room.RoomID })" class="btn btn-warning">Images</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    document.getElementById("roomTypeSelect").addEventListener("change", function () {
+        var roomTypeId = this.value;
+        if (roomTypeId) {
+            window.location.href = '/Admin/ListRoom?roomTypeId=' + roomTypeId;
+        }
+    });
+</script>

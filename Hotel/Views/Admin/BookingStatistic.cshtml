@@ -1,0 +1,135 @@
+﻿@model IEnumerable<Hotel.Models.BookingDetailView>
+@{
+    ViewBag.Title = "BookingStatistic";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Thống kê Booking</h2>
+
+<!-- Bộ lọc theo ngày -->
+<form method="get" action="@Url.Action("BookingStatistic", "Admin")">
+    <label>From :</label>
+    <input type="date" name="startDate" value="@ViewBag.StartDate" />
+
+    <label>To:</label>
+    <input type="date" name="endDate" value="@ViewBag.EndDate" />
+
+    <label>Booking ID:</label>
+    <input type="text" id="bookingIdInput" name="bookingId" value="@ViewBag.BookingId" placeholder="Booking ID" />
+
+    <button type="submit" class="btn btn-primary">Lọc</button>
+</form>
+
+<hr>
+
+<!-- Bảng thống kê Booking -->
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Booking ID</th>
+            <th>Customer</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+            <th>Booking Date</th>
+            <th>Amout (VNĐ)</th>
+            <th>Rooms</th>
+            <th>Status</th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.BookingID</td>
+                <td>@item.UserName</td>
+                <td>@item.CheckIn.ToString("dd/MM/yyyy")</td>
+                <td>@item.CheckOut.ToString("dd/MM/yyyy")</td>
+                <td>@item.BookingDate.ToString("dd/MM/yyyy")</td>
+                <td>@item.TotalAmount.ToString("N0")</td>
+                <td>
+                    <ul>
+                        @foreach (var room in item.Rooms)
+                        {
+                            <li>@room.RoomName - @String.Format("{0:N0}", room.Price) VNĐ</li>
+                        }
+                    </ul>
+                </td>
+                @if (item.Status == "Pending")
+                {
+                    <td>
+                        <select class="form-control" onchange="updateStatus(@item.BookingID, this.value)">
+                            <option value="@item.Status">@item.Status</option>
+                            @foreach (var type in ViewBag.Status as List<string>)
+                            {
+                                if (type != item.Status)
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            }
+                        </select>
+                    </td>
+
+                }
+                else if (item.Status == "Completed")
+                {
+                    <td>
+                        <select class="form-control" onchange="updateStatus(@item.BookingID, this.value)">
+                            <option value="@item.Status">@item.Status</option>
+                            @foreach (var type in ViewBag.Status as List<string>)
+                            {
+                                if (type != item.Status)
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            }
+                        </select>
+                    </td>
+
+                }
+                else if (item.Status == "Canceled")
+                {
+                    <td>
+                        <select class="form-control" onchange="updateStatus(@item.BookingID, this.value)">
+                            <option value="@item.Status">@item.Status</option>
+                            @foreach (var type in ViewBag.Status as List<string>)
+                            {
+                                if (type != item.Status)
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                }
+                <td>
+                    @Html.ActionLink("Remove", "BookingDelete", "Admin", new { id = item.BookingID }, new { @class = "btn btn-danger" })
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+
+            <th colspan="5"><strong>Total:</strong>@ViewBag.SumOfBooking</th>
+            <th><strong>Total:</strong>@String.Format("{0:N0}", ViewBag.SumOfAmount) VND</th>
+            <th><strong>Total:</strong>@ViewBag.SumOfRoom</th>
+
+        </tr>
+
+    </tfoot>
+</table>
+<script>
+    function updateStatus(bookingId, status) {
+        fetch('/Admin/UpdateStatus?bookingId=' + bookingId + '&status=' + status, { method: 'POST' });
+    }
+</script>
+<script>
+    document.getElementById("bookingIdInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Ngăn form submit mặc định
+            window.location.href = '@Url.Action("BookingStatistic", "Admin")' + '?bookingId=' + this.value;
+        }
+    });
+</script>

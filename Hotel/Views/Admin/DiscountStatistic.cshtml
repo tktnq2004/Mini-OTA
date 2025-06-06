@@ -1,0 +1,151 @@
+﻿@model List<Hotel.Models.DiscountView>
+@{
+    ViewBag.Title = "DiscountStatistic";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Quản lý Discount</h2>
+
+<!-- Bộ lọc theo ngày -->
+<form method="get" action="@Url.Action("DiscountStatistic", "Admin")">
+    <label>From:</label>
+    <input type="date" name="startDate" value="@ViewBag.StartDate" />
+
+    <label>To:</label>
+    <input type="date" name="endDate" value="@ViewBag.EndDate" />
+
+    <button type="submit" class="btn btn-primary">Lọc</button>
+</form>
+
+<hr />
+
+<!-- Form thêm Discount -->
+<form method="post" action="@Url.Action("AddDiscount", "Discount")">
+    <label>Phần trăm giảm giá:</label>
+    <input type="number" name="DiscountPercent" min="0" max="100" required />
+
+    <label>Ngày bắt đầu:</label>
+    <input type="date" name="StartDate" required />
+
+    <label>Ngày kết thúc:</label>
+    <input type="date" name="EndDate" required />
+
+    <button type="submit" class="btn btn-success">Thêm Discount</button>
+</form>
+
+<hr />
+
+<!-- Danh sách Discount -->
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Percent</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Rooms</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var discount in Model)
+        {
+            <tr>
+                <td>@discount.DiscountID</td>
+                <td>
+                    <select class="form-control" onchange="updateDiscountPercent(@discount.DiscountID, this.value)">
+                        @for (int i = 0; i <= 100; i += 5)
+                        {
+                            <option value="@i" @(discount.DiscountPercent == i ? "selected" : "")>@i%</option>
+                        }
+                    </select>
+                </td>
+                <td>@discount.StartDate.ToString("dd/MM/yyyy")</td>
+                <td>@discount.EndDate.ToString("dd/MM/yyyy")</td>
+                <td>
+                    @if (discount.Rooms.Any())
+                    {
+                        <ul>
+                            @foreach (var room in discount.Rooms)
+                            {
+                                <li id="room-@discount.DiscountID-@room.RoomID">
+                                    @room.RoomName
+                                    <button type="button" class="btn btn-danger btn-remove"
+                                            data-discountid="@discount.DiscountID"
+                                            data-roomid="@room.RoomID">
+                                        x
+                                    </button>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>Chưa có phòng</p>
+                    }
+                </td>
+                <td>
+                    <a href="@Url.Action("DeleteDiscount", "Discount", new { id = discount.DiscountID })" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa discount này?');">🗑 Xóa</a>
+
+                    <!-- Form thêm phòng vào Discount -->
+                    <form method="post" action="@Url.Action("AddRoomToDiscount", "Admin")">
+                        <input type="hidden" name="discountId" value="@discount.DiscountID" />
+                        <select name="roomId" class="form-control">
+                            @foreach (var room in ViewBag.Rooms)
+                            {
+                                <option value="@room.RoomID">@room.RoomName</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-info mt-1">Thêm Phòng</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("form").submit(function (e) {
+            e.preventDefault(); // Ngăn form submit mặc định
+            var form = $(this);
+
+            $.post(form.attr("action"), form.serialize(), function (data) {
+                if (data.success) {
+                    location.reload(); // Tải lại trang nếu thêm thành công
+                }
+            }).fail(function () {
+                alert("Có lỗi xảy ra!");
+            });
+        });
+    });
+
+   $(document).ready(function () {
+        $(".btn-remove").click(function () {
+            var button = $(this);
+            var discountId = button.data("discountid");
+            var roomId = button.data("roomid");
+
+            if (confirm("Bạn có chắc muốn xóa phòng này khỏi Discount?")) {
+                $.ajax({
+                    url: "@Url.Action("RemoveRoomFromDiscount", "Admin")",
+                    type: "POST",
+                    data: { discountId: discountId, roomId: roomId },
+                    success: function (data) {
+                        if (data.success) {
+                            $("#room-" + discountId + "-" + roomId).remove()
+                            location.reload();
+                        } else {
+                            alert("Không tìm thấy phòng trong chương trình giảm giá!");
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra!");
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+

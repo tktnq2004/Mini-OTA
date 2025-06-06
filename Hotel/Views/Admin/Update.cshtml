@@ -1,0 +1,38 @@
+﻿@model Hotel.Models.Room
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Cập nhật phòng</h2>
+<form action="@Url.Action("Update", "Admin")" method="post">
+    <input type="hidden" name="RoomID" value="@Model.RoomID" />
+
+    <label>Room Name:</label>
+    <input type="text" name="RoomName" class="form-control" value="@Model.RoomName" required />
+
+    <label>RoomType:</label>
+    <select name="RoomTypeId" class="form-control" id="roomTypeSelect">
+        <option value="">-- Room Types --</option>
+        @foreach (var type in ViewBag.RoomTypes)
+        {
+            <option value="@type.RoomTypeId">
+                @type.RoomTypeName
+            </option>
+        }
+    </select>
+
+    <label>Price:</label>
+    <input type="number" name="Price" step="0.01" class="form-control" value="@Model.Price.ToString("N0")" required />
+
+    <label>Capacity:</label>
+    <input type="number" name="Capacity" class="form-control" value="@Model.Capacity" required />
+
+    <label>Description:</label>
+    <textarea name="Description" class="form-control">@Model.Description</textarea>
+
+    <button type="submit" class="btn btn-success">Cập nhật</button>
+</form>
+
+
