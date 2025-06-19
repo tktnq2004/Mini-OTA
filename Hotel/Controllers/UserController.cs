@@ -9,7 +9,7 @@ namespace Hotel.Controllers
 {
     public class UserController : Controller
     {
-        dbHotelBrandDataContext db = new dbHotelBrandDataContext();
+        dbHotelDataContext db = new dbHotelDataContext();
         // GET: User
         public ActionResult Register()
         {

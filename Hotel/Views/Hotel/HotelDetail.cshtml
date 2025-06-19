@@ -1,0 +1,17 @@
+﻿@model Hotel.Models.Hotel
+<div class="p-3">
+    <div class="card shadow-sm border-0">
+        <img src="@Model.HotelImage" alt="Hotel Image" class="card-img-top rounded-top" style="object-fit: cover; height: 200px;">
+        <div class="card-body">
+            <h5 class="card-title text-primary">@Model.HotelName</h5>
+            <p class="card-text text-muted">
+                <i class="bi bi-geo-alt-fill"></i> @Model.Address
+            </p>
+            <div class="d-flex justify-content-between text-secondary small">
+                <span><strong>Lat:</strong> @Model.Latitude</span>
+                <span><strong>Lng:</strong> @Model.Longitude</span>
+            </div>
+        </div>
+    </div>
+</div>
+

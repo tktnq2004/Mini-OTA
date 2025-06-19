@@ -9,7 +9,7 @@ namespace Hotel.Controllers
 {
     public class PaymentController : Controller
     {
-        dbHotelBrandDataContext db = new dbHotelBrandDataContext();
+        dbHotelDataContext db = new dbHotelDataContext();
         // GET: Payment
         public ActionResult History()
         {

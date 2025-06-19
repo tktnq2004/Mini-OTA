@@ -179,13 +179,9 @@ body {
 
 /*anh background*/
 .body-content {
-    background: url('/Content/images/background.jpg') no-repeat center center;
-    background-size: cover; /* Ảnh phủ kín container */
-    background-position: center;
-    min-height: 500px; /* Độ cao tối thiểu để ảnh hiển thị */
-    padding: 20px; /* Tạo khoảng cách cho nội dung bên trong */
-    border-radius: 10px; /* Bo góc nhẹ nếu muốn */
+    background-color: #ADD8E6; /* Màu xanh da trời */
 }
+
 /*footer*/
 .footer-custom {
     background: linear-gradient(to right, #f9c5d1, #fef4f4) !important; /* Màu giống navbar */
@@ -202,4 +198,12 @@ body {
         .footer-custom a:hover {
             color: #ff69b4 !important;
         }
+/*Map*/
+#mymap {
+    height: 600px;
+}
+
+.leaflet-control-attribution {
+    display: none !important;
+}
 

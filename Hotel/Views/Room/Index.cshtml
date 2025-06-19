@@ -4,18 +4,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class=" mb-3">
-    <img src="/Content/images/banner2.jpg" alt="" class="banner">
-    <div class="slogan">
-        <div class="col-2">
-            <h2> Khách sạn siêu cấp Vjp pro </h2>
-            <p>
-                Sự lựa chọn của các bạn là niềm vinh hạnh của chúng tôi
-            </p>
-        </div>
-    </div>
-</div>
-
 <div class="container mb-3">
     <ul class="nav nav-pills justify-content-center navbar-custom2">
         <li class="nav-item">
@@ -237,80 +225,8 @@
 </script>   
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-    let datePicker = flatpickr("#dateRange", {
-        mode: "range",
-        dateFormat: "d-m-Y",
-        minDate: "today",
-        closeOnSelect: false, // Giữ lịch mở khi chọn ngày
-        onChange: function (selectedDates, dateStr, instance) {
-            let currentMonth = instance.currentMonth; // Lưu tháng hiện tại
-            let currentYear = instance.currentYear;   // Lưu năm hiện tại
-
-            if (selectedDates.length === 1) {
-                highlightSelectedDate(selectedDates[0], "#007bff", "white");
-            } else if (selectedDates.length === 2) {
-                let checkIn = selectedDates[0];
-                let checkOut = selectedDates[1];
-
-                if (checkIn.getTime() === checkOut.getTime()) {
-                    instance.clear();
-                    instance.jumpToDate(new Date(currentYear, currentMonth)); // Mở lại đúng tháng trước đó
-                } else {
-                    highlightSelectedDate(checkOut, "#ffc107", "black"); // Check-out màu vàng
-                    instance.close();
-                }
-            }
-        }
-    });
-
-    function highlightSelectedDate(date, bgColor, textColor) {
-        document.querySelectorAll(".flatpickr-day").forEach(day => {
-            if (day.dateObj && day.dateObj.getTime() === date.getTime()) {
-                day.style.backgroundColor = bgColor;
-                day.style.color = textColor;
-            }
-        });
-    }
-});
-
-</script>
-
-
 <style>
-    input::placeholder {
-        color: #b2225f !important; /* Màu hồng đậm */
-        opacity: 1;
-        font-weight: 500;
-        transition: color 0.3s ease, transform 0.3s ease; /* Hiệu ứng chuyển màu và phóng to */
-    }
-
-    /* Khi hover vào ô nhập, placeholder đổi màu đen */
-    input:hover::placeholder {
-        color: black !important;
-    }
-
-    /* Khi input được focus, placeholder thu nhỏ lại (giống hiệu ứng material design) */
-    input:focus::placeholder {
-        color: white !important;
-        opacity: 1;
-    }
-
+    
     .navbar-custom2 {
         background: linear-gradient(to right, #f9c5d1, #fef4f4) !important;
         border-bottom: 2px solid #f8a5c2 !important;

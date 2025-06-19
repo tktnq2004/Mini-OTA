@@ -13,7 +13,7 @@ namespace Hotel.Controllers
 {
     public class RoomController : Controller
     {
-        dbHotelBrandDataContext db = new dbHotelBrandDataContext();
+        dbHotelDataContext db = new dbHotelDataContext();
         // GET: Room
         public ActionResult Index()
         {

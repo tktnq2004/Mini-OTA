@@ -13,7 +13,7 @@ namespace Hotel.Controllers
 {
     public class BookingController : Controller
     {
-        dbHotelBrandDataContext db = new dbHotelBrandDataContext();
+        dbHotelDataContext db = new dbHotelDataContext();
         // GET: Booking
         [HttpPost]
         public ActionResult AddCart(int id)

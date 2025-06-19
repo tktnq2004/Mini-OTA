@@ -12,7 +12,7 @@ namespace Hotel.Controllers
 {
     public class AdminController : Controller
     {
-        dbHotelBrandDataContext db = new dbHotelBrandDataContext();
+        dbHotelDataContext db = new dbHotelDataContext();   
 
         public ActionResult Index()
         {
