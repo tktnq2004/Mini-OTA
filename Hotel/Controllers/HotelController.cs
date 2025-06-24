@@ -12,6 +12,10 @@ namespace Hotel.Controllers
         // GET: Hotel
         private dbHotelDataContext db = new dbHotelDataContext();
 
+        public ActionResult HotelIndex()
+        {
+            return View();
+        }
         public JsonResult GetAllHotels()
         {
             var hotels = db.Hotels.Select(h => new

@@ -93,7 +93,7 @@ namespace Hotel.Models
 		}
 
         public dbHotelDataContext() :
-base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelConnectionString"].ConnectionString, mappingSource)
+base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelConnectionString1"].ConnectionString, mappingSource)
         {
             OnCreated();
         }

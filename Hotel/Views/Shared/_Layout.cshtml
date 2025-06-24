@@ -21,10 +21,9 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -90,215 +89,9 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 
         </div>
     </nav>
-    
+
     <div class="body-content" style="padding-top: 80px;">
         @RenderBody()
-        <hr />
-        <style>
-            #mymap {
-                height: 600px;
-            }
-            .leaflet-control-attribution {
-                display: none !important;
-            }
-        </style>
-        <div class="container" id="mymap" style="height: 600px; position: relative;">
-            <!-- Modal mini nằm trong bản đồ -->
-            <div id="hotelDetailModal">
-                <div id="hotelDetailContent"></div>
-            </div>
-
-            <!-- Hộp reserve nằm bên phải -->
-            <div class="card hotel-reserve-box">
-                <div class="field dropdown">
-                    <label for="dropdownHotel">Destination</label>
-                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownHotelBtn" data-bs-toggle="dropdown" aria-expanded="false">
-                        Where to?
-                    </button>
-                    <ul class="dropdown-menu w-100" id="dropdownHotelMenu" aria-labelledby="dropdownHotelBtn">
-                    </ul>
-                </div>
-                <div class="field">
-                    <label>Stay Dates</label>
-                    <div class="stay-dates">
-                        <input type="text" name="dateRange" id="dateRange" class="nav-link form-control" placeholder="Check in - Check out">
-                    </div>
-                </div>
-                <div class="field">
-                    <label for="rooms-guests">Rooms & Guests</label>
-                    <select id="rooms-guests">
-                        <option>1 Room, 1 Adult, 0 Children</option>
-                    </select>
-                </div>
-                <button>HOTEL SEARCH</button>
-            </div>
-        </div>
-        <script>
-            var initialLatLng = [10.762622, 106.660172];
-            var initialZoom = 8;
-
-            var map = L.map('mymap').setView(initialLatLng, initialZoom);
-
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; CARTO'
-            }).addTo(map);
-            map.attributionControl.setPrefix(false); map.scrollWheelZoom.disable(); map.doubleClickZoom.disable();
-
-            var ResetViewControl = L.Control.extend({
-                options: {
-                    position: 'topleft'  // Nằm cùng vị trí với zoom control mặc định
-                },
-
-                onAdd: function (map) {
-                    var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-
-                    container.style.backgroundColor = 'white';
-                    container.style.width = '30px';
-                    container.style.height = '30px';
-                    container.style.cursor = 'pointer';
-                    container.style.textAlign = 'center';
-                    container.style.lineHeight = '30px';
-                    container.style.fontSize = '18px';
-                    container.title = "Reset View";
-                    container.innerHTML = '<i class="bi bi-cursor"></i>'; 
-
-                    container.onclick = function () {
-                        map.setView(initialLatLng, initialZoom);
-                    }
-
-                    L.DomEvent.disableClickPropagation(container);
-                    L.DomEvent.disableScrollPropagation(container);
-
-                    return container;
-                }
-            }); map.addControl(new ResetViewControl());
-
-            // Gọi dữ liệu từ controller
-            let hotelsData = [];
-
-            fetch('/Hotel/GetAllHotels')
-                .then(r => r.json())
-                .then(data => {
-                    hotelsData = data;
-                    const dropdownMenu = document.getElementById('dropdownHotelMenu');
-                    const dropdownBtn = document.getElementById('dropdownHotelBtn');
-
-                    const hotelMarkers = {};
-                    data.forEach(hotel => {
-                        // Tạo dropdown item
-                        const li = document.createElement('li');
-                        const a = document.createElement('a');
-                        a.classList.add('dropdown-item');
-                        a.href = "#";
-                        a.textContent = hotel.HotelName;
-                        a.dataset.hotelId = hotel.HotelID;
-                        li.appendChild(a);
-                        dropdownMenu.appendChild(li);
-
-                        // Tạo marker và lưu vào object
-                        const marker = L.marker([hotel.Latitude, hotel.Longitude]).addTo(map);
-                        hotelMarkers[hotel.HotelID] = marker;
-
-                        marker.on('click', () => {
-                            dropdownBtn.textContent = hotel.HotelName;
-                            map.setView([hotel.Latitude, hotel.Longitude], 10);
-
-                            $.get("/Hotel/GetHotelDetail", { hotelId: hotel.HotelID }, html => {
-                                $("#hotelDetailContent").html(html);
-                                $("#hotelDetailModal").fadeIn();
-                            });
-                        });
-                    });
-
-                    // Bắt sự kiện click trên dropdown item
-                    dropdownMenu.addEventListener('click', function (e) {
-                        if (e.target && e.target.matches('.dropdown-item')) {
-                            e.preventDefault();
-                            const hotelId = parseInt(e.target.dataset.hotelId);
-                            const marker = hotelMarkers[hotelId];
-                            if (marker) {
-                                marker.fire('click');  // Gọi lại sự kiện click marker tương ứng
-                            }
-                        }
-                    });
-                });
-
-            // Ẩn modal khi click ngoài modal hoặc marker và dropdown
-            $(document).on("click", function (e) {
-                if (
-                    !$(e.target).closest("#hotelDetailModal, .leaflet-marker-icon, #dropdownHotelBtn, #dropdownHotelMenu").length
-                ) {
-                    $("#hotelDetailModal").fadeOut();
-
-                    const currentCenter = map.getCenter();
-                    map.setView(currentCenter, 8);
-                }
-            });
-
-            // Nút reset view luôn hiển thị, không ẩn đi
-            $("#resetViewBtn").on('click', function () {
-                map.setView(initialLatLng, initialZoom);
-            });
-        </script>
-        <style>
-            #hotelDetailModal {
-                position: absolute;
-                top: 20px;
-                left: 50px;
-                width: 30%;
-                z-index: 1001;
-                background: white;
-                border-radius: 10px;
-                box-shadow: 0 0 15px rgba(0,0,0,0.3);
-                display: none;
-            }
-
-            .hotel-reserve-box {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                width: 300px;
-                background: #fff;
-                padding: 20px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-                border-radius: 8px;
-                z-index: 1000;
-            }
-
-            .hotel-reserve-box .field {
-                margin-bottom: 15px;
-            }
-
-            .hotel-reserve-box input,
-            .hotel-reserve-box select {
-                width: 100%;
-                padding: 8px;
-                margin-top: 4px;
-            }
-
-            .stay-dates {
-                display: flex;
-                gap: 8px;
-            }
-
-                .stay-dates input {
-                    flex: 1;
-                }
-
-            .hotel-reserve-box button {
-                width: 100%;
-                padding: 10px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                font-weight: bold;
-            }
-
-                .hotel-reserve-box button:hover {
-                    background-color: #0056b3;
-                }
-        </style>
     </div>
     <footer class="footer-custom text-center py-4">
         <div class="container">
@@ -341,59 +134,24 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
     @RenderSection("upload", required: false)
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let navbar = document.querySelector(".navbar-custom");
 
-        window.addEventListener("scroll", function () {
-            if (window.scrollY > 40) { // Nếu cuộn xuống hơn 50px
-                navbar.classList.add("shrink");
-            } else {
-                navbar.classList.remove("shrink");
-            }
-        });
-    });
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
+            let navbar = document.querySelector(".navbar-custom");
 
-            let datePicker = flatpickr("#dateRange", {
-            mode: "range",
-        dateFormat: "d-m-Y",
-        minDate: "today",
-        closeOnSelect: false, // Giữ lịch mở khi chọn ngày
-        onChange: function (selectedDates, dateStr, instance) {
-            let currentMonth = instance.currentMonth; // Lưu tháng hiện tại
-        let currentYear = instance.currentYear;   // Lưu năm hiện tại
-
-        if (selectedDates.length === 1) {
-            highlightSelectedDate(selectedDates[0], "#007bff", "white");
-            } else if (selectedDates.length === 2) {
-            let checkIn = selectedDates[0];
-        let checkOut = selectedDates[1];
-
-        if (checkIn.getTime() === checkOut.getTime()) {
-            instance.clear();
-        instance.jumpToDate(new Date(currentYear, currentMonth)); // Mở lại đúng tháng trước đó
+            window.addEventListener("scroll", function () {
+                if (window.scrollY > 40) { // Nếu cuộn xuống hơn 50px
+                    navbar.classList.add("shrink");
                 } else {
-            highlightSelectedDate(checkOut, "#ffc107", "black"); // Check-out màu vàng
-        instance.close();
-                }
-            }
-        }
-    });
-
-        function highlightSelectedDate(date, bgColor, textColor) {
-            document.querySelectorAll(".flatpickr-day").forEach(day => {
-                if (day.dateObj && day.dateObj.getTime() === date.getTime()) {
-                    day.style.backgroundColor = bgColor;
-                    day.style.color = textColor;
+                    navbar.classList.remove("shrink");
                 }
             });
-    }
-});
+        });
 
-</script>
+    </script>
+
     <!-- Bootstrap JavaScript (phải có để dropdown hoạt động) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
 </body>
 
