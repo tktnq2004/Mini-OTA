@@ -1,145 +1,69 @@
-﻿@model Hotel.Models.RoomDetail
-<div class="container mt-4">
-    <div class="row">
-        <!-- Phần trái (70%) -->
-        <div class="col-md-7">
-            <div class="row">
-                <!-- Ảnh chính (70%) -->
-                <div class="col-12 text-center">
-                    <img id="mainImage" src="@Model.RoomImages.First().ImageURL"
-                         class="img-fluid border rounded" style="width: 100%; max-height: 400px;">
-                </div>
+﻿@model List<Hotel.Models.RoomImage>
 
-                <!-- Danh sách ảnh nhỏ (30%) -->
-                <div class="col-12 mt-2 d-flex flex-wrap justify-content-center">
-                    @foreach (var img in Model.RoomImages)
-                    {
-                        <img src="@img.ImageURL" class="img-thumbnail m-1 room-thumbnail"
-                             data-src="@img.ImageURL" style="cursor: pointer; width: 80px; height: 60px;">
-                    }
-                </div>
-            </div>
-        </div>
+@if (Model != null && Model.Any())
+{
+    var first = Model.First();
 
-        <!-- Phần phải (30%) -->
-        <div class="col-md-5">
-            <h2>@Model.RoomName</h2>
-            <p>
-                @if (Model.Percent > 0)
-                {
-                    <del class="old-price"> @Model.Price.ToString("N0") VND</del>
-                    <span class="text-danger"> @((Model.Price - (Model.Price * ((decimal)Model.Percent / 100m))).ToString("N0")) VND</span>
+    <!-- Viewer 360 -->
+    <div id="viewer360" style="width: 100%; height: 500px; border: 1px solid #ddd;"></div>
 
-                }
-                else
-                {
-                    <span>@Model.Price.ToString("N0") VND</span>
-                }
-                        / night
-                    </p>
-            <p><strong>Description:</strong> @Model.Description</p>
-
-            <!-- Review -->
-            <p><strong class="mt-3">Reviews</strong></p>
-            <ul class="list-group">
-                @foreach (var review in Model.Reviews)
-                {
-                    <li class="list-group-item">
-                        <strong>@review.User.FullName:</strong> @review.Comment
-                        <br>
-                        <span>⭐ @review.Rating</span>
-                    </li>
-                }
-            </ul>
-            <div class="button-group">
-                <button class="wishlist-btn" data-roomid="@Model.RoomID">+ Add to Wishlist</button>
-                <form action="/Booking/Booking" method="post">
-                    <input type="hidden" name="roomIds" value="@Model.RoomID">
-                    <button type="submit" class="booking-btn">Booking</button>
-                </form>
-            </div>
-        </div>
+    <!-- Danh sách ảnh thu nhỏ -->
+    <div class="mt-3 d-flex flex-wrap justify-content-center">
+        @foreach (var img in Model)
+        {
+            <img src="@img.ImageURL"
+                 data-img="@img.ImageURL"
+                 class="img-thumbnail m-1 thumb-360"
+                 style="width: 100px; height: 70px; cursor: pointer;" />
+        }
     </div>
-</div>
+        <script>
+            let viewer;
 
-<style>
-    /* Hiệu ứng nổi cho ảnh chính */
-    #mainImage {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+            function initPannellum(imageUrl) {
+                viewer = pannellum.viewer('viewer360', {
+                    type: 'equirectangular',
+                    panorama: imageUrl,
+                    autoLoad: true,
+                    showZoomCtrl: true
+                });
+            }
 
-        #mainImage:hover {
-            transform: scale(1.05); /* Phóng to ảnh chính */
-            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2); /* Thêm bóng mờ */
-        }
+            $(document).ready(function () {
+                const firstImage = '@first.ImageURL';
+                initPannellum(firstImage);
 
-    /* Hiệu ứng nổi cho ảnh nhỏ (thumbnails) */
-    .room-thumbnail {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-        .room-thumbnail:hover {
-            transform: scale(1.1); /* Phóng to ảnh nhỏ */
-            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2); /* Thêm bóng mờ */
-        }
-
-    .button-group {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        display: flex;
-        gap: 10px; /* Khoảng cách giữa hai nút */
-    }
-
-    .wishlist-btn, .booking-btn {
-        background-color: #ff4b2b;
-        color: white;
-        padding: 10px 20px;
-        font-size: 16px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-        .wishlist-btn:hover, .booking-btn:hover {
-            background-color: #ff416c;
-            transform: scale(1.05);
-        }
-</style>
-<script>
-    $(document).ready(function () {
-        $(".room-thumbnail").click(function () {
-            var newSrc = $(this).attr("data-src");
-            $("#mainImage").attr("src", newSrc);
-        });
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        $(".wishlist-btn").click(function (e) {
-            e.preventDefault();
-
-            let roomId = $(this).data("roomid");
-            let button = $(this);
-
-            $.ajax({
-                url: "/Booking/AddCart",
-                type: "POST",
-                data: { id: roomId },
-                success: function () {
-                    alert("Đã thêm vào giỏ hàng");
-                },
-                error: function (xhr) {
-                    if (xhr.status === 401) {
-                        alert("Bạn cần đăng nhập để thêm vào giỏ hàng!");
-                    } else if (xhr.status === 409) {
-                        alert("Phòng này đã có trong giỏ hàng.");
-                    } else {
-                        alert("Có lỗi xảy ra, vui lòng thử lại.");
-                    }
-                }
+                $(".thumb-360").click(function () {
+                    const url = $(this).data("img");
+                    viewer.loadScene(viewer.addScene('custom', {
+                        type: 'equirectangular',
+                        panorama: url,
+                        autoLoad: true
+                    }));
+                });
             });
-        });
-    });
-</script>
+        </script>
+    }
+}
+else
+{
+    <p class="text-muted text-center">Không có ảnh 360 nào cho phòng này.</p>
+}
+
+<!-- Style -->
+<style>
+    .thumb-360 {
+        border-radius: 8px;
+        transition: transform 0.2s;
+    }
+
+        .thumb-360:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+    #viewer360:empty {
+        background: #f8f8f8;
+        min-height: 500px;
+    }
+</style>

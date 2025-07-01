@@ -7,10 +7,10 @@
 @foreach (var payment in Model)
 {
     <div class="container3 mt-4 p-3 border rounded">
-        <h4 class="text-center">Booking ID: @payment.PaymentId</h4> <!-- Hiển thị Booking ID -->
+        <h4 class="text-center">Booking ID: @payment.PaymentId</h4>  Hiển thị Booking ID 
 
         <div class="row">
-            <!-- Cột trái (50%): Ảnh và thông tin phòng -->
+             Cột trái (50%): Ảnh và thông tin phòng 
             <div class="col-md-4">
                 @foreach (var room in payment.RoomDetails)
                 {
@@ -37,7 +37,7 @@
                 }
             </div>
 
-            <!-- Cột phải (50%): Thông tin thanh toán -->
+             Cột phải (50%): Thông tin thanh toán 
             <div class="col-md-8 d-flex flex-column justify-content-center">
                 <p><strong>Check In:</strong> @payment.CheckIn.ToString("dd/MM/yyyy")</p>
                 <p><strong>Check Out:</strong> @payment.CheckOut.ToString("dd/MM/yyyy")</p>
@@ -45,30 +45,30 @@
                 <p><strong>Total Amount:</strong> @payment.Amount.ToString("N0") VND</p>
                 <p><strong>Last Update:</strong> @payment.LastUpdate.ToString("dd/MM/yyyy")</p>
 
-                <!-- Xử lý trạng thái thanh toán -->
+                 Xử lý trạng thái thanh toán 
                 @if (payment.Status == "Pending")
                 {
                     <div class="d-flex justify-content-between">
-                        <!-- Nút Proceed to Payment, sẽ thay thành Paid khi nhấn -->
+                         Nút Proceed to Payment, sẽ thay thành Paid khi nhấn 
                         <a href="javascript:void(0);" class="btn btn-success mt-3 proceedToPayment">Proceed to Payment</a>
 
-                        <!-- Nút Cancel Order -->
+                         Nút Cancel Order 
                         <a href="javascript:void(0);" class="btn btn-danger mt-3 cancelOrder">Cancel Order</a>
                     </div>
 
-                    <!-- Mã QR và Nút Confirm Payment Success, ban đầu ẩn -->
+                     Mã QR và Nút Confirm Payment Success, ban đầu ẩn 
                     <div class="qrCodeContainer" style="display: none; text-align:center;">
                         <img src="@payment.QRCode" alt="QR Code" style="width:300px; height:300px;">
                     </div>
 
-                    <!-- Nút Succeed Payment, ban đầu ẩn -->
+                     Nút Succeed Payment, ban đầu ẩn 
                     <div class="succeedPaymentContainer" style="display: none; text-align:center;">
                         <button class="btn btn-primary mt-3">Succeed Payment</button>
                     </div>
                 }
                 else if (payment.Status == "Confirm")
                 {
-                    <!-- Nếu thanh toán đã xác nhận, hiển thị nút Paid -->
+                     Nếu thanh toán đã xác nhận, hiển thị nút Paid 
                     <button class="btn btn-secondary mt-3" disabled>Paid</button>
                 }
 

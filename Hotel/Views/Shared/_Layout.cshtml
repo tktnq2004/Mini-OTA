@@ -16,6 +16,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/Content/Site.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -24,13 +26,22 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <!-- Bản PhotoSphereViewer đã bundle đầy đủ -->
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+
+    <!-- JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+
+
+
+
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light navbar-custom fixed-top">
         <div class="container">
-            <img src="~/Content/images/logo.jpg" width="46" height="25" class="m-3" />
+            @*<img src="~/Content/images/logo.jpg" width="46" height="25" class="m-3" />*@
             <a class="navbar-brand" href="/"> ZooZee </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -86,6 +97,53 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
                     }
                 </ul>
             </div>
+
+
+            @*<div class="container row g-3 KHUYENMAI" id="khuyenmai-section">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="card border-0">
+                        <div class="card-header bg-transparent text-black ">
+                            <p><strong>[TẾT 2025] ƯU ĐÃI GIẢM GIÁ LÊN ĐẾN 70%</strong></p>
+                        </div>
+                        <div class="card-body bg-transparent text-black">
+                            <img src="~/Content/images/KM_1.jpg" width="375" height="200" />
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <p>Thời gian: 01/01/2025 - 30/03/2025</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="card border-0">
+                        <div class="card-header bg-transparent text-black ">
+                            <p><strong>[SRING PROMOTION 2025] COMBO NGHỈ DƯỠNG 2N1Đ</strong></p>
+                        </div>
+                        <div class="card-body bg-transparent text-black">
+                            <img src="~/Content/images/KM_2.jpg" width="375" height="200" />
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <p>Thời gian: 28/02/2025 - 30/04/2025</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="card border-0">
+                        <div class="card-header bg-transparent text-black ">
+                            <p><strong>[Mừng Sinh Nhật] GIẢM GIÁ CHO ĐÊM THỨ 2 TẠI KHÁCH SẠN</strong></p>
+                        </div>
+                        <div class="card-body bg-transparent text-black">
+                            <img src="~/Content/images/KM_3.jpg" width="375" height="200" />
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <p>Thời gian: 10/02/2025 - 20/02/2025</p>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+
+
 
         </div>
     </nav>

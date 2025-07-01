@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Bọc toàn bộ nội dung trong FORM -->
+ Bọc toàn bộ nội dung trong FORM 
 @using (Html.BeginForm("ConfirmBooking", "Booking", FormMethod.Post, new { id = "bookingForm" }))
 {
     <div class="container mt-4" style="max-width: 900px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
@@ -14,13 +14,13 @@
         {
             <div class="card mb-3 shadow-sm">
                 <div class="row g-0">
-                    <!-- Ảnh phòng -->
+                     Ảnh phòng 
                     <div class="col-md-5">
                         <img src="@room.RoomImages.FirstOrDefault().ImageURL"
                              class="img-fluid rounded-start" style="width: 100%; height: 200px; object-fit: cover;">
                     </div>
 
-                    <!-- Thông tin phòng -->
+                     Thông tin phòng 
                     <div class="col-md-7">
                         <div class="card-body">
                             <h5 class="card-title">@room.RoomName</h5>
@@ -39,7 +39,7 @@
                                 / night
                             </p>
 
-                            <!-- Input ẩn chứa RoomID -->
+                             Input ẩn chứa RoomID 
                             <input type="hidden" name="roomIds" value="@room.RoomID" />
                         </div>
                     </div>
@@ -47,7 +47,7 @@
             </div>
         }
 
-        <!-- Chọn ngày nhận/trả phòng -->
+         Chọn ngày nhận/trả phòng 
         <div class="text-center">
             <label for="dateRange" class="form-label">Select Date:</label>
             <input type="text" name="dateRange" id="dateRange" class="form-control w-50 mx-auto" placeholder="Check in - Check out">
@@ -57,7 +57,7 @@
 }
 
 
-<!-- Thêm jQuery -->
+ Thêm jQuery 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {

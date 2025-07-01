@@ -15,12 +15,65 @@ namespace Hotel.Controllers
     {
         dbHotelDataContext db = new dbHotelDataContext();
         // GET: Room
-        public ActionResult Index()
+        private List<RoomDisplay> GetAvailableRooms(int hotelID, DateTime? fromDate, DateTime? toDate)
         {
-            var roomTypes = db.RoomTypes.ToList();
-            ViewBag.RoomTypes = roomTypes;
-            return View();
+            var bookedRoomIds = db.BookingDetails
+                .Where(bd => db.Bookings.Any(b =>
+                    b.BookingID == bd.BookingID &&
+                    b.CheckIn < toDate && b.CheckOut > fromDate))
+                .Select(bd => bd.RoomID)
+                .Distinct()
+                .ToList();
+
+            var rooms = (from r in db.Rooms
+                         where r.HotelID == hotelID
+                         && !bookedRoomIds.Contains(r.RoomID)
+                         join dd in db.DiscountDetails on r.RoomID equals dd.RoomID into discountGroup
+                         from dd in discountGroup.DefaultIfEmpty()
+                         join d in db.Discounts on dd.DiscountID equals d.DiscountID into discountInfo
+                         from d in discountInfo.DefaultIfEmpty()
+                         select new RoomDisplay
+                         {
+                             ID = r.RoomID,
+                             RoomTypeId = r.RoomTypeId,
+                             RoomName = r.RoomName,
+                             Capacity = r.Capacity,
+                             Price = r.Price,
+                             Description = r.Description,
+                             Percent = d != null ? d.DiscountPercent : 0
+                         }).ToList();
+
+            return rooms;
         }
+
+        public ActionResult RoomIndex(int hotelID, DateTime? fromDate, DateTime? toDate, int? rooms, int? adults, int? children)
+        {
+            ViewBag.FromDate = fromDate;
+            ViewBag.ToDate = toDate;
+            ViewBag.Rooms = rooms;
+            ViewBag.Adults = adults;
+            ViewBag.Children = children;
+            ViewBag.HotelID = hotelID;
+
+            ViewBag.RoomTypes = db.RoomTypes.ToList();
+            var availableRooms = GetAvailableRooms(hotelID, fromDate, toDate);
+            return View(availableRooms);
+        }
+
+        public ActionResult UpdateFilter(int hotelID, DateTime? fromDate, DateTime? toDate, int? rooms, int? adults, int? children)
+        {
+            ViewBag.FromDate = fromDate;
+            ViewBag.ToDate = toDate;
+            ViewBag.Rooms = rooms;
+            ViewBag.Adults = adults;
+            ViewBag.Children = children;
+            ViewBag.HotelID = hotelID;
+
+            ViewBag.RoomTypes = db.RoomTypes.ToList();
+            var availableRooms = GetAvailableRooms(hotelID, fromDate, toDate);
+            return View("RoomIndex", availableRooms);
+        }
+
         public ActionResult FilterRooms(int? roomTypeId, string dateRange, string sortByPrice = "asc", int page = 1)
         {
             try
@@ -86,7 +139,7 @@ namespace Hotel.Controllers
             }
         }
 
-        public ActionResult GetRoomImage(int? page,int roomId)
+        public ActionResult GetRoomImage(int? page, int roomId)
         {
             var image = db.RoomImages.FirstOrDefault(i => i.RoomID == roomId);
             if (image != null && !string.IsNullOrEmpty(image.ImageURL))
@@ -97,20 +150,11 @@ namespace Hotel.Controllers
         }
         public ActionResult GetRoomDetail(int roomId)
         {
-            var roomDetail = db.Rooms.Where(r => r.RoomID == roomId)
-                                     .Select(r => new RoomDetail
-                                     {
-                                        RoomID = r.RoomID,
-                                        RoomName = r.RoomName,
-                                        Description = r.Description,
-                                        Price = r.Price,
-                                         Percent = db.DiscountDetails.Where(dd => dd.RoomID == r.RoomID)
-                            .Select(dd => (int?)dd.Discount.DiscountPercent)
-                            .FirstOrDefault() ?? 0,
-                                         RoomImages = db.RoomImages.Where(img => img.RoomID == r.RoomID).ToList(),
-                                        Reviews = db.Reviews.Where(rev => rev.RoomID == r.RoomID).ToList()
-                                     }).FirstOrDefault();
-            return PartialView("RoomDetail",roomDetail);
+            var images = db.RoomImages
+                           .Where(i => i.RoomID == roomId)
+                           .ToList();
+
+            return PartialView("RoomDetail", images);
         }
     }
 }

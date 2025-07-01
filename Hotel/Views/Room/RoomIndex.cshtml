@@ -1,0 +1,428 @@
+﻿@model IEnumerable<Hotel.Models.RoomDisplay>
+@{
+    string from = ViewBag.FromDate != null ? ((DateTime)ViewBag.FromDate).ToString("dd-MM-yyyy") : "";
+    string to = ViewBag.ToDate != null ? ((DateTime)ViewBag.ToDate).ToString("dd-MM-yyyy") : "";
+    string defaultDateRange = (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to)) ? $"{from} - {to}" : "";
+
+    int hotelID = ViewBag.HotelID != null ? (int)ViewBag.HotelID : 0;
+    int rooms = ViewBag.Rooms != null ? (int)ViewBag.Rooms : 1;
+    int adults = ViewBag.Adults != null ? (int)ViewBag.Adults : 1;
+    int children = ViewBag.Children != null ? (int)ViewBag.Children : 0;
+}
+
+@{
+    ViewBag.Title = "RoomIndex";
+}
+
+<div class="container mt-3 mb-4 p-3 bg-light border rounded shadow-sm">
+    <div class="row align-items-center">
+        <!-- Date Range on the left -->
+        <div class="col-md-6">
+            <label class="form-label">Stay Dates</label>
+            <input type="text" id="dateRange" class="form-control" placeholder="Check in - Check out" />
+        </div>
+
+        <!-- Room & Guest dropdown on the right -->
+        <div class="col-md-6 position-relative">
+            <label class="form-label">Rooms & Guests</label>
+            <div class="d-flex">
+                <div id="guestSelector" class="guest-dropdown-toggle w-100 me-2">
+                    @rooms Room@(rooms > 1 ? "s" : ""), @adults Adult@(adults > 1 ? "s" : ""), @children Child@(children != 1 ? "ren" : "")
+                </div>
+                <button id="updateFilter" class="btn btn-primary">Update</button>
+            </div>
+
+            <div id="guestDropdown" class="guest-dropdown-menu w-100 mt-2" style="display: none;">
+                <div class="guest-row-item">
+                    <span>Rooms</span>
+                    <div class="guest-counter">
+                        <button onclick="changeGuestCount('room', -1)">–</button>
+                        <span id="guestRoomCount">@rooms</span>
+                        <button onclick="changeGuestCount('room', 1)">+</button>
+                    </div>
+                </div>
+                <div class="guest-row-item">
+                    <span>Adults</span>
+                    <div class="guest-counter">
+                        <button onclick="changeGuestCount('adult', -1)">–</button>
+                        <span id="guestAdultCount">@adults</span>
+                        <button onclick="changeGuestCount('adult', 1)">+</button>
+                    </div>
+                </div>
+                <div class="guest-row-item">
+                    <span>Children</span>
+                    <div class="guest-counter">
+                        <button onclick="changeGuestCount('child', -1)">–</button>
+                        <span id="guestChildCount">@children</span>
+                        <button onclick="changeGuestCount('child', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-3">
+    <ul class="nav nav-pills justify-content-center navbar-custom2">
+        <li class="nav-item">
+            <a class="nav-link filter-khuyenmai selected" href="#">Promotion</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link filter-btn dropdown-toggle" href="#" id="roomTypeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Room Types
+            </a>
+            <ul class="dropdown-menu">
+                @foreach (var type in ViewBag.RoomTypes)
+                {
+                    <li><a class="dropdown-item text-dark bg-white nav-link filter-btn" data-fil="type" href="#" data-value="@type.RoomTypeId">@type.RoomTypeName</a></li>
+                }
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link filter-btn " data-fil="price" href="#">Price</a>
+        </li>
+
+    </ul>
+</div>
+
+
+<div class="container my-4">
+    <div class="card p-4 shadow-lg bg-white rounded">
+
+        @foreach (var item in Model)
+        {
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        <img class="room-img img-fluid h-100 w-100"
+                             src="@Url.Action("GetRoomImage", "Room", new { roomId = item.ID })"
+                             data-roomid="@item.ID"
+                             alt="Room Image"
+                             style="object-fit: cover; height: 100%;">
+
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body d-flex flex-column justify-content-between h-100">
+                            <div class="d-flex justify-content-between">
+
+                                <div>
+                                    <h4 class="fw-bold mb-1">@item.RoomName</h4>
+                                    <div class="text-muted mb-2" style="font-size: 0.95rem;">
+                                        @item.Capacity @(item.Capacity > 1 ? "people" : "person") · @item.Description
+                                    </div>
+                                </div>
+
+                                <div class="text-end">
+                                    <div style="font-size: 1.3rem;" class="fw-bold text-dark">
+                                        @if (item.Percent > 0)
+                                        {
+                                            <span>@((item.Price - (item.Price * ((decimal)item.Percent / 100m))).ToString("N0"))</span> <span class="text-uppercase" style="font-size: 0.9rem;">VND</span>
+                                            <div class="text-muted" style="font-size: 0.9rem;">
+                                                <del>@item.Price.ToString("N0")</del> VND
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span>@item.Price.ToString("N0")</span> <span class="text-uppercase" style="font-size: 0.9rem;">VND</span>
+                                        }
+                                        <div style="font-size: 0.85rem;" class="text-muted">/ night</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end mt-3">
+                                <a href="@Url.Action("Details", "Room", new { id = item.ID })" class="btn btn-dark px-4 py-2 rounded-pill">
+                                    Select
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+<!-- Modal Hiển Thị Chi Tiết Phòng -->
+<div class="modal fade" id="roomDetailModal" tabindex="-1" aria-labelledby="roomDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="roomDetailModalLabel">Room Detail</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="roomDetailContent">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        flatpickr("#dateRange", {
+            mode: "range",
+            dateFormat: "d-m-Y",
+            minDate: "today",
+            closeOnSelect: false,
+            defaultDate: ["@from","@to"],
+            onChange: function (selectedDates, dateStr, instance) {
+                let currentMonth = instance.currentMonth;
+                let currentYear = instance.currentYear;
+                if (selectedDates.length === 1) {
+                    highlightSelectedDate(selectedDates[0], "#007bff", "white");
+                } else if (selectedDates.length === 2) {
+                    if (selectedDates[0].getTime() === selectedDates[1].getTime()) {
+                        instance.clear();
+                        instance.jumpToDate(new Date(currentYear, currentMonth));
+                    } else {
+                        highlightSelectedDate(selectedDates[1], "#ffc107", "black");
+                        instance.close();
+                    }
+                }
+            }
+        });
+        function highlightSelectedDate(date, bgColor, textColor) {
+            document.querySelectorAll(".flatpickr-day").forEach(day => {
+                if (day.dateObj && day.dateObj.getTime() === date.getTime()) {
+                    day.style.backgroundColor = bgColor;
+                    day.style.color = textColor;
+                }
+            });
+        }
+
+        const guestSelector = document.getElementById("guestSelector");
+        const guestDropdown = document.getElementById("guestDropdown");
+
+        guestSelector.addEventListener("click", function (e) {
+            e.stopPropagation();
+            guestDropdown.style.display = guestDropdown.style.display === "block" ? "none" : "block";
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!guestDropdown.contains(e.target) && !guestSelector.contains(e.target)) {
+                guestDropdown.style.display = "none";
+            }
+        });
+
+        window.changeGuestCount = function (type, delta) {
+            let room = parseInt(document.getElementById("guestRoomCount").innerText);
+            let adult = parseInt(document.getElementById("guestAdultCount").innerText);
+            let child = parseInt(document.getElementById("guestChildCount").innerText);
+
+            if (type === "room" && room + delta >= 1 && room + delta <= 5) {
+                document.getElementById("guestRoomCount").innerText = room + delta;
+            }
+
+            if (type === "adult" && adult + delta >= 1 && adult + child + delta <= 5) {
+                document.getElementById("guestAdultCount").innerText = adult + delta;
+            }
+
+            if (type === "child" && child + delta >= 0 && adult + child + delta <= 5) {
+                document.getElementById("guestChildCount").innerText = child + delta;
+            }
+
+            updateGuestSummary();
+        };
+
+        function updateGuestSummary() {
+            const room = parseInt(document.getElementById("guestRoomCount").innerText);
+            const adult = parseInt(document.getElementById("guestAdultCount").innerText);
+            const child = parseInt(document.getElementById("guestChildCount").innerText);
+
+            let summary = `${room} Room${room > 1 ? "s" : ""}, ${adult} Adult${adult > 1 ? "s" : ""}, ${child} Child${child !== 1 ? "ren" : ""}`;
+
+            document.getElementById("guestSelector").innerText = summary;
+        }
+
+        updateGuestSummary();
+    });
+</script>
+
+<script>
+    document.getElementById("updateFilter").addEventListener("click", function () {
+        const dateRange = document.getElementById("dateRange")._flatpickr.selectedDates;
+        const fromDate = dateRange[0].toISOString();
+        const toDate = dateRange[1].toISOString();
+
+        // Lấy số lượng người
+        const rooms = parseInt(document.getElementById("guestRoomCount").innerText);
+        const adults = parseInt(document.getElementById("guestAdultCount").innerText);
+        const children = parseInt(document.getElementById("guestChildCount").innerText);
+
+        // Gộp thành query string
+        const query = new URLSearchParams({
+            hotelID: @hotelID,
+            fromDate: fromDate,
+            toDate: toDate,
+            rooms: rooms,
+            adults: adults,
+            children: children
+        }).toString();
+
+        window.location.href = `/Room/UpdateFilter?${query}`;
+    });
+
+</script>
+
+
+<script>
+    // Script xử lý lọc theo loại phòng
+    $(document).on("click", ".filter-btn[data-fil='type']", function () {
+        var roomTypeId = $(this).data("value");
+        filterRooms({ roomTypeId: roomTypeId });
+    });
+
+    // Script xử lý lọc theo giá (mặc định tăng dần)
+    $(document).on("click", ".filter-btn[data-fil='price']", function () {
+        filterRooms({ sortByPrice: "asc" });
+    });
+
+    function filterRooms(filterData) {
+        $.ajax({
+            url: "/Room/FilterRooms",
+            type: "GET",
+            data: filterData,
+            success: function (response) {
+                $("#room-list").html(response);
+            },
+            error: function (xhr, status, error) {
+                console.log("Lỗi AJAX:", xhr.responseText);
+                alert("Lỗi: " + xhr.responseText);
+            }
+        });
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $(document).on("click", ".room-img", function () {
+            var roomid = $(this).data("roomid");
+
+            $.get("/Room/GetRoomDetail", { roomId: roomid }, function (data) {
+                $("#roomDetailContent").html(data);
+                $("#roomDetailModal").modal("show");
+            });
+        });
+    });
+</script>
+
+
+
+<style>
+    .guest-dropdown-toggle {
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+    }
+
+    .guest-dropdown-menu {
+        position: absolute;
+        z-index: 1100;
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 4px;
+        width: 100%;
+        display: none;
+    }
+
+    .guest-row-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .guest-counter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .guest-counter button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #ddd;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+            .guest-counter button:hover {
+                background: #bbb;
+            }
+</style>
+
+<style>
+    .room-img {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .room-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .discount-ribbon {
+        position: absolute;
+        top: 5px;
+        left: -5px;
+        background: red;
+        color: white;
+        padding: 5px 12px;
+        font-size: 12px;
+        font-weight: bold;
+        transform: rotate(-15deg);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .text-danger {
+        font-weight: bold;
+        color: red;
+    }
+
+    .old-price {
+        font-size: 0.8em;
+        color: gray;
+        margin-right: 5px;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+    }
+
+    .img-fluid {
+        border-radius: 5px 0 0 5px;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .btn-dark {
+        background-color: #000;
+        border: none;
+    }
+
+        .btn-dark:hover {
+            background-color: #333;
+        }
+
+    .rounded-pill {
+        border-radius: 50px;
+    }
+
+    .fw-bold {
+        font-weight: 600;
+    }
+</style>

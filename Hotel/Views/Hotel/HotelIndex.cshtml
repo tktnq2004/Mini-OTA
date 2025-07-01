@@ -138,11 +138,12 @@
                 </div>
             </div>
 
-            <button>HOTEL SEARCH</button>
+            <button id="hotelSearchBtn">HOTEL SEARCH</button>
         </div>
     </div>
 
     <script>
+        let selectedHotelId = null;
         document.addEventListener("DOMContentLoaded", function () {
             const initialLatLng = [10.762622, 106.660172];
             const initialZoom = 8;
@@ -204,6 +205,7 @@
                         hotelMarkers[hotel.HotelID] = marker;
 
                         marker.on('click', () => {
+                            selectedHotelId = hotel.HotelID;
                             dropdownHotelToggle.textContent = hotel.HotelName;
                             map.setView([hotel.Latitude, hotel.Longitude], 10);
                             $.get("/Hotel/GetHotelDetail", { hotelId: hotel.HotelID }, html => {
@@ -225,7 +227,7 @@
                 });
 
             $(document).on("click", function (e) {
-                if (!$(e.target).closest("#hotelDetailModal, .leaflet-marker-icon, #dropdownHotelToggle, #dropdownHotelMenu").length) {
+                if (!$(e.target).closest("#hotelDetailModal, .leaflet-marker-icon, #dropdownHotelToggle, #dropdownHotelMenu ,#hotelSearchBtn").length) {
                     $("#hotelDetailModal").fadeOut();
                     map.setView(map.getCenter(), initialZoom);
                 }
@@ -240,6 +242,7 @@
                 dateFormat: "d-m-Y",
                 minDate: "today",
                 closeOnSelect: false,
+                defaultDate: [new Date(), new Date(Date.now() + 86400000)],
                 onChange: function (selectedDates, dateStr, instance) {
                     let currentMonth = instance.currentMonth;
                     let currentYear = instance.currentYear;
@@ -256,7 +259,6 @@
                     }
                 }
             });
-
             function highlightSelectedDate(date, bgColor, textColor) {
                 document.querySelectorAll(".flatpickr-day").forEach(day => {
                     if (day.dateObj && day.dateObj.getTime() === date.getTime()) {
@@ -319,4 +321,28 @@
 
             updateGuestSummary();
         });
+        document.getElementById("hotelSearchBtn").addEventListener("click", function () {
+            const dateRange = document.getElementById("dateRange")._flatpickr.selectedDates;
+            const fromDate = dateRange[0].toISOString();
+            const toDate = dateRange[1].toISOString();
+
+            // Lấy số lượng người
+            const rooms = parseInt(document.getElementById("guestRoomCount").innerText);
+            const adults = parseInt(document.getElementById("guestAdultCount").innerText);
+            const children = parseInt(document.getElementById("guestChildCount").innerText);
+
+            // Gộp thành query string
+            const query = new URLSearchParams({
+                hotelID: selectedHotelId,
+                fromDate: fromDate,
+                toDate: toDate,
+                rooms: rooms,
+                adults: adults,
+                children: children
+            }).toString();
+
+            // Mở RoomIndex với tất cả tham số
+            window.open(`/Room/RoomIndex?${query}`, '_blank');
+        });
+ 
     </script>
