@@ -17,7 +17,7 @@ namespace Hotel.Controllers
         // GET: Room
         private List<RoomDisplay> GetAvailableRooms(int hotelID, DateTime? fromDate, DateTime? toDate)
         {
-            var bookedRoomIds = db.BookingDetails
+            var bookedRoomIds = db.Bookings
                 .Where(bd => db.Bookings.Any(b =>
                     b.BookingID == bd.BookingID &&
                     b.CheckIn < toDate && b.CheckOut > fromDate))

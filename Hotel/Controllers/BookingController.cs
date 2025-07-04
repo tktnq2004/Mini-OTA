@@ -24,19 +24,19 @@ namespace Hotel.Controllers
                 return new HttpStatusCodeResult(401);
             }
 
-            var existingCartItem = db.Carts.FirstOrDefault(c => c.RoomID == id && c.UserID == user.UserID);
+            var existingCartItem = db.Wishlists.FirstOrDefault(c => c.RoomID == id && c.UserID == user.UserID);
             if (existingCartItem != null)
             {
                 return new HttpStatusCodeResult(409);
             }
 
-            var cartItem = new Cart
+            var cartItem = new Wishlist
             {
                 RoomID = id,
                 UserID = user.UserID
             };
 
-            db.Carts.InsertOnSubmit(cartItem);
+            db.Wishlists.InsertOnSubmit(cartItem);
             db.SubmitChanges();
 
             return new HttpStatusCodeResult(200);
@@ -44,7 +44,7 @@ namespace Hotel.Controllers
         public ActionResult DisplayCart()
         {
             var user = (User)Session["user"];
-            var cartDetail = (from a in db.Carts
+            var cartDetail = (from a in db.Wishlists
                               join b in db.Rooms on a.RoomID equals b.RoomID
                               where a.UserID == user.UserID
                               select new CartDisplay
@@ -64,64 +64,64 @@ namespace Hotel.Controllers
         public ActionResult Booking(FormCollection form)
         {
             string action = form["action"];
+            var ListRoomId = form.GetValues("roomIds")?.Select(int.Parse).ToList();
+
+            if (ListRoomId == null || !ListRoomId.Any())
+                return new HttpStatusCodeResult(400, "Không có phòng nào được chọn.");
+
+            var user = Session["user"] as User;
+            if (user == null)
+                return new HttpStatusCodeResult(401, "Chưa đăng nhập.");
+
             if (action == "discard")
             {
-                var ListRoomId = form.GetValues("roomIds")?.Select(int.Parse).ToList();
-                if (ListRoomId == null || !ListRoomId.Any())
-                {
-                    return new HttpStatusCodeResult(400, "Không có phòng nào được chọn.");
-                }
-                var user = (User)Session["user"];
-                if (user == null) return new HttpStatusCodeResult(401, "Chưa đăng nhập.");
-                var cartItems = db.Carts.Where(c => c.UserID == user.UserID && ListRoomId.Contains(c.RoomID)).ToList();
-                db.Carts.DeleteAllOnSubmit(cartItems);
+                var cartItems = db.Wishlists
+                                  .Where(c => c.UserID == user.UserID && ListRoomId.Contains(c.RoomID))
+                                  .ToList();
+
+                db.Wishlists.DeleteAllOnSubmit(cartItems);
                 db.SubmitChanges();
                 return RedirectToAction("DisplayCart", "Booking");
             }
             else
             {
-
-                var ListRoomId = form.GetValues("roomIds")?.Select(int.Parse).ToList();
-                if (ListRoomId == null || !ListRoomId.Any())
-                {
-                    return new HttpStatusCodeResult(400, "Không có phòng nào được chọn.");
-                }
                 List<RoomDetail> allRooms = new List<RoomDetail>();
-                // Lấy tất cả thông tin phòng, ảnh và chi tiết đặt phòng trong 1 lần truy vấn
-                foreach ( var room in ListRoomId)
-                {
-                    var roomDetail = db.Rooms.Where(r => r.RoomID == room)
-                                             .Select(r => new RoomDetail
-                                             {
-                                                 RoomID = r.RoomID,
-                                                 RoomName = r.RoomName,
-                                                 Description = r.Description,
-                                                 Price = r.Price,
-                                                 Percent = db.DiscountDetails.Where(dd => dd.RoomID == r.RoomID)
-                                                .Select(dd => (int?)dd.Discount.DiscountPercent)
-                                                .FirstOrDefault() ?? 0,
-                                                 RoomImages = db.RoomImages.Where(img => img.RoomID == r.RoomID).ToList(),
-                                                 Reviews = db.Reviews.Where(rev => rev.RoomID == r.RoomID).ToList()
-                                             }).FirstOrDefault();
-                    if (roomDetail != null)
-                    {
-                        allRooms.Add(roomDetail);  // Thêm vào danh sách thay vì ghi đè
-                    }
-                }
-                var bookings = db.BookingDetails
-                                 .Where(bd => ListRoomId.Contains(bd.RoomID))
-                                 .Select(bd => bd.Booking)
-                                 .ToList();
 
-                var allBookedDates = bookings
+                foreach (int roomId in ListRoomId)
+                {
+                    var roomDetail = db.Rooms
+                        .Where(r => r.RoomID == roomId)
+                        .Select(r => new RoomDetail
+                        {
+                            RoomID = r.RoomID,
+                            RoomName = r.RoomName,
+                            Description = r.Description,
+                            Price = r.Price,
+                            Percent = db.DiscountDetails
+                                        .Where(dd => dd.RoomID == r.RoomID)
+                                        .Select(dd => (int?)dd.Discount.DiscountPercent)
+                                        .FirstOrDefault() ?? 0,
+                            RoomImages = db.RoomImages.Where(img => img.RoomID == r.RoomID).ToList(),
+                            Reviews = db.Reviews.Where(rev => rev.RoomID == r.RoomID).ToList()
+                        })
+                        .FirstOrDefault();
+
+                    if (roomDetail != null)
+                        allRooms.Add(roomDetail);
+                }
+
+                var allBookedDates = db.Bookings
+                    .Where(b => ListRoomId.Contains(b.RoomID) && b.PaymentStatus != "Cancelled")
                     .SelectMany(b => Enumerable.Range(0, (b.CheckOut - b.CheckIn).Days)
-                                  .Select(offset => b.CheckIn.AddDays(offset).ToString("dd/MM/yyyy")))
+                                               .Select(offset => b.CheckIn.AddDays(offset).ToString("dd/MM/yyyy")))
                     .Distinct()
                     .ToList();
+
                 ViewBag.BookedDates = allBookedDates;
                 return View(allRooms);
             }
         }
+
 
         [HttpPost]
         public async Task<ActionResult> ConfirmBooking(FormCollection form)
@@ -188,13 +188,13 @@ namespace Hotel.Controllers
                 if (room == null) continue; // Nếu phòng không tồn tại, bỏ qua
 
                 // Thêm vào BookingDetail
-                var bookingDetail = new BookingDetail
+                var bookingDetail = new Booking
                 {
                     RoomID = roomId,
                     BookingID = newBooking.BookingID,
                     Discount = percent
                 };
-                db.BookingDetails.InsertOnSubmit(bookingDetail);
+                db.Bookings.InsertOnSubmit(bookingDetail);
 
                 // Tính tiền
                 tongTien += ( room.Price - ( room.Price * ((decimal)percent /100m) )) * (newBooking.CheckOut - newBooking.CheckIn).Days;
@@ -260,15 +260,15 @@ namespace Hotel.Controllers
             });
 
             // Tạo thanh toán
-            var payment = new Payment
+            var payment = new Booking
             {
                 BookingID = newBooking.BookingID,
-                PaymentDate = DateTime.Now,
+                BookingDate = DateTime.Now,
                 Amount = tongTien,
                 PaymentStatus = "Pending",
             };
 
-            db.Payments.InsertOnSubmit(payment);
+            db.Bookings.InsertOnSubmit(payment);
             db.SubmitChanges();
 
             return new HttpStatusCodeResult(202, "Đặt phòng thành công.");

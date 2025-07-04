@@ -1,69 +1,74 @@
-﻿@model List<Hotel.Models.RoomImage>
+﻿    @model List<Hotel.Models.RoomImage>
 
-@if (Model != null && Model.Any())
-{
-    var first = Model.First();
+    @if (Model != null && Model.Any())
+    {
+        var first = Model.First();
 
-    <!-- Viewer 360 -->
-    <div id="viewer360" style="width: 100%; height: 500px; border: 1px solid #ddd;"></div>
+        <!-- Viewer 360 full screen trừ thumbnail -->
+        <div id="viewer360" style="width: 100vw; height: calc(100vh - 100px); margin: 0; padding: 0;"></div>
 
-    <!-- Danh sách ảnh thu nhỏ -->
-    <div class="mt-3 d-flex flex-wrap justify-content-center">
-        @foreach (var img in Model)
-        {
-            <img src="@img.ImageURL"
-                 data-img="@img.ImageURL"
-                 class="img-thumbnail m-1 thumb-360"
-                 style="width: 100px; height: 70px; cursor: pointer;" />
-        }
-    </div>
-        <script>
-            let viewer;
-
-            function initPannellum(imageUrl) {
-                viewer = pannellum.viewer('viewer360', {
-                    type: 'equirectangular',
-                    panorama: imageUrl,
-                    autoLoad: true,
-                    showZoomCtrl: true
-                });
+        <div class="d-flex flex-nowrap justify-content-center align-items-center"
+             style="height: 100px; overflow-x: auto; margin: 0; padding: 5px; background: transparent;">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var img = Model[i];
+                <img src="@img.ImageURL"
+                     data-img="@img.ImageURL"
+                     data-sceneid="scene_@i"
+                     class="thumb-360"
+                     style="width: 100px; height: 70px; object-fit: cover; margin: 4px; cursor: pointer;" />
             }
+        </div>
 
-            $(document).ready(function () {
-                const firstImage = '@first.ImageURL';
-                initPannellum(firstImage);
+        <script>
+                let viewer;
+                $(function () {
+                    viewer = pannellum.viewer('viewer360', {
+                        default: {
+                            firstScene: 'scene_0',
+                            autoLoad: true
+                        },
+                        scenes: {
+                            @for (int i = 0; i < Model.Count; i++)
+                            {
+                                var img = Model[i];
+                                <text>
+                                "scene_@i": {
+                                    type: "equirectangular",
+                                    panorama: "@img.ImageURL"
+                                }@((i < Model.Count - 1) ? "," : "")
+                                </text>
+                            }
+                        }
+                    });
 
-                $(".thumb-360").click(function () {
-                    const url = $(this).data("img");
-                    viewer.loadScene(viewer.addScene('custom', {
-                        type: 'equirectangular',
-                        panorama: url,
-                        autoLoad: true
-                    }));
+                    $(".thumb-360").click(function () {
+                        const sceneId = $(this).data("sceneid");
+                        viewer.loadScene(sceneId);
+                    });
                 });
-            });
         </script>
     }
-}
-else
-{
-    <p class="text-muted text-center">Không có ảnh 360 nào cho phòng này.</p>
-}
-
-<!-- Style -->
-<style>
-    .thumb-360 {
-        border-radius: 8px;
-        transition: transform 0.2s;
+    else
+    {
+        <p class="text-muted text-center">Không có ảnh 360 nào cho phòng này.</p>
     }
+
+
+    <style>
+        .thumb-360 {
+            border: none;
+            background: transparent;
+            transition: transform 0.2s;
+        }
 
         .thumb-360:hover {
             transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: none;
+        }
+        .pnlm-load-box,
+        .pnlm-loading {
+            display: none !important;
         }
 
-    #viewer360:empty {
-        background: #f8f8f8;
-        min-height: 500px;
-    }
-</style>
+    </style>
