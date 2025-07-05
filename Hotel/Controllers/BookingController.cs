@@ -60,7 +60,7 @@ namespace Hotel.Controllers
             };
             db.Bookings.InsertOnSubmit(booking);
             db.SubmitChanges();
-            return View(booking);
+            return View();
         }
 
         [HttpPost]
