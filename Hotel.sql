@@ -20,8 +20,8 @@ CREATE TABLE Hotels (
     HotelName NVARCHAR(255) NOT NULL,
     Address NVARCHAR(255) NOT NULL,
 	HotelImage NVARCHAR(255) ,
-    Latitude DECIMAL(9,6) NOT NULL, -- Lưu vĩ độ
-    Longitude DECIMAL(9,6) NOT NULL, -- Lưu kinh độ
+    Latitude DECIMAL(9,6) NOT NULL, 
+    Longitude DECIMAL(9,6) NOT NULL, 
 );
 go
 -- Bảng quản lý người dùng
@@ -53,7 +53,7 @@ GO
 -- Tạo bảng phòng
 CREATE TABLE Rooms (
     RoomID INT PRIMARY KEY IDENTITY(1,1),
-    HotelID INT NOT NULL, -- Thêm khóa ngoại
+    HotelID INT NOT NULL,
     RoomTypeId INT NOT NULL,
     RoomName NVARCHAR(100) NOT NULL,
     Price DECIMAL(10,2) NOT NULL,
@@ -92,12 +92,16 @@ GO
 CREATE TABLE Bookings (
     BookingID INT PRIMARY KEY IDENTITY(1,1),
     UserID INT NOT NULL,
+	RoomID INT NOT NULL,
+	Discount INT NOT NULL DEFAULT 0,
     CheckIn DATE NOT NULL,
     CheckOut DATE NOT NULL,
 	Amount DECIMAL(10,2) NOT NULL,
     PaymentStatus NVARCHAR(20) DEFAULT 'Pending' CHECK (PaymentStatus IN ('Pending', 'Completed', 'Cancelled')),
     BookingDate DATETIME DEFAULT GETDATE() NOT NULL,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
+	ExpirationTime DATETIME NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
+	FOREIGN KEY (RoomID) REFERENCES Rooms(RoomID) ON DELETE CASCADE,
 );
 Go
 CREATE TABLE Reviews (
@@ -108,13 +112,11 @@ CREATE TABLE Reviews (
     Rating INT CHECK (Rating BETWEEN 1 AND 5),
     Comment NVARCHAR(MAX),
     CreatedAt DATETIME DEFAULT GETDATE(),
-    
-    -- Khóa ngoại
-    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
-    FOREIGN KEY (RoomID) REFERENCES Rooms(RoomID) ON DELETE CASCADE,
-    FOREIGN KEY (HotelID) REFERENCES Hotels(HotelID) ON DELETE CASCADE,
 
-    -- Chỉ cho phép 1 trong 2: RoomID hoặc HotelID
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
+    FOREIGN KEY (RoomID) REFERENCES Rooms(RoomID),       
+    FOREIGN KEY (HotelID) REFERENCES Hotels(HotelID),       
+
     CHECK (
         (RoomID IS NOT NULL AND HotelID IS NULL) OR
         (RoomID IS NULL AND HotelID IS NOT NULL)
@@ -225,7 +227,21 @@ VALUES
 (22, '2025-10-20', '2025-10-21'),  -- Giảm 22% dịp Ngày Phụ nữ Việt Nam
 (35, '2025-08-15', '2025-08-20'),  -- Giảm 35% dịp mùa du lịch tháng 8
 (28, '2025-01-01', '2025-01-05');  -- Giảm 28% dịp Tết Dương lịch
-
+go
+CREATE TRIGGER trg_CheckBookingExpiration
+ON Bookings
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE b
+    SET PaymentStatus = 'Cancelled'
+    FROM Bookings b
+    INNER JOIN inserted i ON b.BookingID = i.BookingID
+    WHERE b.PaymentStatus = 'Pending'
+      AND b.ExpirationTime <= GETDATE();
+END;
+go
 select * from users
 select * from Hotels
 select * from rooms
