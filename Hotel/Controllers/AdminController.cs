@@ -189,43 +189,43 @@ namespace Hotel.Controllers
                 query = query.Where(b => b.BookingID == bookingId.Value);
             }
 
-            decimal SumOfAmount = 0;
-            int SumOfRoom = 0;
-            var bookingStats = query.Select(b => new BookingDetailView
-            {
-                BookingID = b.BookingID,
-                UserName = b.User.FullName,
-                CheckIn = b.CheckIn,
-                CheckOut = b.CheckOut,
-                BookingDate = b.BookingDate,
-                TotalAmount = db.BookingDetails
-                    .Where(d => d.BookingID == b.BookingID)
-                    .Sum(d => d.Room.Price),
-                Rooms = db.BookingDetails
-                    .Where(d => d.BookingID == b.BookingID)
-                    .Select(d => new RoomViewModel
-                    {
-                        RoomName = d.Room.RoomName,
-                        Price = d.Room.Price
-                    }).ToList(),
-                Status = db.Payments.FirstOrDefault(p => p.BookingID == b.BookingID).PaymentStatus,
-            }).ToList();
-            foreach (var item in bookingStats)
-            {
-                SumOfAmount += item.TotalAmount;
-                SumOfRoom += item.Rooms.Count();
-            }
-            ViewBag.SumOfBooking = bookingStats.Count();
-            ViewBag.SumOfAmount = SumOfAmount;
-            ViewBag.SumOfRoom = SumOfRoom;
-            ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
-            ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
-            ViewBag.Status = new List<string> { "Pending", "Completed", "Cancelled" };
-            return View(bookingStats);
+            //decimal SumOfAmount = 0;
+            //int SumOfRoom = 0;
+            //var bookingStats = query.Select(b => new BookingDetailView
+            //{
+            //    BookingID = b.BookingID,
+            //    UserName = b.User.FullName,
+            //    CheckIn = b.CheckIn,
+            //    CheckOut = b.CheckOut,
+            //    BookingDate = b.BookingDate,
+            //    TotalAmount = db.Bookings
+            //        .Where(d => d.BookingID == b.BookingID)
+            //        .Sum(d => d.Room.Price),
+            //    Rooms = db.BookingDetails
+            //        .Where(d => d.BookingID == b.BookingID)
+            //        .Select(d => new RoomViewModel
+            //        {
+            //            RoomName = d.Room.RoomName,
+            //            Price = d.Room.Price
+            //        }).ToList(),
+            //    Status = db.Payments.FirstOrDefault(p => p.BookingID == b.BookingID).PaymentStatus,
+            //}).ToList();
+            //foreach (var item in bookingStats)
+            //{
+            //    SumOfAmount += item.TotalAmount;
+            //    SumOfRoom += item.Rooms.Count();
+            //}
+            //ViewBag.SumOfBooking = bookingStats.Count();
+            //ViewBag.SumOfAmount = SumOfAmount;
+            //ViewBag.SumOfRoom = SumOfRoom;
+            //ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
+            //ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
+            //ViewBag.Status = new List<string> { "Pending", "Completed", "Cancelled" };
+            return View();
         }
         public void UpdateStatus(int bookingId, string status)
         {
-            var payment = db.Payments.FirstOrDefault(b => b.BookingID == bookingId);
+            var payment = db.Bookings.FirstOrDefault(b => b.BookingID == bookingId);
             if (payment != null)
             {
                 payment.PaymentStatus = status;

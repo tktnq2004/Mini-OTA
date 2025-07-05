@@ -143,7 +143,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BookingModel\BookingDetailView.cs" />
-    <Compile Include="Models\CartModel\CartDisplay.cs" />
+    <Compile Include="Models\CartModel\WishlistDisplay.cs" />
     <Compile Include="Models\dbHotel.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

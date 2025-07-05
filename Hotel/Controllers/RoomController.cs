@@ -108,15 +108,15 @@ namespace Hotel.Controllers
                         && DateTime.TryParse(dates[0], out DateTime checkIn)
                         && DateTime.TryParse(dates[1], out DateTime checkOut))
                     {
-                        var bookedRooms = db.BookingDetails
+                        var bookedRooms = db.Bookings
                             .Where(bd => db.Bookings
                                 .Any(b => b.BookingID == bd.BookingID &&
                                           b.CheckIn < checkOut && b.CheckOut > checkIn))
                             .Select(bd => bd.RoomID)
                             .Distinct()
-                            .ToList(); // Lấy danh sách RoomID đã đặt
+                            .ToList(); 
 
-                        rooms = rooms.Where(r => !bookedRooms.Contains(r.ID)); // Loại bỏ các phòng đã đặt
+                        rooms = rooms.Where(r => !bookedRooms.Contains(r.ID));
                     }
                 }
 
@@ -138,7 +138,32 @@ namespace Hotel.Controllers
                 return new HttpStatusCodeResult(500, "Lỗi xử lý dữ liệu");
             }
         }
+        [HttpPost]
+        public ActionResult AddWishlist(int id)
+        {
+            var user = (User)Session["user"];
+            if (user == null)
+            {
+                return new HttpStatusCodeResult(401);
+            }
 
+            var existingCartItem = db.Wishlists.FirstOrDefault(c => c.RoomID == id && c.UserID == user.UserID);
+            if (existingCartItem != null)
+            {
+                return new HttpStatusCodeResult(409);
+            }
+
+            var cartItem = new Wishlist
+            {
+                RoomID = id,
+                UserID = user.UserID
+            };
+
+            db.Wishlists.InsertOnSubmit(cartItem);
+            db.SubmitChanges();
+
+            return new HttpStatusCodeResult(200);
+        }
         public ActionResult GetRoomImage(int? page, int roomId)
         {
             var image = db.RoomImages.FirstOrDefault(i => i.RoomID == roomId);

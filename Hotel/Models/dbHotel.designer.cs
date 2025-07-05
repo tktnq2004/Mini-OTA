@@ -86,11 +86,11 @@ namespace Hotel.Models
 			OnCreated();
 		}
 
-        public dbHotelDataContext() :
+		public dbHotelDataContext() :
 base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelConnectionString"].ConnectionString, mappingSource)
-        {
-            OnCreated();
-        }
+		{
+			OnCreated();
+		}
 
         public System.Data.Linq.Table<Booking> Bookings
 		{
@@ -197,6 +197,10 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		
 		private System.DateTime _BookingDate;
 		
+		private System.DateTime _ExpirationTime;
+		
+		private EntityRef<Room> _Room;
+		
 		private EntityRef<User> _User;
 		
     #region Extensibility Method Definitions
@@ -221,10 +225,13 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     partial void OnPaymentStatusChanged();
     partial void OnBookingDateChanging(System.DateTime value);
     partial void OnBookingDateChanged();
+    partial void OnExpirationTimeChanging(System.DateTime value);
+    partial void OnExpirationTimeChanged();
     #endregion
 		
 		public Booking()
 		{
+			this._Room = default(EntityRef<Room>);
 			this._User = default(EntityRef<User>);
 			OnCreated();
 		}
@@ -284,6 +291,10 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			{
 				if ((this._RoomID != value))
 				{
+					if (this._Room.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnRoomIDChanging(value);
 					this.SendPropertyChanging();
 					this._RoomID = value;
@@ -409,6 +420,60 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 					this._BookingDate = value;
 					this.SendPropertyChanged("BookingDate");
 					this.OnBookingDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpirationTime", DbType="DateTime NOT NULL")]
+		public System.DateTime ExpirationTime
+		{
+			get
+			{
+				return this._ExpirationTime;
+			}
+			set
+			{
+				if ((this._ExpirationTime != value))
+				{
+					this.OnExpirationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ExpirationTime = value;
+					this.SendPropertyChanged("ExpirationTime");
+					this.OnExpirationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_Booking", Storage="_Room", ThisKey="RoomID", OtherKey="RoomID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Room Room
+		{
+			get
+			{
+				return this._Room.Entity;
+			}
+			set
+			{
+				Room previousValue = this._Room.Entity;
+				if (((previousValue != value) 
+							|| (this._Room.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Room.Entity = null;
+						previousValue.Bookings.Remove(this);
+					}
+					this._Room.Entity = value;
+					if ((value != null))
+					{
+						value.Bookings.Add(this);
+						this._RoomID = value.RoomID;
+					}
+					else
+					{
+						this._RoomID = default(int);
+					}
+					this.SendPropertyChanged("Room");
 				}
 			}
 		}
@@ -1776,6 +1841,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		
 		private string _Description;
 		
+		private EntitySet<Booking> _Bookings;
+		
 		private EntitySet<Wishlist> _Wishlists;
 		
 		private EntitySet<DiscountDetail> _DiscountDetails;
@@ -1810,6 +1877,7 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		
 		public Room()
 		{
+			this._Bookings = new EntitySet<Booking>(new Action<Booking>(this.attach_Bookings), new Action<Booking>(this.detach_Bookings));
 			this._Wishlists = new EntitySet<Wishlist>(new Action<Wishlist>(this.attach_Wishlists), new Action<Wishlist>(this.detach_Wishlists));
 			this._DiscountDetails = new EntitySet<DiscountDetail>(new Action<DiscountDetail>(this.attach_DiscountDetails), new Action<DiscountDetail>(this.detach_DiscountDetails));
 			this._Reviews = new EntitySet<Review>(new Action<Review>(this.attach_Reviews), new Action<Review>(this.detach_Reviews));
@@ -1967,6 +2035,19 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_Booking", Storage="_Bookings", ThisKey="RoomID", OtherKey="RoomID")]
+		public EntitySet<Booking> Bookings
+		{
+			get
+			{
+				return this._Bookings;
+			}
+			set
+			{
+				this._Bookings.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_Wishlist", Storage="_Wishlists", ThisKey="RoomID", OtherKey="RoomID")]
 		public EntitySet<Wishlist> Wishlists
 		{
@@ -2105,6 +2186,18 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_Bookings(Booking entity)
+		{
+			this.SendPropertyChanging();
+			entity.Room = this;
+		}
+		
+		private void detach_Bookings(Booking entity)
+		{
+			this.SendPropertyChanging();
+			entity.Room = null;
 		}
 		
 		private void attach_Wishlists(Wishlist entity)

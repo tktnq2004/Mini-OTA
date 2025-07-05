@@ -71,7 +71,7 @@ namespace Hotel.Controllers
             {
                 ViewBag.ThongBao = "Username or password is incorrect";
             }
-            return RedirectToAction("Index", "Room");
+            return RedirectToAction("HotelIndex", "Hotel");
         }
         [HttpGet]
         public ActionResult Profile()
@@ -135,7 +135,7 @@ namespace Hotel.Controllers
         public ActionResult Logout()
         {
             Session["User"] = null;
-            return RedirectToAction("Index", "Room");
+            return RedirectToAction("HotelIndex", "Hotel");
         }
     }
 }

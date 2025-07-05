@@ -1,140 +1,66 @@
-﻿@model IEnumerable<Hotel.Models.RoomDetail>
+﻿@model Hotel.Models.Booking
+
 @{
     ViewBag.Title = "Booking";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    var soDem = (Model.CheckOut - Model.CheckIn).Days;
+    var giaGoc = Model.Amount / soDem / (1 - Model.Discount / 100m);
+    var giaSauGiam = Model.Amount / soDem;
+    var countdownSeconds = (Model.ExpirationTime - DateTime.Now).TotalSeconds;
 }
 
- Bọc toàn bộ nội dung trong FORM 
-@using (Html.BeginForm("ConfirmBooking", "Booking", FormMethod.Post, new { id = "bookingForm" }))
-{
-    <div class="container mt-4" style="max-width: 900px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
-        <h3 class="text-center mb-4">Booking Confirmation</h3>
+<div class="container mt-4 p-4 border rounded shadow">
+    <h2 class="mb-3 text-primary">Đặt phòng thành công!</h2>
 
-        @foreach (var room in Model)
-        {
-            <div class="card mb-3 shadow-sm">
-                <div class="row g-0">
-                     Ảnh phòng 
-                    <div class="col-md-5">
-                        <img src="@room.RoomImages.FirstOrDefault().ImageURL"
-                             class="img-fluid rounded-start" style="width: 100%; height: 200px; object-fit: cover;">
-                    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Thông tin đặt phòng</h4>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Phòng:</strong> @Model.Room.RoomName</li>
+                <li class="list-group-item"><strong>Mô tả:</strong> @Model.Room.Description</li>
+                <li class="list-group-item"><strong>Ngày nhận phòng:</strong> @Model.CheckIn.ToString("dd/MM/yyyy")</li>
+                <li class="list-group-item"><strong>Ngày trả phòng:</strong> @Model.CheckOut.ToString("dd/MM/yyyy")</li>
+                <li class="list-group-item"><strong>Số đêm:</strong> @soDem</li>
+                <li class="list-group-item"><strong>Giá mỗi đêm:</strong> @giaGoc.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</li>
+                <li class="list-group-item"><strong>Giảm giá:</strong> @Model.Discount%</li>
+                <li class="list-group-item text-success"><strong>Giá sau giảm:</strong> @giaSauGiam.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</li>
+                <li class="list-group-item"><strong>Tổng tiền:</strong> @Model.Amount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</li>
+                <li class="list-group-item">
+                    <strong>Trạng thái thanh toán:</strong>
+                    <span class="text-warning">@Model.PaymentStatus</span>
+                </li>
+            </ul>
+        </div>
 
-                     Thông tin phòng 
-                    <div class="col-md-7">
-                        <div class="card-body">
-                            <h5 class="card-title">@room.RoomName</h5>
-                            <p>
-                                <strong>Price: </strong>
-                                @if (room.Percent > 0)
-                                {
-                                    <del class="old-price">@room.Price.ToString("N0") VND</del>
-                                    <span class="text-danger"> @((room.Price - (room.Price * ((decimal)room.Percent / 100m))).ToString("N0")) VND</span>
-
-                                }
-                                else
-                                {
-                                    <span>@room.Price.ToString("N0") VND</span>
-                                }
-                                / night
-                            </p>
-
-                             Input ẩn chứa RoomID 
-                            <input type="hidden" name="roomIds" value="@room.RoomID" />
-                        </div>
-                    </div>
-                </div>
+        <div class="col-md-6">
+            <h4>Thời gian giữ phòng</h4>
+            <div class="alert alert-info">
+                Vui lòng thanh toán trong vòng <span id="timer"></span> để giữ phòng.
             </div>
-        }
 
-         Chọn ngày nhận/trả phòng 
-        <div class="text-center">
-            <label for="dateRange" class="form-label">Select Date:</label>
-            <input type="text" name="dateRange" id="dateRange" class="form-control w-50 mx-auto" placeholder="Check in - Check out">
-            <button type="submit" class="btn btn-primary mt-3 w-50">Confirm Booking</button>
+            <script>
+                let countdown = @Math.Floor(countdownSeconds);
+
+                function updateTimer() {
+                    if (countdown <= 0) {
+                        document.getElementById("timer").innerText = "Hết thời gian giữ phòng!";
+                        return;
+                    }
+
+                    let minutes = Math.floor(countdown / 60);
+                    let seconds = countdown % 60;
+                    document.getElementById("timer").innerText = minutes + " phút " + seconds + " giây";
+
+                    countdown--;
+                    setTimeout(updateTimer, 1000);
+                }
+
+                updateTimer();
+            </script>
         </div>
     </div>
-}
 
-<script>
-    $(document).ready(function () {
-        $("#bookingForm").submit(function (e) {
-            e.preventDefault(); // Ngăn form gửi đi theo cách mặc định
-
-            let formData = $(this).serialize(); // Lấy toàn bộ dữ liệu trong form
-            console.log("Form Data:", formData); // Debug kiểm tra dữ liệu
-
-            $.post("/Booking/ConfirmBooking", formData)
-                .done(function (response, status, xhr) {
-
-                    if (xhr.status === 202) {
-                        alert("Đặt phòng thành công!");
-                    }
-                })
-                .fail(function (xhr) {
-                    console.log("Lỗi AJAX:", xhr);
-
-                    let messages = {
-                        401: "Chưa đăng nhập.",
-                        400: "Không có phòng nào được chọn.",
-                        402: "Không có ngày đặt phòng.",
-                        403: "Định dạng ngày không hợp lệ.",
-                        404: "Lỗi chuyển đổi ngày.",
-                        405: "Check-in phải trước Check-out.",
-                        500: "Không tìm thấy template email.",
-                    };
-
-                    alert(messages[xhr.status] || "Có lỗi xảy ra, vui lòng thử lại.");
-                    if (xhr.status === 401) window.location.href = "/User/Login";
-                });
-        });
-    });
-</script>
-
-<script>
-// Xử lý lịch
-   document.addEventListener("DOMContentLoaded", function () {
-    let bookedDates = @Html.Raw(Json.Encode(ViewBag.BookedDates));
-
-    let datePicker = flatpickr("#dateRange", {
-        mode: "range",
-        dateFormat: "d-m-Y",
-        minDate: "today",
-        disable: bookedDates,
-        closeOnSelect: false, // Giữ lịch mở khi chọn ngày
-        onChange: function (selectedDates, dateStr, instance) {
-            let currentMonth = instance.currentMonth; // Lưu tháng hiện tại
-            let currentYear = instance.currentYear;   // Lưu năm hiện tại
-
-            if (selectedDates.length === 1) {
-                highlightSelectedDate(selectedDates[0], "#007bff", "white");
-            } else if (selectedDates.length === 2) {
-                let checkIn = selectedDates[0];
-                let checkOut = selectedDates[1];
-
-                if (checkIn.getTime() === checkOut.getTime()) {
-                    instance.clear();
-                    instance.jumpToDate(new Date(currentYear, currentMonth)); // Mở lại đúng tháng trước đó
-                } else {
-                    highlightSelectedDate(checkOut, "#ffc107", "black"); // Check-out màu vàng
-                    instance.close();
-                }
-            }
-        }
-    });
-
-    function highlightSelectedDate(date, bgColor, textColor) {
-        document.querySelectorAll(".flatpickr-day").forEach(day => {
-            if (day.dateObj && day.dateObj.getTime() === date.getTime()) {
-                day.style.backgroundColor = bgColor;
-                day.style.color = textColor;
-            }
-        });
-    }
-});
-
-
-</script>
-
-
-
+    <div class="mt-4 text-end">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Quay về trang chủ</a>
+        <a href="@Url.Action("History", "Booking")" class="btn btn-success">Xem lịch sử đặt phòng</a>
+    </div>
+</div>

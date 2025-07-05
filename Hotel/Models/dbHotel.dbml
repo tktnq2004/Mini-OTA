@@ -10,6 +10,8 @@
       <Column Name="Amount" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
       <Column Name="PaymentStatus" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Column Name="BookingDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ExpirationTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="Room_Booking" Member="Room" ThisKey="RoomID" OtherKey="RoomID" Type="Room" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="User_Booking" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
@@ -84,6 +86,7 @@
       <Column Name="Price" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
       <Column Name="Capacity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="Room_Booking" Member="Bookings" ThisKey="RoomID" OtherKey="RoomID" Type="Booking" />
       <Association Name="Room_Wishlist" Member="Wishlists" ThisKey="RoomID" OtherKey="RoomID" Type="Wishlist" />
       <Association Name="Room_DiscountDetail" Member="DiscountDetails" ThisKey="RoomID" OtherKey="RoomID" Type="DiscountDetail" />
       <Association Name="Room_Review" Member="Reviews" ThisKey="RoomID" OtherKey="RoomID" Type="Review" />

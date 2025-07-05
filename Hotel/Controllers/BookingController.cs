@@ -2,12 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using QRCoder;
 using System.Globalization;
 using System.Threading.Tasks;
-using System.Web.Razor.Parser.SyntaxTree;
 
 namespace Hotel.Controllers
 {
@@ -15,39 +12,14 @@ namespace Hotel.Controllers
     {
         dbHotelDataContext db = new dbHotelDataContext();
         // GET: Booking
-        [HttpPost]
-        public ActionResult AddCart(int id)
-        {
-            var user = (User)Session["user"];
-            if (user == null)
-            {
-                return new HttpStatusCodeResult(401);
-            }
-
-            var existingCartItem = db.Wishlists.FirstOrDefault(c => c.RoomID == id && c.UserID == user.UserID);
-            if (existingCartItem != null)
-            {
-                return new HttpStatusCodeResult(409);
-            }
-
-            var cartItem = new Wishlist
-            {
-                RoomID = id,
-                UserID = user.UserID
-            };
-
-            db.Wishlists.InsertOnSubmit(cartItem);
-            db.SubmitChanges();
-
-            return new HttpStatusCodeResult(200);
-        }
-        public ActionResult DisplayCart()
+        
+        public ActionResult DisplayWishlist()
         {
             var user = (User)Session["user"];
             var cartDetail = (from a in db.Wishlists
                               join b in db.Rooms on a.RoomID equals b.RoomID
                               where a.UserID == user.UserID
-                              select new CartDisplay
+                              select new WishlistDisplay
                               {
                                   RoomID = b.RoomID,
                                   RoomName = b.RoomName,
@@ -61,67 +33,35 @@ namespace Hotel.Controllers
                               }).ToList();
             return View("DisplayCart", cartDetail);
         }
-        public ActionResult Booking(FormCollection form)
+        public ActionResult Booking(int roomID,string fromDate,string toDate)
         {
-            string action = form["action"];
-            var ListRoomId = form.GetValues("roomIds")?.Select(int.Parse).ToList();
-
-            if (ListRoomId == null || !ListRoomId.Any())
-                return new HttpStatusCodeResult(400, "Không có phòng nào được chọn.");
-
             var user = Session["user"] as User;
             if (user == null)
                 return new HttpStatusCodeResult(401, "Chưa đăng nhập.");
-
-            if (action == "discard")
+            var room = db.Rooms.FirstOrDefault(r => r.RoomID == roomID);
+            int percent = db.DiscountDetails.Where(dd => dd.RoomID == roomID)
+                                            .Select(dd => (int?)dd.Discount.DiscountPercent)
+                                            .FirstOrDefault() ?? 0;
+             
+            var booking = new Booking
             {
-                var cartItems = db.Wishlists
-                                  .Where(c => c.UserID == user.UserID && ListRoomId.Contains(c.RoomID))
-                                  .ToList();
-
-                db.Wishlists.DeleteAllOnSubmit(cartItems);
-                db.SubmitChanges();
-                return RedirectToAction("DisplayCart", "Booking");
-            }
-            else
-            {
-                List<RoomDetail> allRooms = new List<RoomDetail>();
-
-                foreach (int roomId in ListRoomId)
-                {
-                    var roomDetail = db.Rooms
-                        .Where(r => r.RoomID == roomId)
-                        .Select(r => new RoomDetail
-                        {
-                            RoomID = r.RoomID,
-                            RoomName = r.RoomName,
-                            Description = r.Description,
-                            Price = r.Price,
-                            Percent = db.DiscountDetails
-                                        .Where(dd => dd.RoomID == r.RoomID)
-                                        .Select(dd => (int?)dd.Discount.DiscountPercent)
-                                        .FirstOrDefault() ?? 0,
-                            RoomImages = db.RoomImages.Where(img => img.RoomID == r.RoomID).ToList(),
-                            Reviews = db.Reviews.Where(rev => rev.RoomID == r.RoomID).ToList()
-                        })
-                        .FirstOrDefault();
-
-                    if (roomDetail != null)
-                        allRooms.Add(roomDetail);
-                }
-
-                var allBookedDates = db.Bookings
-                    .Where(b => ListRoomId.Contains(b.RoomID) && b.PaymentStatus != "Cancelled")
-                    .SelectMany(b => Enumerable.Range(0, (b.CheckOut - b.CheckIn).Days)
-                                               .Select(offset => b.CheckIn.AddDays(offset).ToString("dd/MM/yyyy")))
-                    .Distinct()
-                    .ToList();
-
-                ViewBag.BookedDates = allBookedDates;
-                return View(allRooms);
-            }
+                RoomID = roomID,
+                UserID = user.UserID,
+                BookingDate = DateTime.Now,
+                ExpirationTime = DateTime.Now.AddMinutes(20),
+                Amount = (room.Price - (room.Price * ((decimal)percent / 100m))) 
+                        * 
+                        (DateTime.ParseExact(toDate, "dd-MM-yyyy", CultureInfo.InvariantCulture) 
+                        - DateTime.ParseExact(fromDate, "dd-MM-yyyy", CultureInfo.InvariantCulture)).Days,
+                Discount = percent,
+                CheckIn = DateTime.ParseExact(fromDate, "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                CheckOut = DateTime.ParseExact(toDate, "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                PaymentStatus = "Pending",
+            };
+            db.Bookings.InsertOnSubmit(booking);
+            db.SubmitChanges();
+            return View(booking);
         }
-
 
         [HttpPost]
         public async Task<ActionResult> ConfirmBooking(FormCollection form)
@@ -274,6 +214,40 @@ namespace Hotel.Controllers
             return new HttpStatusCodeResult(202, "Đặt phòng thành công.");
 
         }
+        public ActionResult History()
+        {
+            var user = (User)Session["user"];
+            if (user == null)
+                return RedirectToAction("Login", "User");
+
+            var paymentDisplay = (from b in db.Bookings
+                                  where b.UserID == user.UserID
+                                  join r in db.Rooms on b.RoomID equals r.RoomID
+                                  select new PaymentDisplay
+                                  {
+                                      PaymentId = b.BookingID, // Dùng BookingID làm mã thanh toán
+                                      Amount = b.Amount,
+                                      Status = b.PaymentStatus,
+                                      CheckIn = b.CheckIn,
+                                      CheckOut = b.CheckOut,
+                                      SoDem = (b.CheckOut - b.CheckIn).Days,
+                                      LastUpdate = b.BookingDate,
+                                      RoomDetails = new List<RoomDetail> {
+                                  new RoomDetail {
+                                      RoomID = r.RoomID,
+                                      RoomName = r.RoomName,
+                                      Price = r.Price,
+                                      Percent = b.Discount,
+                                      RoomImages = db.RoomImages
+                                          .Where(img => img.RoomID == r.RoomID).ToList()
+                                  }
+                              },
+                                      QRCode = new GenQRCode().QRCode(b.Amount, b.BookingID)
+                                  }).ToList();
+
+            return View("History", paymentDisplay);
+        }
+
 
     }
 }
