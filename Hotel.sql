@@ -6,22 +6,40 @@ DROP TABLE IF EXISTS RoomImages;
 DROP TABLE IF EXISTS Wishlist;
 DROP TABLE IF EXISTS DiscountDetails;
 DROP TABLE IF EXISTS Reviews;
-DROP TABLE IF EXISTS BookingDetails;
-DROP TABLE IF EXISTS Payments;
-DROP TABLE IF EXISTS Bookings;	
+DROP TABLE IF EXISTS Bookings;
+--DROP TABLE IF EXISTS BookingDetails;
+--DROP TABLE IF EXISTS Payments;
 DROP TABLE IF EXISTS Rooms;
 DROP TABLE IF EXISTS Discounts;
 DROP TABLE IF EXISTS RoomTypes;
-DROP TABLE IF EXISTS Users;	
+DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Hotels;
+DROP TABLE IF EXISTS Provinces;
+DROP TABLE IF EXISTS Regions;
 GO
+CREATE TABLE Regions (
+    RegionID INT PRIMARY KEY IDENTITY(1,1),
+    RegionName NVARCHAR(50) NOT NULL
+);
+GO
+-- Bảng tỉnh/thành
+CREATE TABLE Provinces (
+    ProvinceID INT PRIMARY KEY,
+    ProvinceName NVARCHAR(100) NOT NULL,
+    RegionID INT NOT NULL,
+	Latitude DECIMAL(9,6) NOT NULL, 
+    Longitude DECIMAL(9,6) NOT NULL, 
+    FOREIGN KEY (RegionID) REFERENCES Regions(RegionID)
+);
 CREATE TABLE Hotels (
     HotelID INT PRIMARY KEY IDENTITY(1,1),
     HotelName NVARCHAR(255) NOT NULL,
     Address NVARCHAR(255) NOT NULL,
 	HotelImage NVARCHAR(255) ,
+	ProvinceID INT NOT NULL,
     Latitude DECIMAL(9,6) NOT NULL, 
     Longitude DECIMAL(9,6) NOT NULL, 
+	FOREIGN KEY (ProvinceID) REFERENCES Provinces(ProvinceID),
 );
 go
 -- Bảng quản lý người dùng
@@ -142,6 +160,83 @@ CREATE TABLE Payments (
 );
 GO*/
 
+INSERT INTO Regions (RegionName)
+VALUES 
+(N'Miền Bắc'),
+(N'Miền Trung'),
+(N'Miền Nam');
+GO
+INSERT INTO Provinces (ProvinceID, ProvinceName, RegionID, Latitude, Longitude) VALUES
+-- Miền Bắc (RegionID = 1)
+(11, N'Cao Bằng', 1, 22.635689, 106.252214),
+(12, N'Lạng Sơn', 1, 21.853708, 106.761519),
+(14, N'Quảng Ninh', 1, 20.959902, 107.042542),
+(15, N'Hải Phòng', 1, 20.844912, 106.688084),
+(17, N'Thái Bình', 1, 20.447616, 106.333298),
+(18, N'Nam Định', 1, 20.438823, 106.162105),
+(19, N'Phú Thọ', 1, 21.365859, 105.278351),
+(20, N'Thái Nguyên', 1, 21.592258, 105.843124),
+(21, N'Yên Bái', 1, 21.716634, 104.895512),
+(22, N'Tuyên Quang', 1, 21.824263, 105.219005),
+(23, N'Hà Giang', 1, 22.802559, 104.978449),
+(24, N'Lào Cai', 1, 22.480943, 103.975496),
+(25, N'Lai Châu', 1, 22.386223, 103.470263),
+(26, N'Sơn La', 1, 21.325434, 103.918639),
+(27, N'Điện Biên', 1, 21.804231, 103.107653),
+(28, N'Hòa Bình', 1, 20.686127, 105.313119),
+(29, N'Hà Nội', 1, 21.027764, 105.834160),
+(34, N'Hải Dương', 1, 20.937341, 106.314554),
+(35, N'Ninh Bình', 1, 20.250080, 105.974683),
+(36, N'Thanh Hóa', 1, 19.806999, 105.784906),
+(88, N'Vĩnh Phúc', 1, 21.308837, 105.594147),
+(89, N'Hưng Yên', 1, 20.852571, 106.016997),
+(90, N'Hà Nam', 1, 20.583520, 105.922990),
+(97, N'Bắc Kạn', 1, 22.303292, 105.876004),
+(98, N'Bắc Giang', 1, 21.281992, 106.197477),
+(99, N'Bắc Ninh', 1, 21.121444, 106.111050),
+
+-- Miền Trung (RegionID = 2)
+(37, N'Nghệ An', 2, 19.234249, 104.920037),
+(38, N'Hà Tĩnh', 2, 18.355954, 105.887749),
+(43, N'Đà Nẵng', 2, 16.054407, 108.202167),
+(47, N'Đắk Lắk', 2, 12.710012, 108.237752),
+(48, N'Đắk Nông', 2, 12.264648, 107.609806),
+(49, N'Lâm Đồng', 2, 11.575279, 108.142867),
+(73, N'Quảng Bình', 2, 17.515208, 106.618388),
+(74, N'Quảng Trị', 2, 16.748839, 107.164193),
+(75, N'Thừa Thiên Huế', 2, 16.463713, 107.590866),
+(76, N'Quảng Ngãi', 2, 15.121629, 108.800085),
+(77, N'Bình Định', 2, 14.166532, 108.902683),
+(78, N'Phú Yên', 2, 13.095358, 109.322235),
+(79, N'Khánh Hòa', 2, 12.258510, 109.052608),
+(85, N'Ninh Thuận', 2, 11.553330, 108.977307),
+(86, N'Bình Thuận', 2, 11.090370, 108.072078),
+(92, N'Quảng Nam', 2, 15.569919, 108.364498),
+(81, N'Gia Lai', 2, 13.807894, 108.109375),
+(82, N'Kon Tum', 2, 14.349740, 108.000461),
+
+-- Miền Nam (RegionID = 3)
+(50, N'TP. Hồ Chí Minh', 3, 10.823099, 106.629664),
+(60, N'Đồng Nai', 3, 11.068631, 107.167598),
+(61, N'Bình Dương', 3, 11.325402, 106.477017),
+(62, N'Long An', 3, 10.560717, 106.649762),
+(63, N'Tiền Giang', 3, 10.350000, 106.333333),
+(64, N'Vĩnh Long', 3, 10.250000, 105.966667),
+(65, N'Cần Thơ', 3, 10.034185, 105.722551),
+(66, N'Đồng Tháp', 3, 10.493799, 105.688179),
+(67, N'An Giang', 3, 10.521584, 105.125896),
+(68, N'Kiên Giang', 3, 9.824959, 105.125896),
+(69, N'Cà Mau', 3, 9.152673, 105.196080),
+(70, N'Tây Ninh', 3, 11.333333, 106.100000),
+(71, N'Bến Tre', 3, 10.243356, 106.375551),
+(72, N'Bà Rịa - Vũng Tàu', 3, 10.541740, 107.242998),
+(83, N'Sóc Trăng', 3, 9.602000, 105.974000),
+(84, N'Trà Vinh', 3, 9.935000, 106.330000),
+(93, N'Bình Phước', 3, 11.751189, 106.723463),
+(94, N'Bạc Liêu', 3, 9.294003, 105.721566),
+(95, N'Hậu Giang', 3, 9.757898, 105.641253);
+
+GO
 INSERT INTO RoomTypes (RoomTypeName) VALUES
 ('Single'),
 ('Double'),
@@ -149,24 +244,24 @@ INSERT INTO RoomTypes (RoomTypeName) VALUES
 ('Standard'),
 ('Deluxe'),
 ('Suite');
-go
-INSERT INTO Hotels (HotelName, HotelImage, Address, Latitude, Longitude)
-VALUES
--- Hà Nội
-(N'Khách sạn Hà Nội Luxury', N'/Content/hotelimages/hanoi.jpg', N'123 Đường Lê Duẩn, Quận Hoàn Kiếm, Hà Nội', 21.028511, 105.804817),
-
--- Đà Nẵng
-(N'Khách sạn Biển Xanh Đà Nẵng', N'/Content/hotelimages/danang.jpg', N'456 Võ Nguyên Giáp, Quận Sơn Trà, Đà Nẵng', 16.067789, 108.220831),
-
--- Nha Trang
-(N'Khách sạn Nha Trang View', N'/Content/hotelimages/nhatrang.jpg', N'789 Trần Phú, TP. Nha Trang, Khánh Hòa', 12.238791, 109.196749),
-
--- TP. Hồ Chí Minh
-(N'Khách sạn Sài Gòn Central', N'/Content/hotelimages/saigon.jpg', N'321 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh', 10.776889, 106.700806),
-
--- Phú Quốc
-(N'Khách sạn Biển Ngọc Phú Quốc', N'/Content/hotelimages/phuquoc.jpg', N'01 Trần Hưng Đạo, Dương Đông, Phú Quốc', 10.289900, 103.984000);
 GO
+INSERT INTO Hotels (HotelName, HotelImage, Address, ProvinceID, Latitude, Longitude)
+VALUES
+-- Hà Nội (29)
+(N'Khách sạn Hà Nội Luxury', N'/Content/hotelimages/hanoi.jpg', N'123 Đường Lê Duẩn, Quận Hoàn Kiếm, Hà Nội', 29, 21.028511, 105.804817),
+
+-- Đà Nẵng (43)
+(N'Khách sạn Biển Xanh Đà Nẵng', N'/Content/hotelimages/danang.jpg', N'456 Võ Nguyên Giáp, Quận Sơn Trà, Đà Nẵng', 43, 16.067789, 108.220831),
+
+-- Nha Trang (Khánh Hòa – 79)
+(N'Khách sạn Nha Trang View', N'/Content/hotelimages/nhatrang.jpg', N'789 Trần Phú, TP. Nha Trang, Khánh Hòa', 79, 12.238791, 109.196749),
+
+-- TP. Hồ Chí Minh (dùng đại diện là 50)
+(N'Khách sạn Sài Gòn Central', N'/Content/hotelimages/saigon.jpg', N'321 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh', 50, 10.776889, 106.700806),
+
+-- Phú Quốc (thuộc Kiên Giang – 68)
+(N'Khách sạn Biển Ngọc Phú Quốc', N'/Content/hotelimages/phuquoc.jpg', N'01 Trần Hưng Đạo, Dương Đông, Phú Quốc', 68, 10.289900, 103.984000);
+
 INSERT INTO Rooms (HotelID, RoomTypeId, RoomName, Price, Capacity, Description)
 VALUES
 (1, 6, 'Suite Room Hanoi', 2000000, 4, N'Phòng Suite cao cấp tại Hà Nội.'),

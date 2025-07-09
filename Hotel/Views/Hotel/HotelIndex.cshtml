@@ -1,348 +1,447 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "HotelIndex";
 }
-    <style>
-        #mymap {
-            height: 600px;
-            position: relative;
-        }
+<style>
+    #mymap {
+        height: 600px;
+        position: relative;
+    }
 
-        .leaflet-control-attribution {
-            display: none !important;
-        }
+    .leaflet-control-attribution {
+        display: none !important;
+    }
 
-        #hotelDetailModal {
-            position: absolute;
-            top: 20px;
-            left: 50px;
-            width: 30%;
-            z-index: 1001;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-            display: none;
-        }
+    #hotelDetailModal {
+        position: absolute;
+        top: 20px;
+        left: 50px;
+        width: 30%;
+        z-index: 1001;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        display: none;
+    }
 
-        .hotel-reserve-box {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 300px;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            z-index: 1000;
-        }
+    .hotel-reserve-box {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 300px;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 1000;
+    }
 
-        .hotel-field {
-            margin-bottom: 15px;
-            position: relative;
-        }
+    .hotel-field {
+        margin-bottom: 15px;
+        position: relative;
+    }
 
-        .guest-dropdown-toggle {
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 4px;
-            background: #fff;
+    .guest-dropdown-toggle {
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+    }
+
+    .guest-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1100;
+        background: #fff;
+        border: 1px solid #ccc;
+        width: 100%;
+        display: none;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .guest-row-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .guest-counter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .guest-counter button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #ddd;
+            border-radius: 50%;
+            font-size: 18px;
             cursor: pointer;
         }
 
-        .guest-dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            z-index: 1100;
-            background: #fff;
-            border: 1px solid #ccc;
-            width: 100%;
-            display: none;
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        .guest-row-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .guest-counter {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-            .guest-counter button {
-                width: 30px;
-                height: 30px;
-                border: none;
-                background: #ddd;
-                border-radius: 50%;
-                font-size: 18px;
-                cursor: pointer;
+            .guest-counter button:hover {
+                background: #bbb;
             }
+</style>
 
-                .guest-counter button:hover {
-                    background: #bbb;
-                }
-    </style>
+@model List<Hotel.Models.HotelModel.RegionModel>
 
-    <div class="container" id="mymap">
-        <div id="hotelDetailModal"><div id="hotelDetailContent"></div></div>
-
-        <div class="card hotel-reserve-box">
-            <div class="hotel-field">
-                <label>Destination</label>
-                <div id="dropdownHotelToggle" class="guest-dropdown-toggle">Where to?</div>
-                <ul class="guest-dropdown-menu" id="dropdownHotelMenu"></ul>
-            </div>
-
-            <div class="hotel-field">
-                <label>Stay Dates</label>
-                <div class="hotel-stay-dates">
-                    <input type="text" id="dateRange" class="form-control" placeholder="Check in - Check out">
-                </div>
-            </div>
-
-            <div class="hotel-field">
-                <label>Rooms & Guests</label>
-                <div id="guestSelector" class="guest-dropdown-toggle">1 Room, 1 Adult, 0 Children</div>
-                <div class="guest-dropdown-menu" id="guestDropdown">
-                    <div class="guest-row-item">
-                        <span>Rooms</span>
-                        <div class="guest-counter">
-                            <button onclick="changeGuestCount('room', -1)">–</button>
-                            <span id="guestRoomCount">1</span>
-                            <button onclick="changeGuestCount('room', 1)">+</button>
-                        </div>
-                    </div>
-                    <div class="guest-row-item">
-                        <span>Adults</span>
-                        <div class="guest-counter">
-                            <button onclick="changeGuestCount('adult', -1)">–</button>
-                            <span id="guestAdultCount">1</span>
-                            <button onclick="changeGuestCount('adult', 1)">+</button>
-                        </div>
-                    </div>
-                    <div class="guest-row-item">
-                        <span>Children</span>
-                        <div class="guest-counter">
-                            <button onclick="changeGuestCount('child', -1)">–</button>
-                            <span id="guestChildCount">0</span>
-                            <button onclick="changeGuestCount('child', 1)">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <button id="hotelSearchBtn">HOTEL SEARCH</button>
-        </div>
+<div class="container" id="mymap">
+    <div id="hotelDetailModal">
+        <div id="hotelDetailContent"></div>
     </div>
 
-    <script>
-        let selectedHotelId = null;
-        document.addEventListener("DOMContentLoaded", function () {
-            const initialLatLng = [10.762622, 106.660172];
-            const initialZoom = 8;
-            const map = L.map('mymap', { minZoom: 8, maxZoom: 10 }).setView(initialLatLng, initialZoom);
+    <div class="card hotel-reserve-box">
+        <div class="hotel-field">
+            <label>Destination</label>
+            <div id="dropdownHotelToggle" class="guest-dropdown-toggle">Where to?</div>
 
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; CARTO'
-            }).addTo(map);
-            map.attributionControl.setPrefix(false);
-            map.scrollWheelZoom.disable();
-            map.doubleClickZoom.disable();
-
-            const ResetViewControl = L.Control.extend({
-                options: { position: 'topleft' },
-                onAdd: function () {
-                    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-                    container.style.backgroundColor = 'white';
-                    container.style.width = '30px';
-                    container.style.height = '30px';
-                    container.style.cursor = 'pointer';
-                    container.style.textAlign = 'center';
-                    container.style.lineHeight = '30px';
-                    container.innerHTML = '<i class="bi bi-cursor"></i>';
-                    container.onclick = () => map.setView(initialLatLng, initialZoom);
-                    return container;
+            <ul class="guest-dropdown-menu" id="dropdownHotelMenu" style="display: none;">
+                @foreach (var region in Model)
+                {
+                    <li class="region-item">
+                        <a href="javascript:void(0);" class="region-toggle" data-region-id="@region.RegionID">
+                            <span class="arrow">▶</span> @region.RegionName
+                        </a>
+                        <ul class="province-submenu" id="region-@region.RegionID" style="display: none;">
+                            @foreach (var province in region.Provinces)
+                            {
+                                <li class="province-item">
+                                    <a href="#" class="province-option"
+                                       data-province-id="@province.ProvinceID"
+                                       data-latitude="@province.Latitude"
+                                       data-longitude="@province.Longitude">
+                                        @province.ProvinceName
+                                    </a>
+                                    <ul class="hotel-submenu" id="province-hotels-@province.ProvinceID" style="display: none;">
+                                        @foreach (var hotel in province.Hotels)
+                                        {
+                                            <li>
+                                                <a href="#" class="dropdown-item"
+                                                   data-hotel-id="@hotel.HotelID"
+                                                   data-latitude="@hotel.Latitude"
+                                                   data-longitude="@hotel.Longitude">
+                                                    @hotel.HotelName
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </li>
                 }
-            });
-            map.addControl(new ResetViewControl());
+            </ul>
+        </div>
 
-            const dropdownHotelToggle = document.getElementById("dropdownHotelToggle");
-            const dropdownHotelMenu = document.getElementById("dropdownHotelMenu");
-            const hotelMarkers = {};
+        <div class="hotel-field">
+            <label>Stay Dates</label>
+            <div class="hotel-stay-dates">
+                <input type="text" id="dateRange" class="form-control" placeholder="Check in - Check out">
+            </div>
+        </div>
 
-            dropdownHotelToggle.addEventListener("click", function (e) {
-                e.stopPropagation();
-                dropdownHotelMenu.style.display = dropdownHotelMenu.style.display === "block" ? "none" : "block";
-            });
+        <div class="hotel-field">
+            <label>Rooms & Guests</label>
+            <div id="guestSelector" class="guest-dropdown-toggle">1 Room, 1 Adult, 0 Children</div>
+            <div class="guest-dropdown-menu" id="guestDropdown">
+                <div class="guest-row-item">
+                    <span>Rooms</span>
+                    <div class="guest-counter">
+                        <button onclick="changeGuestCount('room', -1)">–</button>
+                        <span id="guestRoomCount">1</span>
+                        <button onclick="changeGuestCount('room', 1)">+</button>
+                    </div>
+                </div>
+                <div class="guest-row-item">
+                    <span>Adults</span>
+                    <div class="guest-counter">
+                        <button onclick="changeGuestCount('adult', -1)">–</button>
+                        <span id="guestAdultCount">1</span>
+                        <button onclick="changeGuestCount('adult', 1)">+</button>
+                    </div>
+                </div>
+                <div class="guest-row-item">
+                    <span>Children</span>
+                    <div class="guest-counter">
+                        <button onclick="changeGuestCount('child', -1)">–</button>
+                        <span id="guestChildCount">0</span>
+                        <button onclick="changeGuestCount('child', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            document.addEventListener("click", function (e) {
-                if (!e.target.closest("#dropdownHotelToggle") && !e.target.closest("#dropdownHotelMenu")) {
-                    dropdownHotelMenu.style.display = "none";
-                }
-            });
+        <button id="hotelSearchBtn">HOTEL SEARCH</button>
+    </div>
+</div>
 
-            fetch('/Hotel/GetAllHotels')
-                .then(r => r.json())
-                .then(data => {
-                    data.forEach(hotel => {
-                        const li = document.createElement('li');
-                        const a = document.createElement('a');
-                        a.classList.add('dropdown-item');
-                        a.href = "#";
-                        a.textContent = hotel.HotelName;
-                        a.dataset.hotelId = hotel.HotelID;
-                        li.appendChild(a);
-                        dropdownHotelMenu.appendChild(li);
 
-                        const marker = L.marker([hotel.Latitude, hotel.Longitude]).addTo(map);
-                        hotelMarkers[hotel.HotelID] = marker;
+<script>
+    let map;
+    let selectedHotelId = null;
+    const initialLatLng = [10.762622, 106.660172];
+    const initialZoom = 8;
+    const hotelMarkers = {};
 
-                        marker.on('click', () => {
-                            selectedHotelId = hotel.HotelID;
-                            dropdownHotelToggle.textContent = hotel.HotelName;
-                            map.setView([hotel.Latitude, hotel.Longitude], 10);
-                            $.get("/Hotel/GetHotelDetail", { hotelId: hotel.HotelID }, html => {
-                                $("#hotelDetailContent").html(html);
-                                $("#hotelDetailModal").fadeIn();
-                            });
-                            dropdownHotelMenu.style.display = "none";
-                        });
-                    });
+    document.addEventListener("DOMContentLoaded", function () {
+        map = L.map('mymap', { minZoom: 8, maxZoom: 10 }).setView(initialLatLng, initialZoom);
 
-                    dropdownHotelMenu.addEventListener('click', function (e) {
-                        if (e.target && e.target.matches('.dropdown-item')) {
-                            e.preventDefault();
-                            const hotelId = parseInt(e.target.dataset.hotelId);
-                            const marker = hotelMarkers[hotelId];
-                            if (marker) marker.fire('click');
-                        }
-                    });
-                });
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; CARTO'
+        }).addTo(map);
+        map.attributionControl.setPrefix(false);
+        map.scrollWheelZoom.disable();
+        map.doubleClickZoom.disable();
 
-            $(document).on("click", function (e) {
-                if (!$(e.target).closest("#hotelDetailModal, .leaflet-marker-icon, #dropdownHotelToggle, #dropdownHotelMenu ,#hotelSearchBtn").length) {
-                    $("#hotelDetailModal").fadeOut();
-                    map.setView(map.getCenter(), initialZoom);
-                }
-            });
-
-            $("#resetViewBtn").on('click', function () {
-                map.setView(initialLatLng, initialZoom);
-            });
-
-            flatpickr("#dateRange", {
-                mode: "range",
-                dateFormat: "d-m-Y",
-                minDate: "today",
-                closeOnSelect: false,
-                defaultDate: [new Date(), new Date(Date.now() + 86400000)],
-                onChange: function (selectedDates, dateStr, instance) {
-                    let currentMonth = instance.currentMonth;
-                    let currentYear = instance.currentYear;
-                    if (selectedDates.length === 1) {
-                        highlightSelectedDate(selectedDates[0], "#007bff", "white");
-                    } else if (selectedDates.length === 2) {
-                        if (selectedDates[0].getTime() === selectedDates[1].getTime()) {
-                            instance.clear();
-                            instance.jumpToDate(new Date(currentYear, currentMonth));
-                        } else {
-                            highlightSelectedDate(selectedDates[1], "#ffc107", "black");
-                            instance.close();
-                        }
-                    }
-                }
-            });
-            function highlightSelectedDate(date, bgColor, textColor) {
-                document.querySelectorAll(".flatpickr-day").forEach(day => {
-                    if (day.dateObj && day.dateObj.getTime() === date.getTime()) {
-                        day.style.backgroundColor = bgColor;
-                        day.style.color = textColor;
-                    }
-                });
+        const ResetViewControl = L.Control.extend({
+            options: { position: 'topleft' },
+            onAdd: function () {
+                const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+                container.style = "background:white;width:30px;height:30px;cursor:pointer;text-align:center;line-height:30px;";
+                container.innerHTML = '<i class="bi bi-cursor"></i>';
+                container.onclick = () => map.setView(initialLatLng, initialZoom);
+                return container;
             }
+        });
+        map.addControl(new ResetViewControl());
+    });
+</script>
 
-            const guestSelector = document.getElementById("guestSelector");
-            const guestDropdown = document.getElementById("guestDropdown");
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggle = document.getElementById("dropdownHotelToggle");
+        const menu = document.getElementById("dropdownHotelMenu");
 
-            guestSelector.addEventListener("click", function (e) {
-                e.stopPropagation();
-                guestDropdown.style.display = guestDropdown.style.display === "block" ? "none" : "block";
-            });
+        toggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
 
-            document.addEventListener("click", function (e) {
-                if (!guestDropdown.contains(e.target) && !guestSelector.contains(e.target)) {
-                    guestDropdown.style.display = "none";
+            document.getElementById("hotelDetailModal").style.display = "none";
+        });
+        document.addEventListener("click", function (e) {
+            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                menu.style.display = "none";
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".region-toggle").forEach(function (regionLink) {
+            regionLink.addEventListener("click", function () {
+                const regionId = regionLink.dataset.regionId;
+                const arrow = regionLink.querySelector(".arrow");
+                const submenu = document.getElementById("region-" + regionId);
+
+                const isVisible = submenu.style.display === "block";
+                document.querySelectorAll(".province-submenu").forEach(el => el.style.display = "none");
+                document.querySelectorAll(".region-toggle .arrow").forEach(el => el.textContent = "▶");
+
+                if (!isVisible) {
+                    submenu.style.display = "block";
+                    arrow.textContent = "▼";
                 }
             });
+        });
+    });
+</script>
 
-            window.changeGuestCount = function (type, delta) {
-                let room = parseInt(document.getElementById("guestRoomCount").innerText);
-                let adult = parseInt(document.getElementById("guestAdultCount").innerText);
-                let child = parseInt(document.getElementById("guestChildCount").innerText);
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".province-option").forEach(function (provinceLink) {
+            provinceLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                const provinceId = provinceLink.dataset.provinceId;
+                const provinceName = provinceLink.innerText;
+                const lat = parseFloat(provinceLink.dataset.latitude);
+                const lng = parseFloat(provinceLink.dataset.longitude);
 
-                if (type === "room") {
-                    let newRoom = room + delta;
-                    if (newRoom >= 1 && newRoom <= 5) {
-                        document.getElementById("guestRoomCount").innerText = newRoom;
-                    }
+                document.querySelectorAll(".hotel-submenu").forEach(el => el.style.display = "none"); 
+                const hotelList = document.getElementById("province-hotels-" + provinceId);
+                if (hotelList) hotelList.style.display = "block";
+
+
+                document.getElementById("dropdownHotelToggle").innerText = provinceName;
+
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    map.setView([lat, lng], 8);
                 }
 
-                if (type === "adult") {
-                    let newAdult = adult + delta;
-                    if (newAdult >= 1 && newAdult + child <= 5) {
-                        document.getElementById("guestAdultCount").innerText = newAdult;
-                    }
+                fetch(`/Hotel/GetHotelsByProvince?provinceId=${provinceId}`)
+                    .then(res => res.json())
+                    .then(hotels => {
+                        clearAllMarkers();
+                        hotels.forEach(h => addHotelMarker(h));
+                    });
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const menu = document.getElementById("dropdownHotelMenu");
+
+        menu.addEventListener("click", function (e) {
+            if (e.target && e.target.matches(".dropdown-item")) {
+                e.preventDefault();
+                const hotelId = parseInt(e.target.dataset.hotelId);
+                const marker = hotelMarkers[hotelId];
+                if (marker) marker.fire("click");
+
+                document.getElementById("dropdownHotelMenu").style.display = "none";
+            }
+        });
+    });
+</script>
+
+<script>
+    function clearAllMarkers() {
+        for (const id in hotelMarkers) {
+            map.removeLayer(hotelMarkers[id]);
+        }
+    }
+
+    function addHotelMarker(hotel) {
+        const marker = L.marker([hotel.Latitude, hotel.Longitude]).addTo(map);
+        hotelMarkers[hotel.HotelID] = marker;
+
+        marker.on("click", () => {
+            selectedHotelId = hotel.HotelID;
+            document.getElementById("dropdownHotelToggle").textContent = hotel.HotelName;
+            map.setView([hotel.Latitude, hotel.Longitude], 10);
+
+            $.get("/Hotel/GetHotelDetail", { hotelId: hotel.HotelID }, html => {
+                $("#hotelDetailContent").html(html);
+                $("#hotelDetailModal").fadeIn();
+            });
+
+            document.getElementById("dropdownHotelMenu").style.display = "none";
+        });
+    }
+</script>
+
+
+<script>
+    $(document).on("click", function (e) {
+        if (!$(e.target).closest("#hotelDetailModal, .leaflet-marker-icon, #dropdownHotelToggle, #dropdownHotelMenu ,#hotelSearchBtn").length) {
+            $("#hotelDetailModal").fadeOut();
+            map.setView(map.getCenter(), 8);
+        }
+    });
+
+    $("#resetViewBtn").on('click', function () {
+        map.setView(initialLatLng, initialZoom);
+    });
+</script>
+
+<script>
+    flatpickr("#dateRange", {
+        mode: "range",
+        dateFormat: "d-m-Y",
+        minDate: "today",
+        closeOnSelect: false,
+        defaultDate: [new Date(), new Date(Date.now() + 86400000)],
+        onChange: function (selectedDates, dateStr, instance) {
+            let currentMonth = instance.currentMonth;
+            let currentYear = instance.currentYear;
+            if (selectedDates.length === 1) {
+                highlightSelectedDate(selectedDates[0], "#007bff", "white");
+            } else if (selectedDates.length === 2) {
+                if (selectedDates[0].getTime() === selectedDates[1].getTime()) {
+                    instance.clear();
+                    instance.jumpToDate(new Date(currentYear, currentMonth));
+                } else {
+                    highlightSelectedDate(selectedDates[1], "#ffc107", "black");
+                    instance.close();
                 }
+            }
+        }
+    });
 
-                if (type === "child") {
-                    let newChild = child + delta;
-                    if (newChild >= 0 && adult + newChild <= 5) {
-                        document.getElementById("guestChildCount").innerText = newChild;
-                    }
-                }
+    function highlightSelectedDate(date, bgColor, textColor) {
+        document.querySelectorAll(".flatpickr-day").forEach(day => {
+            if (day.dateObj && day.dateObj.getTime() === date.getTime()) {
+                day.style.backgroundColor = bgColor;
+                day.style.color = textColor;
+            }
+        });
+    }
+</script>
 
-                updateGuestSummary();
-            };
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const guestSelector = document.getElementById("guestSelector");
+        const guestDropdown = document.getElementById("guestDropdown");
 
-            function updateGuestSummary() {
-                const room = parseInt(document.getElementById("guestRoomCount").innerText);
-                const adult = parseInt(document.getElementById("guestAdultCount").innerText);
-                const child = parseInt(document.getElementById("guestChildCount").innerText);
-                document.getElementById("guestSelector").innerText =
-                    `${room} Room${room > 1 ? "s" : ""}, ${adult} Adult${adult > 1 ? "s" : ""}, ${child} Child${child !== 1 ? "ren" : ""}`;
+        guestSelector.addEventListener("click", function (e) {
+            e.stopPropagation();
+            guestDropdown.style.display = guestDropdown.style.display === "block" ? "none" : "block";
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!guestDropdown.contains(e.target) && !guestSelector.contains(e.target)) {
+                guestDropdown.style.display = "none";
+            }
+        });
+
+        window.changeGuestCount = function (type, delta) {
+            let room = parseInt(document.getElementById("guestRoomCount").innerText);
+            let adult = parseInt(document.getElementById("guestAdultCount").innerText);
+            let child = parseInt(document.getElementById("guestChildCount").innerText);
+
+            if (type === "room" && room + delta >= 1 && room + delta <= 5) {
+                document.getElementById("guestRoomCount").innerText = room + delta;
+            }
+            if (type === "adult" && adult + delta >= 1 && adult + delta + child <= 5) {
+                document.getElementById("guestAdultCount").innerText = adult + delta;
+            }
+            if (type === "child" && child + delta >= 0 && adult + child + delta <= 5) {
+                document.getElementById("guestChildCount").innerText = child + delta;
             }
 
             updateGuestSummary();
-        });
-        document.getElementById("hotelSearchBtn").addEventListener("click", function () {
-            const dateRange = document.getElementById("dateRange")._flatpickr.selectedDates;
-            const fromDate = dateRange[0].toISOString();
-            const toDate = dateRange[1].toISOString();
+        };
 
-            // Lấy số lượng người
-            const rooms = parseInt(document.getElementById("guestRoomCount").innerText);
-            const adults = parseInt(document.getElementById("guestAdultCount").innerText);
-            const children = parseInt(document.getElementById("guestChildCount").innerText);
+        function updateGuestSummary() {
+            const room = parseInt(document.getElementById("guestRoomCount").innerText);
+            const adult = parseInt(document.getElementById("guestAdultCount").innerText);
+            const child = parseInt(document.getElementById("guestChildCount").innerText);
+            document.getElementById("guestSelector").innerText =
+                `${room} Room${room > 1 ? "s" : ""}, ${adult} Adult${adult > 1 ? "s" : ""}, ${child} Child${child !== 1 ? "ren" : ""}`;
+        }
 
-            // Gộp thành query string
-            const query = new URLSearchParams({
-                hotelID: selectedHotelId,
-                fromDate: fromDate,
-                toDate: toDate,
-                rooms: rooms,
-                adults: adults,
-                children: children
-            }).toString();
+        updateGuestSummary();
+    });
+</script>
 
-            // Mở RoomIndex với tất cả tham số
-            window.open(`/Room/RoomIndex?${query}`, '_blank');
-        });
- 
-    </script>
+<script>
+    document.getElementById("hotelSearchBtn").addEventListener("click", function () {
+        const dateRange = document.getElementById("dateRange")._flatpickr.selectedDates;
+        const fromDate = dateRange[0].toISOString();
+        const toDate = dateRange[1].toISOString();
+
+        const rooms = parseInt(document.getElementById("guestRoomCount").innerText);
+        const adults = parseInt(document.getElementById("guestAdultCount").innerText);
+        const children = parseInt(document.getElementById("guestChildCount").innerText);
+
+        const query = new URLSearchParams({
+            hotelID: selectedHotelId,
+            fromDate,
+            toDate,
+            rooms,
+            adults,
+            children
+        }).toString();
+
+        window.open(`/Room/RoomIndex?${query}`, '_blank');
+    });
+</script>
+

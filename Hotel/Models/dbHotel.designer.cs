@@ -9,6 +9,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+/*
+      public dbHotelDataContext():
+base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelConnectionString"].ConnectionString, mappingSource)
+  {
+    OnCreated();
+}
+-*/
 namespace Hotel.Models
 {
 	using System.Data.Linq;
@@ -45,6 +52,12 @@ namespace Hotel.Models
     partial void InsertHotel(Hotel instance);
     partial void UpdateHotel(Hotel instance);
     partial void DeleteHotel(Hotel instance);
+    partial void InsertProvince(Province instance);
+    partial void UpdateProvince(Province instance);
+    partial void DeleteProvince(Province instance);
+    partial void InsertRegion(Region instance);
+    partial void UpdateRegion(Region instance);
+    partial void DeleteRegion(Region instance);
     partial void InsertReview(Review instance);
     partial void UpdateReview(Review instance);
     partial void DeleteReview(Review instance);
@@ -86,11 +99,11 @@ namespace Hotel.Models
 			OnCreated();
 		}
 
-		public dbHotelDataContext() :
+        public dbHotelDataContext() :
 base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelConnectionString"].ConnectionString, mappingSource)
-		{
-			OnCreated();
-		}
+        {
+            OnCreated();
+        }
 
         public System.Data.Linq.Table<Booking> Bookings
 		{
@@ -129,6 +142,22 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			get
 			{
 				return this.GetTable<Hotel>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Province> Provinces
+		{
+			get
+			{
+				return this.GetTable<Province>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Region> Regions
+		{
+			get
+			{
+				return this.GetTable<Region>();
 			}
 		}
 		
@@ -1117,6 +1146,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		
 		private string _HotelImage;
 		
+		private int _ProvinceID;
+		
 		private decimal _Latitude;
 		
 		private decimal _Longitude;
@@ -1124,6 +1155,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		private EntitySet<Review> _Reviews;
 		
 		private EntitySet<Room> _Rooms;
+		
+		private EntityRef<Province> _Province;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1137,6 +1170,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     partial void OnAddressChanged();
     partial void OnHotelImageChanging(string value);
     partial void OnHotelImageChanged();
+    partial void OnProvinceIDChanging(int value);
+    partial void OnProvinceIDChanged();
     partial void OnLatitudeChanging(decimal value);
     partial void OnLatitudeChanged();
     partial void OnLongitudeChanging(decimal value);
@@ -1147,6 +1182,7 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		{
 			this._Reviews = new EntitySet<Review>(new Action<Review>(this.attach_Reviews), new Action<Review>(this.detach_Reviews));
 			this._Rooms = new EntitySet<Room>(new Action<Room>(this.attach_Rooms), new Action<Room>(this.detach_Rooms));
+			this._Province = default(EntityRef<Province>);
 			OnCreated();
 		}
 		
@@ -1230,6 +1266,30 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProvinceID", DbType="Int NOT NULL")]
+		public int ProvinceID
+		{
+			get
+			{
+				return this._ProvinceID;
+			}
+			set
+			{
+				if ((this._ProvinceID != value))
+				{
+					if (this._Province.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProvinceIDChanging(value);
+					this.SendPropertyChanging();
+					this._ProvinceID = value;
+					this.SendPropertyChanged("ProvinceID");
+					this.OnProvinceIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Latitude", DbType="Decimal(9,6) NOT NULL")]
 		public decimal Latitude
 		{
@@ -1296,6 +1356,40 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Province_Hotel", Storage="_Province", ThisKey="ProvinceID", OtherKey="ProvinceID", IsForeignKey=true)]
+		public Province Province
+		{
+			get
+			{
+				return this._Province.Entity;
+			}
+			set
+			{
+				Province previousValue = this._Province.Entity;
+				if (((previousValue != value) 
+							|| (this._Province.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Province.Entity = null;
+						previousValue.Hotels.Remove(this);
+					}
+					this._Province.Entity = value;
+					if ((value != null))
+					{
+						value.Hotels.Add(this);
+						this._ProvinceID = value.ProvinceID;
+					}
+					else
+					{
+						this._ProvinceID = default(int);
+					}
+					this.SendPropertyChanged("Province");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -1338,6 +1432,347 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		{
 			this.SendPropertyChanging();
 			entity.Hotel = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Provinces")]
+	public partial class Province : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ProvinceID;
+		
+		private string _ProvinceName;
+		
+		private int _RegionID;
+		
+		private decimal _Latitude;
+		
+		private decimal _Longitude;
+		
+		private EntitySet<Hotel> _Hotels;
+		
+		private EntityRef<Region> _Region;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnProvinceIDChanging(int value);
+    partial void OnProvinceIDChanged();
+    partial void OnProvinceNameChanging(string value);
+    partial void OnProvinceNameChanged();
+    partial void OnRegionIDChanging(int value);
+    partial void OnRegionIDChanged();
+    partial void OnLatitudeChanging(decimal value);
+    partial void OnLatitudeChanged();
+    partial void OnLongitudeChanging(decimal value);
+    partial void OnLongitudeChanged();
+    #endregion
+		
+		public Province()
+		{
+			this._Hotels = new EntitySet<Hotel>(new Action<Hotel>(this.attach_Hotels), new Action<Hotel>(this.detach_Hotels));
+			this._Region = default(EntityRef<Region>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProvinceID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int ProvinceID
+		{
+			get
+			{
+				return this._ProvinceID;
+			}
+			set
+			{
+				if ((this._ProvinceID != value))
+				{
+					this.OnProvinceIDChanging(value);
+					this.SendPropertyChanging();
+					this._ProvinceID = value;
+					this.SendPropertyChanged("ProvinceID");
+					this.OnProvinceIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProvinceName", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		public string ProvinceName
+		{
+			get
+			{
+				return this._ProvinceName;
+			}
+			set
+			{
+				if ((this._ProvinceName != value))
+				{
+					this.OnProvinceNameChanging(value);
+					this.SendPropertyChanging();
+					this._ProvinceName = value;
+					this.SendPropertyChanged("ProvinceName");
+					this.OnProvinceNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RegionID", DbType="Int NOT NULL")]
+		public int RegionID
+		{
+			get
+			{
+				return this._RegionID;
+			}
+			set
+			{
+				if ((this._RegionID != value))
+				{
+					if (this._Region.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRegionIDChanging(value);
+					this.SendPropertyChanging();
+					this._RegionID = value;
+					this.SendPropertyChanged("RegionID");
+					this.OnRegionIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Latitude", DbType="Decimal(9,6) NOT NULL")]
+		public decimal Latitude
+		{
+			get
+			{
+				return this._Latitude;
+			}
+			set
+			{
+				if ((this._Latitude != value))
+				{
+					this.OnLatitudeChanging(value);
+					this.SendPropertyChanging();
+					this._Latitude = value;
+					this.SendPropertyChanged("Latitude");
+					this.OnLatitudeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Longitude", DbType="Decimal(9,6) NOT NULL")]
+		public decimal Longitude
+		{
+			get
+			{
+				return this._Longitude;
+			}
+			set
+			{
+				if ((this._Longitude != value))
+				{
+					this.OnLongitudeChanging(value);
+					this.SendPropertyChanging();
+					this._Longitude = value;
+					this.SendPropertyChanged("Longitude");
+					this.OnLongitudeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Province_Hotel", Storage="_Hotels", ThisKey="ProvinceID", OtherKey="ProvinceID")]
+		public EntitySet<Hotel> Hotels
+		{
+			get
+			{
+				return this._Hotels;
+			}
+			set
+			{
+				this._Hotels.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Region_Province", Storage="_Region", ThisKey="RegionID", OtherKey="RegionID", IsForeignKey=true)]
+		public Region Region
+		{
+			get
+			{
+				return this._Region.Entity;
+			}
+			set
+			{
+				Region previousValue = this._Region.Entity;
+				if (((previousValue != value) 
+							|| (this._Region.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Region.Entity = null;
+						previousValue.Provinces.Remove(this);
+					}
+					this._Region.Entity = value;
+					if ((value != null))
+					{
+						value.Provinces.Add(this);
+						this._RegionID = value.RegionID;
+					}
+					else
+					{
+						this._RegionID = default(int);
+					}
+					this.SendPropertyChanged("Region");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Hotels(Hotel entity)
+		{
+			this.SendPropertyChanging();
+			entity.Province = this;
+		}
+		
+		private void detach_Hotels(Hotel entity)
+		{
+			this.SendPropertyChanging();
+			entity.Province = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Regions")]
+	public partial class Region : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _RegionID;
+		
+		private string _RegionName;
+		
+		private EntitySet<Province> _Provinces;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnRegionIDChanging(int value);
+    partial void OnRegionIDChanged();
+    partial void OnRegionNameChanging(string value);
+    partial void OnRegionNameChanged();
+    #endregion
+		
+		public Region()
+		{
+			this._Provinces = new EntitySet<Province>(new Action<Province>(this.attach_Provinces), new Action<Province>(this.detach_Provinces));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RegionID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int RegionID
+		{
+			get
+			{
+				return this._RegionID;
+			}
+			set
+			{
+				if ((this._RegionID != value))
+				{
+					this.OnRegionIDChanging(value);
+					this.SendPropertyChanging();
+					this._RegionID = value;
+					this.SendPropertyChanged("RegionID");
+					this.OnRegionIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RegionName", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string RegionName
+		{
+			get
+			{
+				return this._RegionName;
+			}
+			set
+			{
+				if ((this._RegionName != value))
+				{
+					this.OnRegionNameChanging(value);
+					this.SendPropertyChanging();
+					this._RegionName = value;
+					this.SendPropertyChanged("RegionName");
+					this.OnRegionNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Region_Province", Storage="_Provinces", ThisKey="RegionID", OtherKey="RegionID")]
+		public EntitySet<Province> Provinces
+		{
+			get
+			{
+				return this._Provinces;
+			}
+			set
+			{
+				this._Provinces.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Provinces(Province entity)
+		{
+			this.SendPropertyChanging();
+			entity.Region = this;
+		}
+		
+		private void detach_Provinces(Province entity)
+		{
+			this.SendPropertyChanging();
+			entity.Region = null;
 		}
 	}
 	

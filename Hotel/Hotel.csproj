@@ -149,6 +149,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dbHotel.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\HotelModel\HotelModel.cs" />
+    <Compile Include="Models\HotelModel\ProvinceModel.cs" />
+    <Compile Include="Models\HotelModel\RegionModel.cs" />
     <Compile Include="Models\RoomModel\DiscountView.cs" />
     <Compile Include="Models\BookingModel\PaymentDisplay.cs" />
     <Compile Include="Models\QRCode.cs" />

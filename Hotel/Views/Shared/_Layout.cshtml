@@ -1,11 +1,4 @@
-﻿<!--
-      public dbHotelDataContext():
-base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelConnectionString"].ConnectionString, mappingSource)
-  {
-      OnCreated();
-  }
--->
-@using Hotel.Models
+﻿@using Hotel.Models
 @{
     User user = (User)Session["User"];
 }
@@ -190,7 +183,7 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
             let navbar = document.querySelector(".navbar-custom");
 
             window.addEventListener("scroll", function () {
-                if (window.scrollY > 40) { // Nếu cuộn xuống hơn 50px
+                if (window.scrollY > 40) { 
                     navbar.classList.add("shrink");
                 } else {
                     navbar.classList.remove("shrink");
@@ -199,9 +192,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
         });
 
     </script>
-
-    <!-- Bootstrap JavaScript (phải có để dropdown hoạt động) -->
-
 
 </body>
 
