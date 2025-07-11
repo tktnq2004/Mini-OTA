@@ -87,6 +87,40 @@
             .guest-counter button:hover {
                 background: #bbb;
             }
+
+    .region-toggle, .province-option, .dropdown-item {
+        padding: 6px 10px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+
+        .region-toggle:hover, .province-option:hover, .dropdown-item:hover {
+            background: #f0f0f0;
+        }
+
+    .toggle-box {
+        padding: 10px;
+        border: 1px solid #ccc;
+        margin: 5px 0;
+        border-radius: 4px;
+        cursor: pointer;
+        background-color: white;
+        transition: background 0.2s;
+    }
+
+        .toggle-box:hover {
+            background-color: #f5f5f5;
+        }
+
+    .province-box, .hotel-box {
+        margin-left: 15px;
+    }
+
+    .arrow {
+        margin-right: 8px;
+        font-weight: bold;
+    }
 </style>
 
 @model List<Hotel.Models.HotelModel.RegionModel>
@@ -99,45 +133,41 @@
     <div class="card hotel-reserve-box">
         <div class="hotel-field">
             <label>Destination</label>
-            <div id="dropdownHotelToggle" class="guest-dropdown-toggle">Where to?</div>
-
-            <ul class="guest-dropdown-menu" id="dropdownHotelMenu" style="display: none;">
+            <div id="dropdownHotelToggle" class="guest-dropdown-toggle">Select Region</div>
+            <div class="guest-dropdown-menu" id="dropdownHotelMenu" style="display: none;">
                 @foreach (var region in Model)
                 {
-                    <li class="region-item">
-                        <a href="javascript:void(0);" class="region-toggle" data-region-id="@region.RegionID">
+                    <div class="region-box">
+                        <div class="toggle-box region-toggle" data-region-id="@region.RegionID">
                             <span class="arrow">▶</span> @region.RegionName
-                        </a>
-                        <ul class="province-submenu" id="region-@region.RegionID" style="display: none;">
+                        </div>
+                        <div class="province-box" id="region-@region.RegionID" style="display: none;">
                             @foreach (var province in region.Provinces)
                             {
-                                <li class="province-item">
-                                    <a href="#" class="province-option"
-                                       data-province-id="@province.ProvinceID"
-                                       data-latitude="@province.Latitude"
-                                       data-longitude="@province.Longitude">
-                                        @province.ProvinceName
-                                    </a>
-                                    <ul class="hotel-submenu" id="province-hotels-@province.ProvinceID" style="display: none;">
-                                        @foreach (var hotel in province.Hotels)
-                                        {
-                                            <li>
-                                                <a href="#" class="dropdown-item"
-                                                   data-hotel-id="@hotel.HotelID"
-                                                   data-latitude="@hotel.Latitude"
-                                                   data-longitude="@hotel.Longitude">
-                                                    @hotel.HotelName
-                                                </a>
-                                            </li>
-                                        }
-                                    </ul>
-                                </li>
+                                <div class="toggle-box province-option"
+                                     data-province-id="@province.ProvinceID"
+                                     data-latitude="@province.Latitude"
+                                     data-longitude="@province.Longitude">
+                                    <span class="arrow">▶</span> @province.ProvinceName
+                                </div>
+                                <div class="hotel-box" id="province-hotels-@province.ProvinceID" style="display: none;">
+                                    @foreach (var hotel in province.Hotels)
+                                    {
+                                        <div class="toggle-box dropdown-item"
+                                             data-hotel-id="@hotel.HotelID"
+                                             data-latitude="@hotel.Latitude"
+                                             data-longitude="@hotel.Longitude">
+                                            @hotel.HotelName
+                                        </div>
+                                    }
+                                </div>
                             }
-                        </ul>
-                    </li>
+                        </div>
+                    </div>
                 }
-            </ul>
+            </div>
         </div>
+
 
         <div class="hotel-field">
             <label>Stay Dates</label>
@@ -179,8 +209,8 @@
 
         <button id="hotelSearchBtn">HOTEL SEARCH</button>
     </div>
-</div>
 
+</div>
 
 <script>
     let map;
@@ -214,36 +244,21 @@
 </script>
 
 <script>
+    //Region
     document.addEventListener("DOMContentLoaded", function () {
-        const toggle = document.getElementById("dropdownHotelToggle");
-        const menu = document.getElementById("dropdownHotelMenu");
-
-        toggle.addEventListener("click", function (e) {
-            e.stopPropagation();
-            menu.style.display = menu.style.display === "block" ? "none" : "block";
-
-            document.getElementById("hotelDetailModal").style.display = "none";
-        });
-        document.addEventListener("click", function (e) {
-            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
-                menu.style.display = "none";
-            }
-        });
-    });
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".region-toggle").forEach(function (regionLink) {
-            regionLink.addEventListener("click", function () {
-                const regionId = regionLink.dataset.regionId;
-                const arrow = regionLink.querySelector(".arrow");
+        document.querySelectorAll(".region-toggle").forEach(region => {
+            region.addEventListener("click", function () {
+                const regionId = region.dataset.regionId;
                 const submenu = document.getElementById("region-" + regionId);
+                const arrow = region.querySelector(".arrow");
 
                 const isVisible = submenu.style.display === "block";
+
+                // 1. Đóng tất cả miền và reset mũi tên
                 document.querySelectorAll(".province-submenu").forEach(el => el.style.display = "none");
                 document.querySelectorAll(".region-toggle .arrow").forEach(el => el.textContent = "▶");
 
+                // 2. Mở lại nếu đang đóng
                 if (!isVisible) {
                     submenu.style.display = "block";
                     arrow.textContent = "▼";
@@ -252,28 +267,36 @@
         });
     });
 </script>
-
 <script>
+    //Province
     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".province-option").forEach(function (provinceLink) {
-            provinceLink.addEventListener("click", function (e) {
-                e.preventDefault();
-                const provinceId = provinceLink.dataset.provinceId;
-                const provinceName = provinceLink.innerText;
-                const lat = parseFloat(provinceLink.dataset.latitude);
-                const lng = parseFloat(provinceLink.dataset.longitude);
-
-                document.querySelectorAll(".hotel-submenu").forEach(el => el.style.display = "none"); 
+        document.querySelectorAll(".province-option").forEach(province => {
+            province.addEventListener("click", function () {
+                const provinceId = province.dataset.provinceId;
                 const hotelList = document.getElementById("province-hotels-" + provinceId);
-                if (hotelList) hotelList.style.display = "block";
+                const isVisible = hotelList.style.display === "block";
 
+                // 1. Đóng tất cả khách sạn trong cùng miền (trong cùng UL cha)
+                const provinceList = province.closest(".province-submenu");
+                if (provinceList) {
+                    provinceList.querySelectorAll(".hotel-submenu").forEach(el => el.style.display = "none");
+                }
 
-                document.getElementById("dropdownHotelToggle").innerText = provinceName;
+                // 2. Toggle khách sạn
+                if (!isVisible) {
+                    hotelList.style.display = "block";
+                }
 
+                // 3. Set lại map view
+                const lat = parseFloat(province.dataset.latitude);
+                const lng = parseFloat(province.dataset.longitude);
                 if (!isNaN(lat) && !isNaN(lng)) {
                     map.setView([lat, lng], 8);
                 }
 
+                document.getElementById("dropdownHotelToggle").innerText = province.innerText;
+
+                // 4. Gọi server lấy lại danh sách hotel
                 fetch(`/Hotel/GetHotelsByProvince?provinceId=${provinceId}`)
                     .then(res => res.json())
                     .then(hotels => {
@@ -287,17 +310,17 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const menu = document.getElementById("dropdownHotelMenu");
-
-        menu.addEventListener("click", function (e) {
-            if (e.target && e.target.matches(".dropdown-item")) {
-                e.preventDefault();
-                const hotelId = parseInt(e.target.dataset.hotelId);
+        document.querySelectorAll(".dropdown-item").forEach(hotel => {
+            hotel.addEventListener("click", function () {
+                const hotelId = parseInt(hotel.dataset.hotelId);
                 const marker = hotelMarkers[hotelId];
-                if (marker) marker.fire("click");
+
+                if (marker) {
+                    marker.fire("click");
+                }
 
                 document.getElementById("dropdownHotelMenu").style.display = "none";
-            }
+            });
         });
     });
 </script>
@@ -327,6 +350,25 @@
         });
     }
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggle = document.getElementById("dropdownHotelToggle");
+        const menu = document.getElementById("dropdownHotelMenu");
+
+        toggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+            document.getElementById("hotelDetailModal").style.display = "none";
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!menu.contains(e.target) && e.target !== toggle) {
+                menu.style.display = "none";
+            }
+        });
+    });
+</script>
+
 
 
 <script>
