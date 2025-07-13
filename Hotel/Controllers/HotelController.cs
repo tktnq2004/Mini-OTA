@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Windows.Media.Animation;
 
 namespace Hotel.Controllers
 {
@@ -27,8 +28,6 @@ namespace Hotel.Controllers
                         {
                             ProvinceID = p.ProvinceID,
                             ProvinceName = p.ProvinceName,
-                            Latitude = p.Latitude,
-                            Longitude = p.Longitude,
                             Hotels = p.Hotels.Select(h => new HotelModel
                             {
                                 HotelID = h.HotelID,
@@ -89,6 +88,51 @@ namespace Hotel.Controllers
             var hotel = db.Hotels.FirstOrDefault(h => h.HotelID == hotelId);
             return PartialView("HotelDetail", hotel);
         }
+        [HttpGet]
+        public ActionResult GetNearbyHotels(decimal latitude, decimal longitude, decimal radiusKm = 50)
+        {
+            try
+            {
+                var allHotels = db.Hotels
+                    .Where(h => h.Latitude != 0 && h.Longitude != 0)
+                    .ToList();
+
+                var nearbyHotels = allHotels
+                    .Where(h => GetDistance((double)latitude, (double)longitude, (double)h.Latitude, (double)h.Longitude) <= (double)radiusKm)
+                    .Select(h => new {
+                        h.HotelID,
+                        h.HotelName,
+                        h.Latitude,
+                        h.Longitude,
+                        h.Address
+                    }).ToList();
+
+                return Json(nearbyHotels, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(500, ex.Message); // Trả lỗi dễ debug
+            }
+        }
+
+
+        // Haversine sử dụng double
+        private double GetDistance(double lat1, double lon1, double lat2, double lon2)
+        {
+            var R = 6371.0;
+            var dLat = ToRad(lat2 - lat1);
+            var dLon = ToRad(lon2 - lon1);
+
+            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                    Math.Cos(ToRad(lat1)) * Math.Cos(ToRad(lat2)) *
+                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+            return R * c;
+        }
+
+        private double ToRad(double deg) => deg * (Math.PI / 180);
+
 
     }
 }

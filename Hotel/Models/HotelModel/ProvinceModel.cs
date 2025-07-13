@@ -9,8 +9,6 @@ namespace Hotel.Models.HotelModel
 	{
         public int ProvinceID { get; set; }
         public string ProvinceName { get; set; }
-        public decimal Latitude { get; set; }
-        public decimal Longitude { get; set; }
         public List<HotelModel> Hotels { get; set; }
     }
 }

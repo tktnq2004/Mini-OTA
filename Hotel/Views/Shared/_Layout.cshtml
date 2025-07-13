@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
@@ -85,48 +85,48 @@
 
 
             @*<div class="container row g-3 KHUYENMAI" id="khuyenmai-section">
-                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <div class="card border-0">
-                        <div class="card-header bg-transparent text-black ">
-                            <p><strong>[TẾT 2025] ƯU ĐÃI GIẢM GIÁ LÊN ĐẾN 70%</strong></p>
-                        </div>
-                        <div class="card-body bg-transparent text-black">
-                            <img src="~/Content/images/KM_1.jpg" width="375" height="200" />
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            <p>Thời gian: 01/01/2025 - 30/03/2025</p>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="card border-0">
+                            <div class="card-header bg-transparent text-black ">
+                                <p><strong>[TẾT 2025] ƯU ĐÃI GIẢM GIÁ LÊN ĐẾN 70%</strong></p>
+                            </div>
+                            <div class="card-body bg-transparent text-black">
+                                <img src="~/Content/images/KM_1.jpg" width="375" height="200" />
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <p>Thời gian: 01/01/2025 - 30/03/2025</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <div class="card border-0">
-                        <div class="card-header bg-transparent text-black ">
-                            <p><strong>[SRING PROMOTION 2025] COMBO NGHỈ DƯỠNG 2N1Đ</strong></p>
-                        </div>
-                        <div class="card-body bg-transparent text-black">
-                            <img src="~/Content/images/KM_2.jpg" width="375" height="200" />
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            <p>Thời gian: 28/02/2025 - 30/04/2025</p>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="card border-0">
+                            <div class="card-header bg-transparent text-black ">
+                                <p><strong>[SRING PROMOTION 2025] COMBO NGHỈ DƯỠNG 2N1Đ</strong></p>
+                            </div>
+                            <div class="card-body bg-transparent text-black">
+                                <img src="~/Content/images/KM_2.jpg" width="375" height="200" />
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <p>Thời gian: 28/02/2025 - 30/04/2025</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <div class="card border-0">
-                        <div class="card-header bg-transparent text-black ">
-                            <p><strong>[Mừng Sinh Nhật] GIẢM GIÁ CHO ĐÊM THỨ 2 TẠI KHÁCH SẠN</strong></p>
-                        </div>
-                        <div class="card-body bg-transparent text-black">
-                            <img src="~/Content/images/KM_3.jpg" width="375" height="200" />
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            <p>Thời gian: 10/02/2025 - 20/02/2025</p>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="card border-0">
+                            <div class="card-header bg-transparent text-black ">
+                                <p><strong>[Mừng Sinh Nhật] GIẢM GIÁ CHO ĐÊM THỨ 2 TẠI KHÁCH SẠN</strong></p>
+                            </div>
+                            <div class="card-body bg-transparent text-black">
+                                <img src="~/Content/images/KM_3.jpg" width="375" height="200" />
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <p>Thời gian: 10/02/2025 - 20/02/2025</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>*@
+                </div>*@
 
 
 
@@ -167,7 +167,7 @@
                     <p>Address: Đường 35CL, phường Cát Lái, quận 2, thành phố Thủ Đức</p>
                 </div>
             </div>
-
+   
             <hr class="my-3 border-light">
             <p class="mt-2">Designed & Developed by <a href="#" class="text-white">Wengg</a></p>
         </div>
@@ -183,7 +183,7 @@
             let navbar = document.querySelector(".navbar-custom");
 
             window.addEventListener("scroll", function () {
-                if (window.scrollY > 40) { 
+                if (window.scrollY > 40) {
                     navbar.classList.add("shrink");
                 } else {
                     navbar.classList.remove("shrink");
@@ -191,7 +191,22 @@
             });
         });
 
+
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Tắt autocomplete cho toàn bộ form
+            document.querySelectorAll("form").forEach(function (form) {
+                form.setAttribute("autocomplete", "off");
+            });
+
+            // Tắt autocomplete cho tất cả input
+            document.querySelectorAll("input").forEach(function (input) {
+                input.setAttribute("autocomplete", "off");
+            });
+        });
+    </script>
+
 
 </body>
 

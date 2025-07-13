@@ -6,38 +6,47 @@
 
 <h2 style="text-align:center">Login</h2>
 <div class="setting">
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <hr />
+        <div class="form-horizontal">
+            <hr />
 
-        <div class="form-group">
-            <label class="control-label col-md-2">User name</label>
-            <div class="col-md-10">
-                <input type="text" name="username" class="form-control" />
+            <div class="form-group">
+                <label class="control-label col-md-2">User name</label>
+                <div class="col-md-10">
+                    <input type="text" name="username" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Pass word</label>
+                <div class="col-md-10">
+                    <input type="password" name="password" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Login" class="btn btn-default" />
+                </div>
             </div>
         </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">Pass word</label>
-            <div class="col-md-10">
-                <input type="password" name="password" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Login" class="btn btn-default" />
-            </div>
-        </div>
+    }
+    @*<form novalidate="">
+        <div><div class="block mb18 col w-full">
+            <div class="relative "><div><
+                label class="inline-block txt-s txt-bold mb6" for="username">Username or email </label>
+            </div><input id="username" name="username" type="text" class="input" aria-required="true" data-testid="username-input" autocapitalize="none" autocorrect="off" spellcheck="false" value="">
+            <div role="alert"></div></div></div><div class="block mb18 col w-full"><div class="relative "><div>
+            <label class="inline-block txt-s txt-bold mb6" for="password">Password </label></div>
+            <input id="password" name="password" type="password" class="input" aria-required="true" data-testid="password-input" autocapitalize="none" autocorrect="off" spellcheck="false" value=""><div role="alert"></div>
+                     </div></div><button aria-label="Sign in" type="button" class="btn" data-testid="signin-form-submit">Sign in</button></div></form>*@
+   
+    <div>
+        @Html.ActionLink("Back to List", "HotelIndex", "Hotel")
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index", "Room")
 </div>
-    </div>
 <style>
     .setting {
         margin-left: 8%;
