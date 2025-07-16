@@ -42,7 +42,11 @@ namespace Hotel.Controllers
 
             return View(data);
         }
-
+        public ActionResult HotelMain()
+        {
+            
+            return View();
+        }
         public JsonResult GetProvincesByRegionId(int regionId)
         {
             var provinces = db.Provinces

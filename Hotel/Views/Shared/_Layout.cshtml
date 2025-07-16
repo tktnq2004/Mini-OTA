@@ -32,6 +32,18 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        @Html.ActionLink("Home", "HotelMain", "Hotel", new { area = "" }, new { @class = "nav-link custom-hover" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Destinations", "HotelIndex", "Hotel", new { area = "" }, new { @class = "nav-link custom-hover" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("AboutUs", "AboutUs", "Menu", new { area = "" }, new { @class = "nav-link custom-hover" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Services", "Services", "Menu", new { area = "" }, new { @class = "nav-link custom-hover" })
+                    </li>
                     @if (Session["User"] == null)
                     {
                         <li class="nav-item">
@@ -39,7 +51,7 @@
                                 <i class="fa fa-sign-in-alt"></i> Log in
                             </a>
                         </li>
-                        
+
                         <li class="nav-item">
                             <a href="@Url.Action("Register", "User")" class="text-dark">
                                 <i class="fa fa-user-plus"></i> Register
@@ -49,7 +61,7 @@
                     else if (user.Role == "Customer")
                     {
                         <li class="nav-item">
-                            @Html.ActionLink("Home", "Index", "Room", new { area = "" }, new { @class = "nav-link custom-hover" })
+                            @Html.ActionLink("Home", "HotelMain", "Hotel", new { area = "" }, new { @class = "nav-link custom-hover" })
                         </li>
                         <li class="nav-item">
                             @Html.ActionLink("Wish List", "DisplayWishlist", "Booking", new { area = "" }, new { @class = "nav-link custom-hover" })

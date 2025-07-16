@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewBag.Title = "AboutUs";
+}
+
+<h2></h2>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>About Us - Hotale Hotel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .about-banner {
+            background: url('/Content/images/logo1/about-banner.jpg') no-repeat center center / cover;
+            height: 300px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 40px auto;
+            max-width: 90%;
+        }
+
+            .about-banner h1 {
+                color: white;
+                font-size: 48px;
+                font-weight: 400;
+            }
+
+        .about-section {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+            .about-section h2 {
+                font-size: 32px;
+                margin-bottom: 20px;
+                color: #002060;
+            }
+
+            .about-section p {
+                font-size: 18px;
+                line-height: 1.8;
+                color: #555;
+            }
+    </style>
+</head>
+<body>
+
+    <!-- Banner Section -->
+    <div class="about-banner">
+        <h1>About Us</h1>
+    </div>
+
+    <!-- About Content Section -->
+    <section style="padding: 100px 0; background-color: #fff;">
+        <div class="container" style="text-align: center;">
+            <h2 style="font-family: 'Dancing Script', cursive; font-size: 32px; font-weight: bold;">
+                Visit Our Famous Facilities
+            </h2>
+            <p style="max-width: 600px; margin: 10px auto 40px; font-style: italic; color: #666;">
+                A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.
+            </p>
+
+            <div style="display: flex; justify-content: center; align-items: center; gap: 30px; background: #f9f9f9; padding: 40px; border-radius: 30px; flex-wrap: wrap;">
+                <!-- Image -->
+                <div style="flex: 1; min-width: 280px;">
+                    <img src="/Content/images/logo1/bathtub.jpg" alt="Luxury Bath" style="width: 100%; border-radius: 10px;">
+                </div>
+
+                <!-- Text Content -->
+                <div style="flex: 1; min-width: 280px; text-align: left;">
+                    <h3 style="font-size: 18px; font-weight: 600; color: #222;">
+                        Experience the best of luxury at Hotale Hotel
+                    </h3>
+                    <p style="font-size: 15px; line-height: 1.6; color: #555; margin-top: 10px;">
+                        Hotale Hotel is located in the heart of the forest. Inside you'll discover a great collection of luxury rooms and exquisite experiences that combine comfort with elegance. Whether it’s the fine spa, modern suites, or fine dining – we promise you an unforgettable stay.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Hotel Info -->
+            <div style="margin-top: 60px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 30px;">
+                <div style="text-align: center;">
+                    <strong>5 stars</strong>
+                </div>
+                <div style="text-align: center;">
+                    <strong>25 Rooms</strong>
+                </div>
+            </div>
+
+            <!-- Hotel Description -->
+            <div style="margin-top: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <p style="text-align: center; font-size: 16px; color: #333;">
+                    Our hotel is located in the heart of the New Forrest. A five stars lifestyle surrounded by the forest.
+                </p>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

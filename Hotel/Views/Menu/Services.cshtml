@@ -1,0 +1,163 @@
+﻿@{
+    ViewBag.Title = "Services";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Services - Hotale Hotel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .about-banner {
+            background: url('/Content/images/logo1/about-banner.jpg') no-repeat center center / cover;
+            height: 300px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 40px auto;
+            max-width: 90%;
+        }
+
+        .about-banner h1 {
+            color: white;
+            font-size: 48px;
+            font-weight: 400;
+        }
+
+        .service {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .section-title h2 {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 60px;
+            color: #002060;
+        }
+
+        .service-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .service-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .service-item:nth-child(even) {
+            direction: rtl;
+        }
+
+        .service-item:nth-child(even) .service-text {
+            direction: ltr;
+        }
+
+        .service-img img {
+            width: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #002060;
+            margin-bottom: 15px;
+        }
+
+        .service-desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .link-detail {
+            color: #002060;
+            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
+
+        .link-detail:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="about-banner">
+        <h1>Services</h1>
+    </div>
+
+    <section class="service">
+        <div class="section-title">
+            <h2 style="font-family: 'Dancing Script', cursive; font-size: 32px; font-weight: bold;">
+                Visit Our Famous Facilities
+            </h2>
+        </div>
+
+        <div class="service-grid">
+            <!-- Restaurant -->
+            <div class="service-item">
+                <div class="service-img">
+                    <img src="/Content/images/logo1/chef-cook.jpg" alt="Restaurant">
+                </div>
+                <div class="service-text">
+                    <h3 class="service-title">Restaurant</h3>
+                    <p class="service-desc">The large, flexible banquet hall system, invested with modern equipment, will always be a great suggestion for high-class weddings and conferences.</p>
+                    <a href="/services/2145/restaurant" class="link-detail">Learn more &gt;</a>
+                </div>
+            </div>
+
+            <!-- Sky Bar -->
+            <div class="service-item">
+                <div class="service-img">
+                    <img src="/Content/images/logo1/bar.jpg" alt="Sky Bar">
+                </div>
+                <div class="service-text">
+                    <h3 class="service-title">Sky Bar</h3>
+                    <p class="service-desc">Celebrate your moment with one of our highlights for cocktails or if you prefer, a selection of international teas and locally sourced coffees are available hot or refreshingly iced.</p>
+                    <a href="/services/2146/sky-bar" class="link-detail">Learn more &gt;</a>
+                </div>
+            </div>
+
+            <!-- Spa Hotale -->
+            <div class="service-item">
+                <div class="service-img">
+                    <img src="/Content/images/logo1/spa.jpg" alt="Spa Hotale">
+                </div>
+                <div class="service-text">
+                    <h3 class="service-title">Spa Hotale</h3>
+                    <p class="service-desc">Get lost in the luxurious and charming Spa Hotale Hotel oasis to enjoy moments of absolute relaxation in the midst of nature. Here, you can immerse yourself in unique spa experiences.</p>
+                    <a href="/services/2147/spa-hotale" class="link-detail">Learn more &gt;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

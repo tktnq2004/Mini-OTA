@@ -181,6 +181,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\HotelController.cs" />
+    <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Controllers\RoomController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -253,6 +254,21 @@
     <Content Include="Content\images\5\P503.jpg" />
     <Content Include="Content\images\5\P504.jpg" />
     <Content Include="Content\images\5\P505.jpg" />
+    <Content Include="Content\images\logo1\an-sansg.png" />
+    <Content Include="Content\images\logo1\bar.jpg" />
+    <Content Include="Content\images\logo1\bathtub.jpg" />
+    <Content Include="Content\images\logo1\be-boi.png" />
+    <Content Include="Content\images\logo1\about-banner.jpg" />
+    <Content Include="Content\images\logo1\background.jpg" />
+    <Content Include="Content\images\logo1\chef-cook.jpg" />
+    <Content Include="Content\images\logo1\insta1.jpg" />
+    <Content Include="Content\images\logo1\paking.png" />
+    <Content Include="Content\images\logo1\gym.png" />
+    <Content Include="Content\images\logo1\kets.png" />
+    <Content Include="Content\images\logo1\resort-swim.jpg" />
+    <Content Include="Content\images\logo1\spa.jpg" />
+    <Content Include="Content\images\logo1\spa.png" />
+    <Content Include="Content\images\logo1\wifi.png" />
     <Content Include="Content\images\logo\amex.png" />
     <Content Include="Content\images\logo\gglogo.png" />
     <Content Include="Content\images\logo\hotel-award.png" />
@@ -320,6 +336,8 @@
     <Content Include="Views\Hotel\HotelIndex.cshtml" />
     <Content Include="Views\Room\RoomIndex.cshtml" />
     <Content Include="Views\Hotel\HotelMain.cshtml" />
+    <Content Include="Views\Menu\AboutUs.cshtml" />
+    <Content Include="Views\Menu\Services.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
