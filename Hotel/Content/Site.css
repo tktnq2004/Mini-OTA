@@ -3,28 +3,31 @@
     margin-top: 15px;
     padding-left: 15px;
     padding-right: 15px;
+    background-color: #fff; /* nền content trắng */
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
+/* Override bootstrap horizontal description lists */
 .dl-horizontal dt {
     white-space: normal;
 }
-.setting{
-        margin-left: 8%;
-    }
+
+.setting {
+    margin-left: 8%;
+}
+
 html {
     translate: no;
 }
-/* Set width on the form input elements since they're 100% wide by default */
+
+/* Form input max-width */
 input,
 select,
 textarea {
     max-width: 280px;
 }
+
 body {
-    font-family: "Poppins",sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 .header {
@@ -35,15 +38,14 @@ body {
         margin-top: 35%;
     }
 
-}
 .topbar {
-    position: absolute; /* Đặt trên banner */
-    top: 10px; /* Cách trên 10px */
+    position: absolute;
+    top: 10px;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.7); /* Nền mờ để dễ nhìn */
+    background: rgba(255, 255, 255, 0.7);
     padding: 8px 0;
-    z-index: 15; /* Cao hơn banner */
+    z-index: 15;
 }
 
 .container {
@@ -52,11 +54,11 @@ body {
     padding-left: 15px;
     padding-right: 15px;
 }
+
 .banner {
     width: 100%;
     height: auto;
-    display:block;
-    
+    display: block;
 }
 
 .slogan {
@@ -82,6 +84,7 @@ body {
     line-height: 60px;
     margin: 25px 0;
 }
+
 .pagination-container {
     text-align: center;
     margin-top: 20px;
@@ -92,7 +95,6 @@ body {
     font-weight: bold;
     margin-bottom: 10px;
 }
-
 
 .Menu {
     display: inline-block;
@@ -133,72 +135,83 @@ body {
         color: red;
         pointer-events: none;
     }
-/*thanh nvbar*/
+
+/* --- NAVBAR CUSTOM --- */
 .navbar-custom {
-    background: linear-gradient(to right, #f9c5d1, #fef4f4) !important;
-    border-bottom: 2px solid #f8a5c2 !important;
+    background: #000 !important;
+    border: none !important;
     transition: all 0.3s ease-in-out;
-    height: 80px; /* Chiều cao ban đầu */
+    height: 80px;
     padding: 15px 20px;
     display: flex;
-    align-items: center; /* Căn giữa nội dung */
+    align-items: center;
 }
 
     .navbar-custom.shrink {
-        height: 56px; /* Thu nhỏ chiều cao 30% */
-        padding: 5px 20px; /* Giảm padding để co nhỏ hơn */
+        height: 56px;
+        padding: 5px 20px;
     }
 
     .navbar-custom .navbar-brand {
-        color: #d63384 !important;
+        color: #fff !important;
         font-weight: bold;
-        font-size: 1.2rem; /* Kích thước chữ ban đầu */
+        font-size: 1.2rem;
         transition: all 0.3s ease-in-out;
     }
 
     .navbar-custom.shrink .navbar-brand {
-        font-size: 1.0rem; /* Thu nhỏ chữ khi co */
+        font-size: 1rem;
     }
 
     .navbar-custom .navbar-nav .nav-link {
-        color: #b2225f !important;
-        font-weight: 500;
-        font-size: 1.0rem; /* Kích thước chữ ban đầu */
+        color: #fff !important;
+        font-weight: 600;
+        font-size: 1rem;
         transition: all 0.3s ease-in-out;
         padding: 10px 15px;
     }
 
     .navbar-custom.shrink .navbar-nav .nav-link {
-        font-size: 0.8rem; /* Thu nhỏ chữ */
-        padding: 5px 10px; /* Giảm padding */
+        font-size: 0.8rem;
+        padding: 5px 10px;
     }
 
     .navbar-custom .navbar-nav .nav-link:hover {
-        color: #ff69b4 !important;
+        color: #ccc !important;
     }
 
-/*anh background*/
-.body-content {
-    background-color: #ADD8E6; /* Màu xanh da trời */
-}
+    /* NEW: fix all navbar links + icons */
+    .navbar-custom a {
+        color: #fff !important;
+        transition: color 0.3s ease;
+    }
 
-/*footer*/
+        .navbar-custom a:hover {
+            color: #ccc !important;
+        }
+
+    .navbar-custom i {
+        color: inherit !important;
+    }
+
+/* --- FOOTER CUSTOM --- */
 .footer-custom {
-    background: linear-gradient(to right, #f9c5d1, #fef4f4) !important; /* Màu giống navbar */
-    border-top: 2px solid #f8a5c2 !important;
-    color: #b2225f !important;
+    background: #000 !important;
+    border-top: 2px solid #333 !important;
+    color: #fff !important;
     padding: 20px 0;
 }
 
     .footer-custom a {
-        color: #b2225f !important;
+        color: #fff !important;
         text-decoration: none;
     }
 
         .footer-custom a:hover {
-            color: #ff69b4 !important;
+            color: #ccc !important;
         }
-/*Map*/
+
+/* Map */
 #mymap {
     height: 600px;
 }
@@ -206,4 +219,3 @@ body {
 .leaflet-control-attribution {
     display: none !important;
 }
-

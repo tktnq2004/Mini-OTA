@@ -6,105 +6,112 @@
 }
 
 <h2 style="text-align:center">Profile</h2>
-<div class="setting">
-    @using (Html.BeginForm())
-    {
-        @Html.AntiForgeryToken()
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="mb-4 text-center">Update Profile</h4>
 
-        <div class="form-horizontal align-middle">
-            <hr />
-            <div class="form-group">
-                <label class="control-label col-md-2">Customer Name</label>
-                <div class="col-md-10">
-                    <input type="text" name="fullname" value="@Model.FullName" class="form-control" />
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label for="fullname" class="form-label">Customer Name</label>
+                            <input type="text" id="fullname" name="fullname" value="@Model.FullName" class="form-control" placeholder="Enter your full name" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" id="username" name="username" value="@Model.Username" class="form-control" placeholder="Your username" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="email" value="@Model.Email" class="form-control" placeholder="Your email address" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="numberphone" class="form-label">Phone Number</label>
+                            <input type="tel" id="numberphone" name="numberphone" value="@Model.Phone" class="form-control" placeholder="Your phone number" required />
+                        </div>
+
+                        <!-- Toggle buttons -->
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-outline-secondary" id="togglePasswordFields">
+                                Change Password
+                            </button>
+                            <button type="button" class="btn btn-outline-danger ms-2" id="cancelPasswordFields" style="display: none;">
+                                Cancel
+                            </button>
+                        </div>
+
+                        <!-- Hidden password fields -->
+                        <div class="mb-3 password-group" style="display: none;">
+                            <label for="password" class="form-label">New Password</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter new password" />
+                        </div>
+
+                        <div class="mb-3 password-group" style="display: none;">
+                            <label for="changepassword" class="form-label">Confirm New Password</label>
+                            <input type="password" id="changepassword" name="changepassword" class="form-control" placeholder="Confirm new password" />
+                        </div>
+
+                        <!-- Validation messages -->
+                        <div class="text-danger mb-3">
+                            @ViewData["enterpassword"] @ViewData["samepassword"]
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100">Save Changes</button>
+                    }
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="control-label col-md-2">Username</label>
-                <div class="col-md-10">
-                    <input type="text" name="username" value="@Model.Username" class="form-control" />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-md-2">Email</label>
-                <div class="col-md-10">
-                    <input type="email" name="email" value="@Model.Email" class="form-control" />
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                <label class="control-label col-md-2">Phone Number</label>
-                <div class="col-md-10">
-                    <input type="tel" name="numberphone" value="@Model.Phone" class="form-control" />
-                </div>
-            </div>
-
-            <div class="form-group" id="passwordGroup" style="display:none">
-                <label class="control-label col-md-2">Password</label>
-                <div class="col-md-10">
-                    <input type="password" id="password" name="password" class="form-control" disabled />
-                </div>
-            </div>
-
-            <div class="form-group" id="confirmPasswordGroup" style="display: none">
-                <label class="control-label col-md-2">ConfirmPassword</label>
-                <div class="col-md-10">
-                    <input type="password" id="changepassword" name="changepassword" class="form-control" disabled />
-                </div>
-            </div>
-
-            <!-- Nút "Change Password" -->
-
-
-            <button type="button" id="changePasswordBtn" class="btn btn-primary">Change Password</button>
-
-            <!-- Nút "Cancel" (ẩn ban đầu) -->
-            <button type="button" id="cancelBtn" class="btn btn-secondary" style="display: none;">Cancel</button>
-            @ViewData["enterpassword"] @ViewData["samepassword"]
-
-            <div class="form-group mt-5">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" />
-                </div>
+            <div class="mt-4 text-center">
+                @Html.ActionLink(
+                    "← Back to List",
+                    "HotelIndex",
+                    "Hotel",
+                    null,
+                    new { @class = "btn btn-outline-secondary" }
+                )
             </div>
         </div>
-    }
-
-    <div>
-        @Html.ActionLink("Back to List", "HotelIndex", "Hotel")
     </div>
 </div>
+
 <script>
-    document.getElementById("changePasswordBtn").addEventListener("click", function () {
-        document.getElementById("passwordGroup").style.display = "block"; // Hiện ô Password
-        document.getElementById("confirmPasswordGroup").style.display = "block"; // Hiện ô Confirm Password
+    // Lấy ra các phần tử nút và nhóm trường mật khẩu
+    const toggleBtn = document.getElementById('togglePasswordFields'); // Nút "Change Password"
+    const cancelBtn = document.getElementById('cancelPasswordFields'); // Nút "Cancel"
+    const passwordGroups = document.querySelectorAll('.password-group'); // Tất cả các khối nhập mật khẩu
 
-        // Bật lại input (sửa lỗi ở đây)
-        document.getElementById("password").disabled = false;
-        document.getElementById("changepassword").disabled = false;
+    // Khi click nút "Change Password"
+    toggleBtn.addEventListener('click', () => {
+        // Hiện các trường mật khẩu (New Password & Confirm Password)
+        passwordGroups.forEach(group => group.style.display = 'block');
 
-        document.getElementById("changePasswordBtn").style.display = "none"; // Ẩn nút "Change Password"
-        document.getElementById("cancelBtn").style.display = "inline-block"; // Hiện nút "Cancel"
+        // Ẩn nút "Change Password"
+        toggleBtn.style.display = 'none';
+
+        // Hiện nút "Cancel"
+        cancelBtn.style.display = 'inline-block';
     });
 
-    document.getElementById("cancelBtn").addEventListener("click", function () {
-        document.getElementById("passwordGroup").style.display = "none"; // Ẩn ô Password
-        document.getElementById("confirmPasswordGroup").style.display = "none"; // Ẩn ô Confirm Password
+    // Khi click nút "Cancel"
+    cancelBtn.addEventListener('click', () => {
+        // Ẩn các trường mật khẩu
+        passwordGroups.forEach(group => group.style.display = 'none');
 
-        // Vô hiệu hóa input (sửa lỗi ở đây)
-        document.getElementById("password").disabled = true;
-        document.getElementById("changepassword").disabled = true;
+        // Hiện lại nút "Change Password"
+        toggleBtn.style.display = 'inline-block';
 
-        document.getElementById("changePasswordBtn").style.display = "inline-block"; // Hiện lại nút "Change Password"
-        document.getElementById("cancelBtn").style.display = "none"; // Ẩn nút "Cancel"
+        // Ẩn nút "Cancel"
+        cancelBtn.style.display = 'none';
+
+        // Xóa giá trị trong các ô nhập mật khẩu (phòng lỗi lưu giá trị)
+        document.getElementById('password').value = '';
+        document.getElementById('changepassword').value = '';
     });
-
 </script>
-<style>
-    .setting {
-        margin-left: 8%;
-    }
-</style>
