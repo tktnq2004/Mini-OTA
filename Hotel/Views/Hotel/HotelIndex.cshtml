@@ -271,6 +271,12 @@
         });
 
         map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+        fetch("/Hotel/GetAllHotels")
+            .then(res => res.json())
+            .then(hotels => {
+                hotels.forEach(h => addHotelMarker(h));
+            });
+
         map.scrollZoom.disable();
 
         const resetContainer = document.createElement("div");
@@ -305,11 +311,9 @@
                 const submenu = document.getElementById("region-" + regionId);
                 const isVisible = submenu.style.display === "block";
 
-                // Đóng tất cả province-submenu và hotel-submenu
                 document.querySelectorAll(".province-submenu").forEach(el => el.style.display = "none");
                 document.querySelectorAll(".hotel-submenu").forEach(el => el.style.display = "none");
 
-                // Toggle
                 if (!isVisible) {
                     submenu.style.display = "block";
                 }
@@ -320,39 +324,58 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".dropdown-item").forEach(hotel => {
+            hotel.addEventListener("click", function () {
+                const hotelId = parseInt(hotel.dataset.hotelId);
+                const provinceId = hotel.closest(".hotel-submenu")?.id?.replace("province-hotels-", "");
+                if (!provinceId) return;
+
+                fetch(`/Hotel/GetHotelsByProvince?provinceId=${provinceId}`)
+                    .then(res => res.json())
+                    .then(hotels => {
+                        clearAllMarkers();
+
+                        hotels.forEach(h => addHotelMarker(h));
+
+                        const marker = hotelMarkers[hotelId];
+                        if (marker) {
+                            marker.getElement().dispatchEvent(new Event("click"));
+                        }
+                    });
+
+                document.getElementById("dropdownHotelMenu").style.display = "none";
+            });
+        });
+    });
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".province-option").forEach(province => {
             province.addEventListener("click", function () {
                 const provinceId = province.dataset.provinceId;
                 const hotelList = document.getElementById("province-hotels-" + provinceId);
                 const isVisible = hotelList.style.display === "block";
 
-                // Đóng tất cả khách sạn trong cùng miền
                 const provinceList = province.closest(".province-submenu");
                 if (provinceList) {
                     provinceList.querySelectorAll(".hotel-submenu").forEach(el => el.style.display = "none");
                 }
 
-                // Toggle hotel submenu
                 if (!isVisible) {
                     hotelList.style.display = "block";
                 }
-
+                const provinceID = provinceId;
                 document.getElementById("dropdownHotelToggle").innerText = province.innerText;
 
-                // Gọi API lấy danh sách hotel
-                fetch(`/Hotel/GetHotelsByProvince?provinceId=${provinceId}`)
-                    .then(res => res.json())
-                    .then(hotels => {
-                        clearAllMarkers();
-                        hotels.forEach(h => addHotelMarker(h));
-                    });
             });
         });
 
         const nearbyBtn = document.getElementById("nearbyHotelsBtn");
         if (nearbyBtn) {
             nearbyBtn.addEventListener("click", function () {
-                if (hasTriggeredNearbySearch) return; // tránh gọi lại nhiều lần
+                if (hasTriggeredNearbySearch) return;
                 hasTriggeredNearbySearch = true;
 
                 if (!navigator.geolocation) {
@@ -373,7 +396,6 @@
                                     return;
                                 }
 
-                                // Ẩn các menu khác
                                 document.querySelectorAll(".province-submenu, .hotel-submenu").forEach(el => el.style.display = "none");
 
                                 const hotelList = document.getElementById("province-hotels-nearby");
@@ -398,53 +420,15 @@
                     },
                     function (error) {
                         alert("Không thể lấy vị trí: " + error.message);
-                        hasTriggeredNearbySearch = false; // Cho phép thử lại
+                        hasTriggeredNearbySearch = false;
                     }
                 );
             });
         }
-
     });
 </script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".dropdown-item").forEach(hotel => {
-            hotel.addEventListener("click", function () {
-                const hotelId = parseInt(hotel.dataset.hotelId);
-                const marker = hotelMarkers[hotelId];
 
-                if (marker) {
-                    marker.fire("click");
-                }
-
-                // Đóng toàn bộ dropdown
-                document.getElementById("dropdownHotelMenu").style.display = "none";
-                document.querySelectorAll(".province-submenu").forEach(el => el.style.display = "none");
-                document.querySelectorAll(".hotel-submenu").forEach(el => el.style.display = "none");
-            });
-        });
-    });
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".dropdown-item").forEach(hotel => {
-            hotel.addEventListener("click", function () {
-                const hotelId = parseInt(hotel.dataset.hotelId);
-                const marker = hotelMarkers[hotelId];
-
-                if (marker) {
-                    marker.getElement().dispatchEvent(new Event("click"));
-                }
-
-                document.getElementById("dropdownHotelMenu").style.display = "none";
-                document.querySelectorAll(".province-submenu, .hotel-submenu").forEach(el => el.style.display = "none");
-            });
-        });
-    });
-
-</script>
 
 
 <script>
@@ -459,6 +443,7 @@
             selectedHotelId = hotel.HotelID;
             document.getElementById("dropdownHotelToggle").textContent = hotel.HotelName;
             map.flyTo({ center: [hotel.Longitude, hotel.Latitude], zoom: 13 });
+            
 
             $.get("/Hotel/GetHotelDetail", { hotelId: hotel.HotelID }, html => {
                 $("#hotelDetailContent").html(html);
@@ -478,7 +463,6 @@
         if (!$(e.target).closest("#hotelDetailModal, .maplibregl-marker, #dropdownHotelToggle, #dropdownHotelMenu, #hotelSearchBtn").length) {
             if ($("#hotelDetailModal").is(":visible")) {
                 $("#hotelDetailModal").fadeOut();
-                map.flyTo({ center: initialLatLng, zoom: initialZoom });
             }
         }
     });

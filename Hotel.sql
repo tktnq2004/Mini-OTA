@@ -27,7 +27,7 @@ CREATE TABLE Users (
     Role NVARCHAR(10) DEFAULT 'Customer' CHECK (Role IN ('Admin', 'Customer'))
 );
 INSERT INTO Users (FullName, Email, Username, Password, Role) 
-VALUES ('admin', 'admin@gmail.com', 'admin', 'admin', 'Admin');
+VALUES ('admin', 'admin@gmail.com', 'admin', '$2a$11$mbavRwTjp9o9oHk1NJBvwugHzRiuUKJCCF2UXNNKmJDcmUi5OXbcq', 'Admin');
 GO
 
 CREATE TABLE Regions (
@@ -305,10 +305,53 @@ INSERT INTO Hotels (HotelName, Address, HotelImage, ProvinceID, Latitude, Longit
 (N'Fusion Original Saigon Centre', N'65 Le Loi, District 1, Ho Chi Minh City', 'https://example.com/images/fusion_saigon.jpg', 50, 10.7730, 106.7010),
 (N'Hotel de la Coupole - MGallery', N'1 Hoang Lien, Sapa, Lao Cai', 'https://example.com/images/delacoupole_sapa.jpg', 94, 22.3350, 103.8400),
 (N'Da Nang Mikazuki Japanese Resort & Spa', N'Xuan Thieu, Hoa Hiep Nam, Da Nang', 'https://example.com/images/mikazuki_danang.jpg', 43, 16.1000, 108.2000),
-(N'Mercure Dalat Resort', N'3 Nguyen Du, Dalat', 'https://example.com/images/mercure_dalat.jpg', 49, 11.9400, 108.4400);
+(N'Mercure Dalat Resort', N'3 Nguyen Du, Dalat', 'https://example.com/images/mercure_dalat.jpg', 49, 11.9400, 108.4400),
+-- Chèn 20 khách sạn ở TP. Hồ Chí Minh
+(N'Park Hyatt Saigon', N'2 Lam Son Square, District 1, Ho Chi Minh City', 'https://example.com/images/park_hyatt_saigon.jpg', 50, 10.7770, 106.7030),
+(N'Grand Hotel Saigon', N'8 Dong Khoi Street, District 1, Ho Chi Minh City', 'https://example.com/images/grand_saigon.jpg', 50, 10.7750, 106.7040),
+(N'The Myst Dong Khoi', N'6-8 Ho Huan Nghiep, District 1, Ho Chi Minh City', 'https://example.com/images/myst_dongkhoi.jpg', 50, 10.7760, 106.7060),
+(N'Vinpearl Landmark 81, Autograph Collection', N'720A Dien Bien Phu, Binh Thanh District, Ho Chi Minh City', 'https://example.com/images/vinpearl_landmark81.jpg', 50, 10.7960, 106.7210),
+(N'Sofitel Saigon Plaza', N'17 Le Duan Boulevard, District 1, Ho Chi Minh City', 'https://example.com/images/sofitel_saigon.jpg', 50, 10.7840, 106.7020),
+(N'Caravelle Saigon', N'19-23 Lam Son Square, District 1, Ho Chi Minh City', 'https://example.com/images/caravelle_saigon.jpg', 50, 10.7760, 106.7030),
+(N'New World Saigon Hotel', N'76 Le Lai Street, District 1, Ho Chi Minh City', 'https://example.com/images/newworld_saigon.jpg', 50, 10.7710, 106.6970),
+(N'Harmony Saigon Hotel & Spa', N'32A-34 Bui Thi Xuan, District 1, Ho Chi Minh City', 'https://example.com/images/harmony_saigon.jpg', 50, 10.7700, 106.6900),
+(N'Sherwood Suites', N'192-194 Nam Ky Khoi Nghia, District 3, Ho Chi Minh City', 'https://example.com/images/sherwood_suites.jpg', 50, 10.7860, 106.6880),
+(N'Villa Song Saigon', N'197/2 Nguyen Van Huong, District 2, Ho Chi Minh City', 'https://example.com/images/villa_song_saigon.jpg', 50, 10.8020, 106.7360),
+(N'An Lam Retreats Saigon River', N'21/4 Trung Village, Vinh Phu, Thuan An, Ho Chi Minh City', 'https://example.com/images/anlam_saigonriver.jpg', 50, 10.8500, 106.7160),
+(N'Fusion Suites Saigon', N'3-5 Suong Nguyet Anh, District 1, Ho Chi Minh City', 'https://example.com/images/fusion_suites_saigon.jpg', 50, 10.7690, 106.6900),
+(N'Liberty Central Saigon Riverside', N'17 Ton Duc Thang, District 1, Ho Chi Minh City', 'https://example.com/images/liberty_riverside.jpg', 50, 10.7800, 106.7070),
+(N'Silverland Jolie Hotel & Spa', N'4D Thi Sach, District 1, Ho Chi Minh City', 'https://example.com/images/silverland_jolie.jpg', 50, 10.7790, 106.7040),
+(N'Alagon D’antique Hotel & Spa', N'301-303 Ly Tu Trong, District 1, Ho Chi Minh City', 'https://example.com/images/alagon_dantique.jpg', 50, 10.7720, 106.6980),
+(N'Icon Saigon Luxury Hotel', N'65-67 Hai Ba Trung, District 1, Ho Chi Minh City', 'https://example.com/images/icon_saigon.jpg', 50, 10.7800, 106.7020),
+(N'Saigon Prince Hotel', N'63 Nguyen Hue, District 1, Ho Chi Minh City', 'https://example.com/images/saigon_prince.jpg', 50, 10.7740, 106.7040),
+(N'Eden Star Saigon Hotel', N'38 Bui Thi Xuan, District 1, Ho Chi Minh City', 'https://example.com/images/eden_star_saigon.jpg', 50, 10.7700, 106.6910),
+(N'Silverland Yen Hotel', N'111-113 Ly Tu Trong, District 1, Ho Chi Minh City', 'https://example.com/images/silverland_yen.jpg', 50, 10.7730, 106.6990),
+(N'Au Lac Legend Hotel', N'90 Nguyen Thi Minh Khai, District 3, Ho Chi Minh City', 'https://example.com/images/aulac_legend.jpg', 50, 10.7840, 106.6930),
+
+-- Chèn 20 khách sạn ở Hà Nội
+(N'Apricot Hotel', N'136 Hang Trong, Hoan Kiem, Hanoi', 'https://example.com/images/apricot_hanoi.jpg', 29, 21.0280, 105.8510),
+(N'Hotel du Parc Hanoi', N'84 Tran Nhan Tong, Hai Ba Trung, Hanoi', 'https://example.com/images/duparc_hanoi.jpg', 29, 21.0160, 105.8460),
+(N'Melia Hanoi', N'44B Ly Thuong Kiet, Hoan Kiem, Hanoi', 'https://example.com/images/melia_hanoi.jpg', 29, 21.0250, 105.8520),
+(N'JW Marriott Hotel Hanoi', N'8 Do Duc, Nam Tu Liem, Hanoi', 'https://example.com/images/jw_marriott_hanoi.jpg', 29, 21.0280, 105.7830),
+(N'Pan Pacific Hanoi', N'1 Thanh Nien, Ba Dinh, Hanoi', 'https://example.com/images/pan_pacific_hanoi.jpg', 29, 21.0450, 105.8400),
+(N'Fraser Suites Hanoi', N'51 Xuan Dieu, Tay Ho, Hanoi', 'https://example.com/images/fraser_suites_hanoi.jpg', 29, 21.0600, 105.8300),
+(N'Hanoi La Siesta Hotel & Spa', N'94 Ma May, Hoan Kiem, Hanoi', 'https://example.com/images/lasiesta_mamay_hanoi.jpg', 29, 21.0340, 105.8540),
+(N'The Oriental Jade Hotel', N'92-94 Hang Trong, Hoan Kiem, Hanoi', 'https://example.com/images/oriental_jade_hanoi.jpg', 29, 21.0280, 105.8500),
+(N'Sofitel Legend Metropole Hanoi', N'15 Ngo Quyen, Hoan Kiem, Hanoi', 'https://example.com/images/sofitel_metropole_hanoi.jpg', 29, 21.0251, 105.8557),
+(N'Hanoi Brilliant Hotel & Spa', N'44 Hang Trong, Hoan Kiem, Hanoi', 'https://example.com/images/brilliant_hanoi.jpg', 29, 21.0280, 105.8510),
+(N'Peridot Grand Hotel & Spa', N'33 Duong Thanh, Hoan Kiem, Hanoi', 'https://example.com/images/peridot_grand_hanoi.jpg', 29, 21.0290, 105.8470),
+(N'Hanoi Pearl Hotel', N'6 Bao Khanh, Hoan Kiem, Hanoi', 'https://example.com/images/hanoi_pearl.jpg', 29, 21.0310, 105.8520),
+(N'The Lapis Hotel', N'21 Tran Hung Dao, Hoan Kiem, Hanoi', 'https://example.com/images/lapis_hanoi.jpg', 29, 21.0220, 105.8520),
+(N'Elegant Suites Westlake', N'10B Dang Thai Mai, Tay Ho, Hanoi', 'https://example.com/images/elegant_suites_hanoi.jpg', 29, 21.0580, 105.8280),
+(N'Silk Path Grand Hue Hotel', N'2 Le Loi, Hue, Hanoi', 'https://example.com/images/silkpath_hue_hanoi.jpg', 29, 21.0260, 105.8490),
+(N'Hanoi La Storia Hotel', N'45-47 Hang Dong, Hoan Kiem, Hanoi', 'https://example.com/images/lastoria_hanoi.jpg', 29, 21.0320, 105.8490),
+(N'Mövenpick Hotel Hanoi', N'83A Ly Thuong Kiet, Hoan Kiem, Hanoi', 'https://example.com/images/movenpick_hanoi.jpg', 29, 21.0240, 105.8520),
+(N'Hanoi Emerald Waters Hotel & Spa', N'47 Lo Su, Hoan Kiem, Hanoi', 'https://example.com/images/emerald_waters_hanoi.jpg', 29, 21.0330, 105.8540),
+(N'The Light Hotel', N'128-130 Hang Bong, Hoan Kiem, Hanoi', 'https://example.com/images/light_hanoi.jpg', 29, 21.0290, 105.8480),
+(N'Hanoi Elite Hotel', N'10/50 Dao Duy Tu, Hoan Kiem, Hanoi', 'https://example.com/images/elite_hanoi.jpg', 29, 21.0350, 105.8530);
 -- Chèn dữ liệu vào bảng Rooms
 DECLARE @HotelID INT = 1;
-WHILE @HotelID <= 25
+WHILE @HotelID <= 65
 BEGIN
     INSERT INTO Rooms (HotelID, RoomTypeId, RoomName, Price, Capacity, Thumnail, Description) VALUES
     (@HotelID, 1, 'Standard Room ' + CAST(@HotelID AS NVARCHAR), 100.00, 2, 'https://example.com/images/room_standard_' + CAST(@HotelID AS NVARCHAR) + '.jpg', 'Cozy standard room with modern amenities'),
@@ -321,7 +364,7 @@ END;
 
 -- Chèn dữ liệu vào bảng RoomImages
 DECLARE @RoomID INT = 1;
-WHILE @RoomID <= 125 -- 25 khách sạn x 5 phòng = 125 phòng
+WHILE @RoomID <= (65 * 5) -- 25 khách sạn x 5 phòng = 125 phòng
 BEGIN
     INSERT INTO RoomImages (RoomID, ImageURL) VALUES
     (@RoomID, 'https://example.com/images/room_image_' + CAST(@RoomID AS NVARCHAR) + '.jpg');
