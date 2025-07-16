@@ -27,17 +27,23 @@
                             <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
                         </div>
 
-                        <button type="submit" class="btn btn-dark w-100">Login</button>
+                        <button type="submit" class="btn btn-dark w-100 mb-3">Login</button>
                     }
-                </div>
-                <div class="mt-4 text-center">
-                    @Html.ActionLink(
-                        "← Back to List",
-                        "HotelIndex",
-                        "Hotel",
-                        null,
-                        new { @class = "btn btn-outline-secondary" }
-                    )
+
+                    <a href="/User/ExternalLogin?provider=Google&returnUrl=/Hotel/HotelIndex" class="btn btn-outline-danger w-100 mb-3">
+                        <img src="/Content/images/logo/gglogo.png" alt="Google Icon" style="height:20px; vertical-align:middle; margin-right:8px;">
+                        Đăng nhập với Google
+                    </a>
+
+                    <div class="mt-4 text-center">
+                        @Html.ActionLink(
+                            "← Back to List",
+                            "HotelIndex",
+                            "Hotel",
+                            null,
+                            new { @class = "btn btn-outline-secondary" }
+                        )
+                    </div>
                 </div>
             </div>
         </div>

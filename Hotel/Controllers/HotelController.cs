@@ -69,7 +69,6 @@ namespace Hotel.Controllers
             return Json(hotels, JsonRequestBehavior.AllowGet);
         }
 
-
         public JsonResult GetAllHotels()
         {
             var hotels = db.Hotels.Select(h => new
