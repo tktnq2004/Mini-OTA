@@ -2,7 +2,6 @@
 @{
     var currentHotel = ViewBag.CurrentHotel as Hotel.Models.HotelModel.HotelModel;
 }
-
 @if (currentHotel != null)
 {
     <div class="card mb-2 shadow-sm border border-primary bg-light-subtle">
@@ -36,21 +35,28 @@
                         </div>
                     }
 
-                    <!-- Views -->
-                    @if (currentHotel.Views?.Any() == true)
-                    {
-                        <div class="small text-muted">
-                            <strong>View:</strong>
-                            <div class="d-flex flex-wrap gap-1 mt-1">
-                                @foreach (var v in currentHotel.Views.Take(2))
-                                {
-                                    <span title="@v.ViewName">
-                                        <i class="bi @v.ViewIcon"></i>
-                                    </span>
-                                }
+                    <!-- Views + Button -->
+                    <div class="d-flex justify-content-between align-items-center mt-1">
+                        @if (currentHotel.Views?.Any() == true)
+                        {
+                            <div class="small text-muted">
+                                <strong>View:</strong>
+                                <div class="d-flex flex-wrap gap-1 mt-1">
+                                    @foreach (var v in currentHotel.Views.Take(2))
+                                    {
+                                        <span title="@v.ViewName">
+                                            <i class="bi @v.ViewIcon"></i>
+                                        </span>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                    }
+                        }
+
+                    <button class="hotelSearchBtn btn btn-sm btn-outline-primary ms-2"
+                            data-hotel-id="@currentHotel.HotelID">
+                        Check
+                    </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,48 +66,48 @@
 <!-- Các khách sạn còn lại -->
 @foreach (var hotel in Model)
 {
-    <div class="card mb-2 shadow-sm border-0">
-        <div class="row g-0">
-            <div class="col-4">
-                <img src="@hotel.HotelImage" class="img-fluid rounded-start" style="height: 100%; object-fit: cover;" />
-            </div>
-            <div class="col-8">
-                <div class="card-body py-2 px-2">
-                    <h6 class="card-title text-primary mb-1">@hotel.HotelName</h6>
-                    <p class="text-muted small mb-1">
-                        <i class="bi bi-geo-alt-fill"></i> @hotel.Address
-                    </p>
-                    @if (hotel.Amenities?.Any() == true)
-                    {
-                        <div class="small text-muted mb-1">
-                            <strong>Amenities:</strong>
-                            <div class="d-flex flex-wrap gap-1 mt-1">
-                                @foreach (var a in hotel.Amenities.Take(3))
-                                {
-                                    <span title="@a.AmenityName">
-                                        <i class="bi @a.AmenityIcon"></i>
-                                    </span>
-                                }
-                            </div>
-                        </div>
-                    }
+   <div class="card mb-2 shadow-sm border-0 hotel-card" data-hotel-id="@hotel.HotelID" style="cursor: pointer;">
+       <div class="row g-0">
+           <div class="col-4">
+               <img src="@hotel.HotelImage" class="img-fluid rounded-start" style="height: 100%; object-fit: cover;" />
+           </div>
+           <div class="col-8">
+               <div class="card-body py-2 px-2">
+                   <h6 class="card-title text-primary mb-1">@hotel.HotelName</h6>
+                   <p class="text-muted small mb-1">
+                       <i class="bi bi-geo-alt-fill"></i> @hotel.Address
+                   </p>
+                   @if (hotel.Amenities?.Any() == true)
+                   {
+                       <div class="small text-muted mb-1">
+                           <strong>Amenities:</strong>
+                           <div class="d-flex flex-wrap gap-1 mt-1">
+                               @foreach (var a in hotel.Amenities.Take(3))
+                               {
+                                   <span title="@a.AmenityName">
+                                       <i class="bi @a.AmenityIcon"></i>
+                                   </span>
+                               }
+                           </div>
+                       </div>
+                   }
 
-                    @if (hotel.Views?.Any() == true)
-                    {
-                        <div class="small text-muted">
-                            <strong>View:</strong>
-                            <div class="d-flex flex-wrap gap-1 mt-1">
-                                @foreach (var v in hotel.Views.Take(2))
-                                {
-                                    <span title="@v.ViewName">
-                                        <i class="bi @v.ViewIcon"></i>
-                                    </span>
-                                }
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+                   @if (hotel.Views?.Any() == true)
+                   {
+                       <div class="small text-muted">
+                           <strong>View:</strong>
+                           <div class="d-flex flex-wrap gap-1 mt-1">
+                               @foreach (var v in hotel.Views.Take(2))
+                               {
+                                   <span title="@v.ViewName">
+                                       <i class="bi @v.ViewIcon"></i>
+                                   </span>
+                               }
+                           </div>
+                       </div>
+                   }
+               </div>
+           </div>
+       </div>
+   </div>
 }

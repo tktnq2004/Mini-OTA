@@ -143,7 +143,7 @@ namespace Hotel.Controllers
 
 
         [HttpGet]
-        public ActionResult GetNearbyHotels(decimal latitude, decimal longitude, decimal radiusKm = 50)
+        public ActionResult GetNearbyHotels(decimal latitude, decimal longitude, decimal radiusKm = 10)
         {
             try
             {
