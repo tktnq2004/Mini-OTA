@@ -5,7 +5,9 @@
     padding-right: 15px;
     background-color: #fff; /* nền content trắng */
 }
-
+body {
+    font-family: 'Inter', sans-serif;
+}
 /* Override bootstrap horizontal description lists */
 .dl-horizontal dt {
     white-space: normal;

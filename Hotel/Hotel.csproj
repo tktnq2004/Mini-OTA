@@ -335,9 +335,9 @@
     <Content Include="Views\Hotel\HotelDetail.cshtml" />
     <Content Include="Views\Hotel\HotelIndex.cshtml" />
     <Content Include="Views\Room\RoomIndex.cshtml" />
-    <Content Include="Views\Hotel\HotelMain.cshtml" />
     <Content Include="Views\Menu\AboutUs.cshtml" />
     <Content Include="Views\Menu\Services.cshtml" />
+    <Content Include="Views\Menu\MainMenu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -9,6 +9,10 @@ namespace Hotel.Controllers
     public class MenuController : Controller
     {
         // GET: Menu
+        public ActionResult MainMenu()
+        {
+            return View();
+        }
         public ActionResult AboutUs()
         {
             return View();

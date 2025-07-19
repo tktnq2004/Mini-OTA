@@ -1,4 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Hotel" Class="dbHotelDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="dbo.Amenities" Member="Amenities">
+    <Type Name="Amenity">
+      <Column Name="AmenityID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AmenityName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="AmenityIcon" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Association Name="Amenity_RoomAmenity" Member="RoomAmenities" ThisKey="AmenityID" OtherKey="AmenityID" Type="RoomAmenity" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Wishlist" Member="Wishlists">
+    <Type Name="Wishlist">
+      <Column Name="WishListID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RoomID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Room_Wishlist" Member="Room" ThisKey="RoomID" OtherKey="RoomID" Type="Room" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="User_Wishlist" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.Bookings" Member="Bookings">
     <Type Name="Booking">
       <Column Name="BookingID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -13,15 +30,6 @@
       <Column Name="ExpirationTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Association Name="Room_Booking" Member="Room" ThisKey="RoomID" OtherKey="RoomID" Type="Room" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="User_Booking" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.Wishlist" Member="Wishlists">
-    <Type Name="Wishlist">
-      <Column Name="WishListID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="RoomID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Association Name="Room_Wishlist" Member="Room" ThisKey="RoomID" OtherKey="RoomID" Type="Room" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
-      <Association Name="User_Wishlist" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.DiscountDetails" Member="DiscountDetails">
@@ -39,7 +47,6 @@
       <Column Name="DiscountPercent" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="StartDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
       <Column Name="EndDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
-      <Column Name="Images" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Association Name="Discount_DiscountDetail" Member="DiscountDetails" ThisKey="DiscountID" OtherKey="DiscountID" Type="DiscountDetail" />
     </Type>
   </Table>
@@ -62,8 +69,6 @@
       <Column Name="ProvinceID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="ProvinceName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
       <Column Name="RegionID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Latitude" Type="System.Decimal" DbType="Decimal(9,6) NOT NULL" CanBeNull="false" />
-      <Column Name="Longitude" Type="System.Decimal" DbType="Decimal(9,6) NOT NULL" CanBeNull="false" />
       <Association Name="Province_Hotel" Member="Hotels" ThisKey="ProvinceID" OtherKey="ProvinceID" Type="Hotel" />
       <Association Name="Region_Province" Member="Region" ThisKey="RegionID" OtherKey="RegionID" Type="Region" IsForeignKey="true" />
     </Type>
@@ -89,6 +94,14 @@
       <Association Name="User_Review" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.RoomAmenities" Member="RoomAmenities">
+    <Type Name="RoomAmenity">
+      <Column Name="RoomID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AmenityID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Amenity_RoomAmenity" Member="Amenity" ThisKey="AmenityID" OtherKey="AmenityID" Type="Amenity" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Room_RoomAmenity" Member="Room" ThisKey="RoomID" OtherKey="RoomID" Type="Room" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.RoomImages" Member="RoomImages">
     <Type Name="RoomImage">
       <Column Name="ImageID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -105,12 +118,18 @@
       <Column Name="RoomName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
       <Column Name="Price" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
       <Column Name="Capacity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Thumnail" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="AllowSmoking" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="AllowPet" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="CancellationPolicy" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Association Name="Room_Booking" Member="Bookings" ThisKey="RoomID" OtherKey="RoomID" Type="Booking" />
       <Association Name="Room_Wishlist" Member="Wishlists" ThisKey="RoomID" OtherKey="RoomID" Type="Wishlist" />
+      <Association Name="Room_Booking" Member="Bookings" ThisKey="RoomID" OtherKey="RoomID" Type="Booking" />
       <Association Name="Room_DiscountDetail" Member="DiscountDetails" ThisKey="RoomID" OtherKey="RoomID" Type="DiscountDetail" />
       <Association Name="Room_Review" Member="Reviews" ThisKey="RoomID" OtherKey="RoomID" Type="Review" />
+      <Association Name="Room_RoomAmenity" Member="RoomAmenities" ThisKey="RoomID" OtherKey="RoomID" Type="RoomAmenity" />
       <Association Name="Room_RoomImage" Member="RoomImages" ThisKey="RoomID" OtherKey="RoomID" Type="RoomImage" />
+      <Association Name="Room_RoomView" Member="RoomViews" ThisKey="RoomID" OtherKey="RoomID" Type="RoomView" />
       <Association Name="Hotel_Room" Member="Hotel" ThisKey="HotelID" OtherKey="HotelID" Type="Hotel" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="RoomType_Room" Member="RoomType" ThisKey="RoomTypeId" OtherKey="RoomTypeId" Type="RoomType" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
@@ -122,6 +141,14 @@
       <Association Name="RoomType_Room" Member="Rooms" ThisKey="RoomTypeId" OtherKey="RoomTypeId" Type="Room" />
     </Type>
   </Table>
+  <Table Name="dbo.RoomViews" Member="RoomViews">
+    <Type Name="RoomView">
+      <Column Name="RoomID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ViewID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Room_RoomView" Member="Room" ThisKey="RoomID" OtherKey="RoomID" Type="Room" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="View_RoomView" Member="View" ThisKey="ViewID" OtherKey="ViewID" Type="View" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.Users" Member="Users">
     <Type Name="User">
       <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -131,9 +158,17 @@
       <Column Name="Password" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
       <Column Name="Phone" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Column Name="Role" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
-      <Association Name="User_Booking" Member="Bookings" ThisKey="UserID" OtherKey="UserID" Type="Booking" />
       <Association Name="User_Wishlist" Member="Wishlists" ThisKey="UserID" OtherKey="UserID" Type="Wishlist" />
+      <Association Name="User_Booking" Member="Bookings" ThisKey="UserID" OtherKey="UserID" Type="Booking" />
       <Association Name="User_Review" Member="Reviews" ThisKey="UserID" OtherKey="UserID" Type="Review" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Views" Member="Views">
+    <Type Name="View">
+      <Column Name="ViewID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ViewName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="ViewIcon" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Association Name="View_RoomView" Member="RoomViews" ThisKey="ViewID" OtherKey="ViewID" Type="RoomView" />
     </Type>
   </Table>
 </Database>

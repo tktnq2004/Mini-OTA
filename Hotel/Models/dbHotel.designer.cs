@@ -9,13 +9,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-/*
-      public dbHotelDataContext():
-base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelConnectionString"].ConnectionString, mappingSource)
-  {
-    OnCreated();
-}
--*/
 namespace Hotel.Models
 {
 	using System.Data.Linq;
@@ -37,12 +30,15 @@ namespace Hotel.Models
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertBooking(Booking instance);
-    partial void UpdateBooking(Booking instance);
-    partial void DeleteBooking(Booking instance);
+    partial void InsertAmenity(Amenity instance);
+    partial void UpdateAmenity(Amenity instance);
+    partial void DeleteAmenity(Amenity instance);
     partial void InsertWishlist(Wishlist instance);
     partial void UpdateWishlist(Wishlist instance);
     partial void DeleteWishlist(Wishlist instance);
+    partial void InsertBooking(Booking instance);
+    partial void UpdateBooking(Booking instance);
+    partial void DeleteBooking(Booking instance);
     partial void InsertDiscountDetail(DiscountDetail instance);
     partial void UpdateDiscountDetail(DiscountDetail instance);
     partial void DeleteDiscountDetail(DiscountDetail instance);
@@ -61,6 +57,9 @@ namespace Hotel.Models
     partial void InsertReview(Review instance);
     partial void UpdateReview(Review instance);
     partial void DeleteReview(Review instance);
+    partial void InsertRoomAmenity(RoomAmenity instance);
+    partial void UpdateRoomAmenity(RoomAmenity instance);
+    partial void DeleteRoomAmenity(RoomAmenity instance);
     partial void InsertRoomImage(RoomImage instance);
     partial void UpdateRoomImage(RoomImage instance);
     partial void DeleteRoomImage(RoomImage instance);
@@ -70,9 +69,15 @@ namespace Hotel.Models
     partial void InsertRoomType(RoomType instance);
     partial void UpdateRoomType(RoomType instance);
     partial void DeleteRoomType(RoomType instance);
+    partial void InsertRoomView(RoomView instance);
+    partial void UpdateRoomView(RoomView instance);
+    partial void DeleteRoomView(RoomView instance);
     partial void InsertUser(User instance);
     partial void UpdateUser(User instance);
     partial void DeleteUser(User instance);
+    partial void InsertView(View instance);
+    partial void UpdateView(View instance);
+    partial void DeleteView(View instance);
     #endregion
 		
 		public dbHotelDataContext(string connection) : 
@@ -105,11 +110,11 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
             OnCreated();
         }
 
-        public System.Data.Linq.Table<Booking> Bookings
+        public System.Data.Linq.Table<Amenity> Amenities
 		{
 			get
 			{
-				return this.GetTable<Booking>();
+				return this.GetTable<Amenity>();
 			}
 		}
 		
@@ -118,6 +123,14 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			get
 			{
 				return this.GetTable<Wishlist>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Booking> Bookings
+		{
+			get
+			{
+				return this.GetTable<Booking>();
 			}
 		}
 		
@@ -169,6 +182,14 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
+		public System.Data.Linq.Table<RoomAmenity> RoomAmenities
+		{
+			get
+			{
+				return this.GetTable<RoomAmenity>();
+			}
+		}
+		
 		public System.Data.Linq.Table<RoomImage> RoomImages
 		{
 			get
@@ -193,11 +214,357 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
+		public System.Data.Linq.Table<RoomView> RoomViews
+		{
+			get
+			{
+				return this.GetTable<RoomView>();
+			}
+		}
+		
 		public System.Data.Linq.Table<User> Users
 		{
 			get
 			{
 				return this.GetTable<User>();
+			}
+		}
+		
+		public System.Data.Linq.Table<View> Views
+		{
+			get
+			{
+				return this.GetTable<View>();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Amenities")]
+	public partial class Amenity : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AmenityID;
+		
+		private string _AmenityName;
+		
+		private string _AmenityIcon;
+		
+		private EntitySet<RoomAmenity> _RoomAmenities;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAmenityIDChanging(int value);
+    partial void OnAmenityIDChanged();
+    partial void OnAmenityNameChanging(string value);
+    partial void OnAmenityNameChanged();
+    partial void OnAmenityIconChanging(string value);
+    partial void OnAmenityIconChanged();
+    #endregion
+		
+		public Amenity()
+		{
+			this._RoomAmenities = new EntitySet<RoomAmenity>(new Action<RoomAmenity>(this.attach_RoomAmenities), new Action<RoomAmenity>(this.detach_RoomAmenities));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AmenityID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int AmenityID
+		{
+			get
+			{
+				return this._AmenityID;
+			}
+			set
+			{
+				if ((this._AmenityID != value))
+				{
+					this.OnAmenityIDChanging(value);
+					this.SendPropertyChanging();
+					this._AmenityID = value;
+					this.SendPropertyChanged("AmenityID");
+					this.OnAmenityIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AmenityName", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		public string AmenityName
+		{
+			get
+			{
+				return this._AmenityName;
+			}
+			set
+			{
+				if ((this._AmenityName != value))
+				{
+					this.OnAmenityNameChanging(value);
+					this.SendPropertyChanging();
+					this._AmenityName = value;
+					this.SendPropertyChanged("AmenityName");
+					this.OnAmenityNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AmenityIcon", DbType="NVarChar(100)")]
+		public string AmenityIcon
+		{
+			get
+			{
+				return this._AmenityIcon;
+			}
+			set
+			{
+				if ((this._AmenityIcon != value))
+				{
+					this.OnAmenityIconChanging(value);
+					this.SendPropertyChanging();
+					this._AmenityIcon = value;
+					this.SendPropertyChanged("AmenityIcon");
+					this.OnAmenityIconChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Amenity_RoomAmenity", Storage="_RoomAmenities", ThisKey="AmenityID", OtherKey="AmenityID")]
+		public EntitySet<RoomAmenity> RoomAmenities
+		{
+			get
+			{
+				return this._RoomAmenities;
+			}
+			set
+			{
+				this._RoomAmenities.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_RoomAmenities(RoomAmenity entity)
+		{
+			this.SendPropertyChanging();
+			entity.Amenity = this;
+		}
+		
+		private void detach_RoomAmenities(RoomAmenity entity)
+		{
+			this.SendPropertyChanging();
+			entity.Amenity = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Wishlist")]
+	public partial class Wishlist : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _WishListID;
+		
+		private int _UserID;
+		
+		private int _RoomID;
+		
+		private EntityRef<Room> _Room;
+		
+		private EntityRef<User> _User;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnWishListIDChanging(int value);
+    partial void OnWishListIDChanged();
+    partial void OnUserIDChanging(int value);
+    partial void OnUserIDChanged();
+    partial void OnRoomIDChanging(int value);
+    partial void OnRoomIDChanged();
+    #endregion
+		
+		public Wishlist()
+		{
+			this._Room = default(EntityRef<Room>);
+			this._User = default(EntityRef<User>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WishListID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int WishListID
+		{
+			get
+			{
+				return this._WishListID;
+			}
+			set
+			{
+				if ((this._WishListID != value))
+				{
+					this.OnWishListIDChanging(value);
+					this.SendPropertyChanging();
+					this._WishListID = value;
+					this.SendPropertyChanged("WishListID");
+					this.OnWishListIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="Int NOT NULL")]
+		public int UserID
+		{
+			get
+			{
+				return this._UserID;
+			}
+			set
+			{
+				if ((this._UserID != value))
+				{
+					if (this._User.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUserIDChanging(value);
+					this.SendPropertyChanging();
+					this._UserID = value;
+					this.SendPropertyChanged("UserID");
+					this.OnUserIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoomID", DbType="Int NOT NULL")]
+		public int RoomID
+		{
+			get
+			{
+				return this._RoomID;
+			}
+			set
+			{
+				if ((this._RoomID != value))
+				{
+					if (this._Room.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRoomIDChanging(value);
+					this.SendPropertyChanging();
+					this._RoomID = value;
+					this.SendPropertyChanged("RoomID");
+					this.OnRoomIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_Wishlist", Storage="_Room", ThisKey="RoomID", OtherKey="RoomID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Room Room
+		{
+			get
+			{
+				return this._Room.Entity;
+			}
+			set
+			{
+				Room previousValue = this._Room.Entity;
+				if (((previousValue != value) 
+							|| (this._Room.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Room.Entity = null;
+						previousValue.Wishlists.Remove(this);
+					}
+					this._Room.Entity = value;
+					if ((value != null))
+					{
+						value.Wishlists.Add(this);
+						this._RoomID = value.RoomID;
+					}
+					else
+					{
+						this._RoomID = default(int);
+					}
+					this.SendPropertyChanged("Room");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Wishlist", Storage="_User", ThisKey="UserID", OtherKey="UserID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public User User
+		{
+			get
+			{
+				return this._User.Entity;
+			}
+			set
+			{
+				User previousValue = this._User.Entity;
+				if (((previousValue != value) 
+							|| (this._User.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._User.Entity = null;
+						previousValue.Wishlists.Remove(this);
+					}
+					this._User.Entity = value;
+					if ((value != null))
+					{
+						value.Wishlists.Add(this);
+						this._UserID = value.UserID;
+					}
+					else
+					{
+						this._UserID = default(int);
+					}
+					this.SendPropertyChanged("User");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}
@@ -562,198 +929,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Wishlist")]
-	public partial class Wishlist : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _WishListID;
-		
-		private int _UserID;
-		
-		private int _RoomID;
-		
-		private EntityRef<Room> _Room;
-		
-		private EntityRef<User> _User;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnWishListIDChanging(int value);
-    partial void OnWishListIDChanged();
-    partial void OnUserIDChanging(int value);
-    partial void OnUserIDChanged();
-    partial void OnRoomIDChanging(int value);
-    partial void OnRoomIDChanged();
-    #endregion
-		
-		public Wishlist()
-		{
-			this._Room = default(EntityRef<Room>);
-			this._User = default(EntityRef<User>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WishListID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int WishListID
-		{
-			get
-			{
-				return this._WishListID;
-			}
-			set
-			{
-				if ((this._WishListID != value))
-				{
-					this.OnWishListIDChanging(value);
-					this.SendPropertyChanging();
-					this._WishListID = value;
-					this.SendPropertyChanged("WishListID");
-					this.OnWishListIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="Int NOT NULL")]
-		public int UserID
-		{
-			get
-			{
-				return this._UserID;
-			}
-			set
-			{
-				if ((this._UserID != value))
-				{
-					if (this._User.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnUserIDChanging(value);
-					this.SendPropertyChanging();
-					this._UserID = value;
-					this.SendPropertyChanged("UserID");
-					this.OnUserIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoomID", DbType="Int NOT NULL")]
-		public int RoomID
-		{
-			get
-			{
-				return this._RoomID;
-			}
-			set
-			{
-				if ((this._RoomID != value))
-				{
-					if (this._Room.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnRoomIDChanging(value);
-					this.SendPropertyChanging();
-					this._RoomID = value;
-					this.SendPropertyChanged("RoomID");
-					this.OnRoomIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_Wishlist", Storage="_Room", ThisKey="RoomID", OtherKey="RoomID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
-		public Room Room
-		{
-			get
-			{
-				return this._Room.Entity;
-			}
-			set
-			{
-				Room previousValue = this._Room.Entity;
-				if (((previousValue != value) 
-							|| (this._Room.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Room.Entity = null;
-						previousValue.Wishlists.Remove(this);
-					}
-					this._Room.Entity = value;
-					if ((value != null))
-					{
-						value.Wishlists.Add(this);
-						this._RoomID = value.RoomID;
-					}
-					else
-					{
-						this._RoomID = default(int);
-					}
-					this.SendPropertyChanged("Room");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Wishlist", Storage="_User", ThisKey="UserID", OtherKey="UserID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
-		public User User
-		{
-			get
-			{
-				return this._User.Entity;
-			}
-			set
-			{
-				User previousValue = this._User.Entity;
-				if (((previousValue != value) 
-							|| (this._User.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._User.Entity = null;
-						previousValue.Wishlists.Remove(this);
-					}
-					this._User.Entity = value;
-					if ((value != null))
-					{
-						value.Wishlists.Add(this);
-						this._UserID = value.UserID;
-					}
-					else
-					{
-						this._UserID = default(int);
-					}
-					this.SendPropertyChanged("User");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.DiscountDetails")]
 	public partial class DiscountDetail : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -960,8 +1135,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		
 		private System.DateTime _EndDate;
 		
-		private string _Images;
-		
 		private EntitySet<DiscountDetail> _DiscountDetails;
 		
     #region Extensibility Method Definitions
@@ -976,8 +1149,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     partial void OnStartDateChanged();
     partial void OnEndDateChanging(System.DateTime value);
     partial void OnEndDateChanged();
-    partial void OnImagesChanging(string value);
-    partial void OnImagesChanged();
     #endregion
 		
 		public Discount()
@@ -1062,26 +1233,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 					this._EndDate = value;
 					this.SendPropertyChanged("EndDate");
 					this.OnEndDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Images", DbType="NVarChar(MAX)")]
-		public string Images
-		{
-			get
-			{
-				return this._Images;
-			}
-			set
-			{
-				if ((this._Images != value))
-				{
-					this.OnImagesChanging(value);
-					this.SendPropertyChanging();
-					this._Images = value;
-					this.SendPropertyChanged("Images");
-					this.OnImagesChanged();
 				}
 			}
 		}
@@ -1447,10 +1598,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		
 		private int _RegionID;
 		
-		private decimal _Latitude;
-		
-		private decimal _Longitude;
-		
 		private EntitySet<Hotel> _Hotels;
 		
 		private EntityRef<Region> _Region;
@@ -1465,10 +1612,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     partial void OnProvinceNameChanged();
     partial void OnRegionIDChanging(int value);
     partial void OnRegionIDChanged();
-    partial void OnLatitudeChanging(decimal value);
-    partial void OnLatitudeChanged();
-    partial void OnLongitudeChanging(decimal value);
-    partial void OnLongitudeChanged();
     #endregion
 		
 		public Province()
@@ -1538,46 +1681,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 					this._RegionID = value;
 					this.SendPropertyChanged("RegionID");
 					this.OnRegionIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Latitude", DbType="Decimal(9,6) NOT NULL")]
-		public decimal Latitude
-		{
-			get
-			{
-				return this._Latitude;
-			}
-			set
-			{
-				if ((this._Latitude != value))
-				{
-					this.OnLatitudeChanging(value);
-					this.SendPropertyChanging();
-					this._Latitude = value;
-					this.SendPropertyChanged("Latitude");
-					this.OnLatitudeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Longitude", DbType="Decimal(9,6) NOT NULL")]
-		public decimal Longitude
-		{
-			get
-			{
-				return this._Longitude;
-			}
-			set
-			{
-				if ((this._Longitude != value))
-				{
-					this.OnLongitudeChanging(value);
-					this.SendPropertyChanging();
-					this._Longitude = value;
-					this.SendPropertyChanged("Longitude");
-					this.OnLongitudeChanged();
 				}
 			}
 		}
@@ -2105,6 +2208,174 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.RoomAmenities")]
+	public partial class RoomAmenity : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _RoomID;
+		
+		private int _AmenityID;
+		
+		private EntityRef<Amenity> _Amenity;
+		
+		private EntityRef<Room> _Room;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnRoomIDChanging(int value);
+    partial void OnRoomIDChanged();
+    partial void OnAmenityIDChanging(int value);
+    partial void OnAmenityIDChanged();
+    #endregion
+		
+		public RoomAmenity()
+		{
+			this._Amenity = default(EntityRef<Amenity>);
+			this._Room = default(EntityRef<Room>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoomID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int RoomID
+		{
+			get
+			{
+				return this._RoomID;
+			}
+			set
+			{
+				if ((this._RoomID != value))
+				{
+					if (this._Room.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRoomIDChanging(value);
+					this.SendPropertyChanging();
+					this._RoomID = value;
+					this.SendPropertyChanged("RoomID");
+					this.OnRoomIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AmenityID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int AmenityID
+		{
+			get
+			{
+				return this._AmenityID;
+			}
+			set
+			{
+				if ((this._AmenityID != value))
+				{
+					if (this._Amenity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAmenityIDChanging(value);
+					this.SendPropertyChanging();
+					this._AmenityID = value;
+					this.SendPropertyChanged("AmenityID");
+					this.OnAmenityIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Amenity_RoomAmenity", Storage="_Amenity", ThisKey="AmenityID", OtherKey="AmenityID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Amenity Amenity
+		{
+			get
+			{
+				return this._Amenity.Entity;
+			}
+			set
+			{
+				Amenity previousValue = this._Amenity.Entity;
+				if (((previousValue != value) 
+							|| (this._Amenity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Amenity.Entity = null;
+						previousValue.RoomAmenities.Remove(this);
+					}
+					this._Amenity.Entity = value;
+					if ((value != null))
+					{
+						value.RoomAmenities.Add(this);
+						this._AmenityID = value.AmenityID;
+					}
+					else
+					{
+						this._AmenityID = default(int);
+					}
+					this.SendPropertyChanged("Amenity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_RoomAmenity", Storage="_Room", ThisKey="RoomID", OtherKey="RoomID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Room Room
+		{
+			get
+			{
+				return this._Room.Entity;
+			}
+			set
+			{
+				Room previousValue = this._Room.Entity;
+				if (((previousValue != value) 
+							|| (this._Room.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Room.Entity = null;
+						previousValue.RoomAmenities.Remove(this);
+					}
+					this._Room.Entity = value;
+					if ((value != null))
+					{
+						value.RoomAmenities.Add(this);
+						this._RoomID = value.RoomID;
+					}
+					else
+					{
+						this._RoomID = default(int);
+					}
+					this.SendPropertyChanged("Room");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.RoomImages")]
 	public partial class RoomImage : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -2274,17 +2545,29 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		
 		private int _Capacity;
 		
+		private string _Thumnail;
+		
+		private System.Nullable<bool> _AllowSmoking;
+		
+		private System.Nullable<bool> _AllowPet;
+		
+		private string _CancellationPolicy;
+		
 		private string _Description;
 		
-		private EntitySet<Booking> _Bookings;
-		
 		private EntitySet<Wishlist> _Wishlists;
+		
+		private EntitySet<Booking> _Bookings;
 		
 		private EntitySet<DiscountDetail> _DiscountDetails;
 		
 		private EntitySet<Review> _Reviews;
 		
+		private EntitySet<RoomAmenity> _RoomAmenities;
+		
 		private EntitySet<RoomImage> _RoomImages;
+		
+		private EntitySet<RoomView> _RoomViews;
 		
 		private EntityRef<Hotel> _Hotel;
 		
@@ -2306,17 +2589,27 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     partial void OnPriceChanged();
     partial void OnCapacityChanging(int value);
     partial void OnCapacityChanged();
+    partial void OnThumnailChanging(string value);
+    partial void OnThumnailChanged();
+    partial void OnAllowSmokingChanging(System.Nullable<bool> value);
+    partial void OnAllowSmokingChanged();
+    partial void OnAllowPetChanging(System.Nullable<bool> value);
+    partial void OnAllowPetChanged();
+    partial void OnCancellationPolicyChanging(string value);
+    partial void OnCancellationPolicyChanged();
     partial void OnDescriptionChanging(string value);
     partial void OnDescriptionChanged();
     #endregion
 		
 		public Room()
 		{
-			this._Bookings = new EntitySet<Booking>(new Action<Booking>(this.attach_Bookings), new Action<Booking>(this.detach_Bookings));
 			this._Wishlists = new EntitySet<Wishlist>(new Action<Wishlist>(this.attach_Wishlists), new Action<Wishlist>(this.detach_Wishlists));
+			this._Bookings = new EntitySet<Booking>(new Action<Booking>(this.attach_Bookings), new Action<Booking>(this.detach_Bookings));
 			this._DiscountDetails = new EntitySet<DiscountDetail>(new Action<DiscountDetail>(this.attach_DiscountDetails), new Action<DiscountDetail>(this.detach_DiscountDetails));
 			this._Reviews = new EntitySet<Review>(new Action<Review>(this.attach_Reviews), new Action<Review>(this.detach_Reviews));
+			this._RoomAmenities = new EntitySet<RoomAmenity>(new Action<RoomAmenity>(this.attach_RoomAmenities), new Action<RoomAmenity>(this.detach_RoomAmenities));
 			this._RoomImages = new EntitySet<RoomImage>(new Action<RoomImage>(this.attach_RoomImages), new Action<RoomImage>(this.detach_RoomImages));
+			this._RoomViews = new EntitySet<RoomView>(new Action<RoomView>(this.attach_RoomViews), new Action<RoomView>(this.detach_RoomViews));
 			this._Hotel = default(EntityRef<Hotel>);
 			this._RoomType = default(EntityRef<RoomType>);
 			OnCreated();
@@ -2450,6 +2743,86 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Thumnail", DbType="NVarChar(MAX)")]
+		public string Thumnail
+		{
+			get
+			{
+				return this._Thumnail;
+			}
+			set
+			{
+				if ((this._Thumnail != value))
+				{
+					this.OnThumnailChanging(value);
+					this.SendPropertyChanging();
+					this._Thumnail = value;
+					this.SendPropertyChanged("Thumnail");
+					this.OnThumnailChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllowSmoking", DbType="Bit")]
+		public System.Nullable<bool> AllowSmoking
+		{
+			get
+			{
+				return this._AllowSmoking;
+			}
+			set
+			{
+				if ((this._AllowSmoking != value))
+				{
+					this.OnAllowSmokingChanging(value);
+					this.SendPropertyChanging();
+					this._AllowSmoking = value;
+					this.SendPropertyChanged("AllowSmoking");
+					this.OnAllowSmokingChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllowPet", DbType="Bit")]
+		public System.Nullable<bool> AllowPet
+		{
+			get
+			{
+				return this._AllowPet;
+			}
+			set
+			{
+				if ((this._AllowPet != value))
+				{
+					this.OnAllowPetChanging(value);
+					this.SendPropertyChanging();
+					this._AllowPet = value;
+					this.SendPropertyChanged("AllowPet");
+					this.OnAllowPetChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CancellationPolicy", DbType="NVarChar(100)")]
+		public string CancellationPolicy
+		{
+			get
+			{
+				return this._CancellationPolicy;
+			}
+			set
+			{
+				if ((this._CancellationPolicy != value))
+				{
+					this.OnCancellationPolicyChanging(value);
+					this.SendPropertyChanging();
+					this._CancellationPolicy = value;
+					this.SendPropertyChanged("CancellationPolicy");
+					this.OnCancellationPolicyChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(MAX)")]
 		public string Description
 		{
@@ -2470,19 +2843,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_Booking", Storage="_Bookings", ThisKey="RoomID", OtherKey="RoomID")]
-		public EntitySet<Booking> Bookings
-		{
-			get
-			{
-				return this._Bookings;
-			}
-			set
-			{
-				this._Bookings.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_Wishlist", Storage="_Wishlists", ThisKey="RoomID", OtherKey="RoomID")]
 		public EntitySet<Wishlist> Wishlists
 		{
@@ -2493,6 +2853,19 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			set
 			{
 				this._Wishlists.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_Booking", Storage="_Bookings", ThisKey="RoomID", OtherKey="RoomID")]
+		public EntitySet<Booking> Bookings
+		{
+			get
+			{
+				return this._Bookings;
+			}
+			set
+			{
+				this._Bookings.Assign(value);
 			}
 		}
 		
@@ -2522,6 +2895,19 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_RoomAmenity", Storage="_RoomAmenities", ThisKey="RoomID", OtherKey="RoomID")]
+		public EntitySet<RoomAmenity> RoomAmenities
+		{
+			get
+			{
+				return this._RoomAmenities;
+			}
+			set
+			{
+				this._RoomAmenities.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_RoomImage", Storage="_RoomImages", ThisKey="RoomID", OtherKey="RoomID")]
 		public EntitySet<RoomImage> RoomImages
 		{
@@ -2532,6 +2918,19 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			set
 			{
 				this._RoomImages.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_RoomView", Storage="_RoomViews", ThisKey="RoomID", OtherKey="RoomID")]
+		public EntitySet<RoomView> RoomViews
+		{
+			get
+			{
+				return this._RoomViews;
+			}
+			set
+			{
+				this._RoomViews.Assign(value);
 			}
 		}
 		
@@ -2623,18 +3022,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
-		private void attach_Bookings(Booking entity)
-		{
-			this.SendPropertyChanging();
-			entity.Room = this;
-		}
-		
-		private void detach_Bookings(Booking entity)
-		{
-			this.SendPropertyChanging();
-			entity.Room = null;
-		}
-		
 		private void attach_Wishlists(Wishlist entity)
 		{
 			this.SendPropertyChanging();
@@ -2642,6 +3029,18 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		}
 		
 		private void detach_Wishlists(Wishlist entity)
+		{
+			this.SendPropertyChanging();
+			entity.Room = null;
+		}
+		
+		private void attach_Bookings(Booking entity)
+		{
+			this.SendPropertyChanging();
+			entity.Room = this;
+		}
+		
+		private void detach_Bookings(Booking entity)
 		{
 			this.SendPropertyChanging();
 			entity.Room = null;
@@ -2671,6 +3070,18 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			entity.Room = null;
 		}
 		
+		private void attach_RoomAmenities(RoomAmenity entity)
+		{
+			this.SendPropertyChanging();
+			entity.Room = this;
+		}
+		
+		private void detach_RoomAmenities(RoomAmenity entity)
+		{
+			this.SendPropertyChanging();
+			entity.Room = null;
+		}
+		
 		private void attach_RoomImages(RoomImage entity)
 		{
 			this.SendPropertyChanging();
@@ -2678,6 +3089,18 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		}
 		
 		private void detach_RoomImages(RoomImage entity)
+		{
+			this.SendPropertyChanging();
+			entity.Room = null;
+		}
+		
+		private void attach_RoomViews(RoomView entity)
+		{
+			this.SendPropertyChanging();
+			entity.Room = this;
+		}
+		
+		private void detach_RoomViews(RoomView entity)
 		{
 			this.SendPropertyChanging();
 			entity.Room = null;
@@ -2798,6 +3221,174 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.RoomViews")]
+	public partial class RoomView : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _RoomID;
+		
+		private int _ViewID;
+		
+		private EntityRef<Room> _Room;
+		
+		private EntityRef<View> _View;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnRoomIDChanging(int value);
+    partial void OnRoomIDChanged();
+    partial void OnViewIDChanging(int value);
+    partial void OnViewIDChanged();
+    #endregion
+		
+		public RoomView()
+		{
+			this._Room = default(EntityRef<Room>);
+			this._View = default(EntityRef<View>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoomID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int RoomID
+		{
+			get
+			{
+				return this._RoomID;
+			}
+			set
+			{
+				if ((this._RoomID != value))
+				{
+					if (this._Room.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRoomIDChanging(value);
+					this.SendPropertyChanging();
+					this._RoomID = value;
+					this.SendPropertyChanged("RoomID");
+					this.OnRoomIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ViewID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int ViewID
+		{
+			get
+			{
+				return this._ViewID;
+			}
+			set
+			{
+				if ((this._ViewID != value))
+				{
+					if (this._View.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnViewIDChanging(value);
+					this.SendPropertyChanging();
+					this._ViewID = value;
+					this.SendPropertyChanged("ViewID");
+					this.OnViewIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Room_RoomView", Storage="_Room", ThisKey="RoomID", OtherKey="RoomID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Room Room
+		{
+			get
+			{
+				return this._Room.Entity;
+			}
+			set
+			{
+				Room previousValue = this._Room.Entity;
+				if (((previousValue != value) 
+							|| (this._Room.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Room.Entity = null;
+						previousValue.RoomViews.Remove(this);
+					}
+					this._Room.Entity = value;
+					if ((value != null))
+					{
+						value.RoomViews.Add(this);
+						this._RoomID = value.RoomID;
+					}
+					else
+					{
+						this._RoomID = default(int);
+					}
+					this.SendPropertyChanged("Room");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="View_RoomView", Storage="_View", ThisKey="ViewID", OtherKey="ViewID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public View View
+		{
+			get
+			{
+				return this._View.Entity;
+			}
+			set
+			{
+				View previousValue = this._View.Entity;
+				if (((previousValue != value) 
+							|| (this._View.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._View.Entity = null;
+						previousValue.RoomViews.Remove(this);
+					}
+					this._View.Entity = value;
+					if ((value != null))
+					{
+						value.RoomViews.Add(this);
+						this._ViewID = value.ViewID;
+					}
+					else
+					{
+						this._ViewID = default(int);
+					}
+					this.SendPropertyChanged("View");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Users")]
 	public partial class User : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -2818,9 +3409,9 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		
 		private string _Role;
 		
-		private EntitySet<Booking> _Bookings;
-		
 		private EntitySet<Wishlist> _Wishlists;
+		
+		private EntitySet<Booking> _Bookings;
 		
 		private EntitySet<Review> _Reviews;
 		
@@ -2846,8 +3437,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		
 		public User()
 		{
-			this._Bookings = new EntitySet<Booking>(new Action<Booking>(this.attach_Bookings), new Action<Booking>(this.detach_Bookings));
 			this._Wishlists = new EntitySet<Wishlist>(new Action<Wishlist>(this.attach_Wishlists), new Action<Wishlist>(this.detach_Wishlists));
+			this._Bookings = new EntitySet<Booking>(new Action<Booking>(this.attach_Bookings), new Action<Booking>(this.detach_Bookings));
 			this._Reviews = new EntitySet<Review>(new Action<Review>(this.attach_Reviews), new Action<Review>(this.detach_Reviews));
 			OnCreated();
 		}
@@ -2992,19 +3583,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Booking", Storage="_Bookings", ThisKey="UserID", OtherKey="UserID")]
-		public EntitySet<Booking> Bookings
-		{
-			get
-			{
-				return this._Bookings;
-			}
-			set
-			{
-				this._Bookings.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Wishlist", Storage="_Wishlists", ThisKey="UserID", OtherKey="UserID")]
 		public EntitySet<Wishlist> Wishlists
 		{
@@ -3015,6 +3593,19 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			set
 			{
 				this._Wishlists.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Booking", Storage="_Bookings", ThisKey="UserID", OtherKey="UserID")]
+		public EntitySet<Booking> Bookings
+		{
+			get
+			{
+				return this._Bookings;
+			}
+			set
+			{
+				this._Bookings.Assign(value);
 			}
 		}
 		
@@ -3051,18 +3642,6 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
-		private void attach_Bookings(Booking entity)
-		{
-			this.SendPropertyChanging();
-			entity.User = this;
-		}
-		
-		private void detach_Bookings(Booking entity)
-		{
-			this.SendPropertyChanging();
-			entity.User = null;
-		}
-		
 		private void attach_Wishlists(Wishlist entity)
 		{
 			this.SendPropertyChanging();
@@ -3070,6 +3649,18 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		}
 		
 		private void detach_Wishlists(Wishlist entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = null;
+		}
+		
+		private void attach_Bookings(Booking entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = this;
+		}
+		
+		private void detach_Bookings(Booking entity)
 		{
 			this.SendPropertyChanging();
 			entity.User = null;
@@ -3085,6 +3676,144 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		{
 			this.SendPropertyChanging();
 			entity.User = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Views")]
+	public partial class View : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ViewID;
+		
+		private string _ViewName;
+		
+		private string _ViewIcon;
+		
+		private EntitySet<RoomView> _RoomViews;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnViewIDChanging(int value);
+    partial void OnViewIDChanged();
+    partial void OnViewNameChanging(string value);
+    partial void OnViewNameChanged();
+    partial void OnViewIconChanging(string value);
+    partial void OnViewIconChanged();
+    #endregion
+		
+		public View()
+		{
+			this._RoomViews = new EntitySet<RoomView>(new Action<RoomView>(this.attach_RoomViews), new Action<RoomView>(this.detach_RoomViews));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ViewID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ViewID
+		{
+			get
+			{
+				return this._ViewID;
+			}
+			set
+			{
+				if ((this._ViewID != value))
+				{
+					this.OnViewIDChanging(value);
+					this.SendPropertyChanging();
+					this._ViewID = value;
+					this.SendPropertyChanged("ViewID");
+					this.OnViewIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ViewName", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		public string ViewName
+		{
+			get
+			{
+				return this._ViewName;
+			}
+			set
+			{
+				if ((this._ViewName != value))
+				{
+					this.OnViewNameChanging(value);
+					this.SendPropertyChanging();
+					this._ViewName = value;
+					this.SendPropertyChanged("ViewName");
+					this.OnViewNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ViewIcon", DbType="NVarChar(100)")]
+		public string ViewIcon
+		{
+			get
+			{
+				return this._ViewIcon;
+			}
+			set
+			{
+				if ((this._ViewIcon != value))
+				{
+					this.OnViewIconChanging(value);
+					this.SendPropertyChanging();
+					this._ViewIcon = value;
+					this.SendPropertyChanged("ViewIcon");
+					this.OnViewIconChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="View_RoomView", Storage="_RoomViews", ThisKey="ViewID", OtherKey="ViewID")]
+		public EntitySet<RoomView> RoomViews
+		{
+			get
+			{
+				return this._RoomViews;
+			}
+			set
+			{
+				this._RoomViews.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_RoomViews(RoomView entity)
+		{
+			this.SendPropertyChanging();
+			entity.View = this;
+		}
+		
+		private void detach_RoomViews(RoomView entity)
+		{
+			this.SendPropertyChanging();
+			entity.View = null;
 		}
 	}
 }

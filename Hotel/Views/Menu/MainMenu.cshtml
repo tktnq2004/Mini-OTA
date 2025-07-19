@@ -1,0 +1,689 @@
+﻿
+@{
+    ViewBag.Title = "MainMenu";
+}
+
+<h2>MainMenu</h2>
+
+@{
+    ViewBag.Title = "HotelMain";
+}
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Hotale - Book Your Vacation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        /* Booking section styles with custom background */
+        .booking-section {
+            position: relative;
+            height: 100vh;
+            background: url('/Content/images/logo1/background.jpg') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            width: 100%; /* Ensure full width */
+            margin: 0;
+        }
+
+        .booking-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            border-radius: 10px;
+        }
+
+        .booking-section h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .booking-section p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .booking-form {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            color: #333;
+        }
+
+            .form-group label {
+                font-size: 0.9em;
+                margin-bottom: 5px;
+            }
+
+            .form-group input, .form-group select {
+                border: none;
+                padding: 8px;
+                border-radius: 3px;
+                width: 150px;
+            }
+
+        .book-btn {
+            padding: 10px 20px;
+            background-color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #333;
+            font-weight: bold;
+        }
+
+            .book-btn:hover {
+                background-color: #ddd;
+            }
+
+        /* Existing styles remain the same */
+        .testimonial-section {
+            padding: 100px 0;
+            background-color: #fff;
+        }
+
+        .section-title h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 50px;
+        }
+
+        .testimonial-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .testimonial-card {
+            background: #fff;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            width: 500px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .testimonial-inner {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+
+        .testimonial-img img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .quote-mark {
+            font-size: 40px;
+            font-weight: bold;
+            color: #555;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .testimonial-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #555;
+            margin: 10px 0;
+        }
+
+        .testimonial-author {
+            margin-top: 10px;
+            font-size: 15px;
+            color: #333;
+        }
+
+            .testimonial-author strong {
+                font-weight: bold;
+                font-size: 16px;
+            }
+
+        .testimonial-card {
+            width: 90%;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            background: #fff;
+            color: #333;
+        }
+
+        section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+            h2::after {
+                content: "";
+                display: block;
+                width: 60px;
+                height: 3px;
+                background: #000;
+                margin: 20px auto 0;
+            }
+
+        p {
+            max-width: 700px;
+            margin: 0 auto 40px;
+            text-align: center;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+
+        .rooms, .facility-list, .news {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .room-card, .facility-item, .news-item {
+            background: #fafafa;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+            .room-card:hover, .facility-item:hover, .news-item:hover {
+                transform: translateY(-5px);
+            }
+
+        .room-card, .facility-item, .news-item {
+            width: 300px;
+            text-align: center;
+        }
+
+            .room-card img, .facility-item img, .news-item img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+            }
+
+            .room-card-body, .facility-item div {
+                padding: 20px;
+            }
+
+        .facilities .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .facilities-item {
+            width: 150px;
+            text-align: center;
+        }
+
+            .facilities-item img {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 15px;
+            }
+
+            .facilities-item h3 {
+                font-size: 16px;
+                margin: 0;
+            }
+
+        .video-section iframe {
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+            max-width: 100%;
+        }
+
+        .testimonial {
+            font-style: italic;
+            font-size: 18px;
+            margin: 20px auto;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .service {
+            padding: 100px 0;
+            background-color: #fff;
+        }
+
+        .section-title h2 {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+
+        .service-wrap__item {
+            margin-bottom: 60px;
+        }
+
+            .service-wrap__item .image img {
+                width: 100%;
+                height: auto;
+                border-radius: 10px;
+                object-fit: cover;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            }
+
+        .service-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #002060;
+            margin-bottom: 15px;
+        }
+
+        .desc {
+            padding: 0 15px;
+        }
+
+            .desc span {
+                color: #898989;
+                line-height: 1.6;
+                font-size: 15px;
+            }
+
+        .link-detail {
+            display: inline-block;
+            margin-top: 15px;
+            color: #002060;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
+
+            .link-detail i {
+                margin-left: 5px;
+                font-size: 11px;
+            }
+
+            .link-detail:hover {
+                color: #0056b3;
+            }
+
+        .blogs {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+            .section-title .subtitle {
+                font-family: 'Dancing Script', cursive;
+                font-size: 36px;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+
+            .section-title .sectitle {
+                font-size: 16px;
+                max-width: 600px;
+                margin: 0 auto;
+                line-height: 1.6;
+                color: #444;
+            }
+
+        .blogs-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .blog-item {
+            width: 300px;
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+            .blog-item:hover {
+                transform: translateY(-5px);
+            }
+
+        .thumd img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .blog-title {
+            font-size: 16px;
+            margin: 15px 0 10px;
+        }
+
+            .blog-title a {
+                color: #000;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+        .blog-infor {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+            .blog-infor i {
+                margin-right: 5px;
+            }
+
+        .view-all-blog {
+            text-align: center;
+        }
+
+        .link-detail {
+            text-transform: uppercase;
+            font-weight: 500;
+            font-size: 14px;
+            text-decoration: none;
+            border-bottom: 1px solid #000;
+            padding-bottom: 3px;
+            transition: 0.3s;
+            color: #000;
+        }
+
+            .link-detail:hover {
+                color: #007bff;
+                border-color: #007bff;
+            }
+
+        .blog-item {
+            width: 90%;
+        }
+
+        .hotel-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .hotel-text {
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .hotel-info {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .hotel-desc {
+            font-size: 22px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .read-more {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            color: #000;
+            border-bottom: 1px solid #000;
+            padding-bottom: 3px;
+        }
+
+        .hotel-image {
+            flex: 1;
+            max-width: 400px;
+        }
+
+            .hotel-image img {
+                width: 100%;
+                border-radius: 20px;
+                object-fit: cover;
+            }
+
+        .hotel-info {
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Booking Section -->
+    <section class="booking-section">
+        <div class="booking-overlay">
+            <h1>Book Your Vacation</h1>
+            <p>Explore new experiences with Hotale</p>
+            <form class="booking-form">
+                <div class="form-group">
+                    <label>Check In</label>
+                    <input type="date" id="checkin" name="checkin" value="2025-07-16">
+                </div>
+                <div class="form-group">
+                    <label>Check Out</label>
+                    <input type="date" id="checkout" name="checkout" value="2025-07-17">
+                </div>
+                <div class="form-group">
+                    <label>Adults</label>
+                    <select id="adults">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Child</label>
+                    <select id="children">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
+                <button type="submit" class="book-btn">Book Rooms</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="hotel-section">
+        <div class="hotel-text">
+            <div class="hotel-info">
+                <div>5 Stars</div>
+                <div>25 Rooms</div>
+            </div>
+            <div class="hotel-desc">
+                Our hotel is located in the heart of the New Forrest. A five stars lifestyle surrounded by the forest.
+            </div>
+            <a href="#" class="read-more">More About Us  ></a>
+        </div>
+        <div class="hotel-image">
+            <img src="/Content/images/logo1/resort-swim.jpg" alt="Hotel">
+        </div>
+    </section>
+
+    <!-- Rooms -->
+    <section>
+        <div class="section-title">
+            <h2 class="subtitle add-font">Owl rooms</h2>
+        </div>
+        <div class="rooms">
+            <div class="room-card">
+                <img src="https://via.placeholder.com/300x200" alt="">
+                <div class="room-card-body">
+                    <h4>Deluxe City View</h4>
+                    <p>2 Guests | 1 Bed | 1 Bath</p>
+                </div>
+            </div>
+            <div class="room-card">
+                <img src="https://via.placeholder.com/300x200" alt="">
+                <div class="room-card-body">
+                    <h4>Service Dr City View</h4>
+                    <p>2 Guests | 1 Bed | 1 Bath</p>
+                </div>
+            </div>
+            <div class="room-card">
+                <img src="https://via.placeholder.com/300x200" alt="">
+                <div class="room-card-body">
+                    <h4>Balcony Triple Suite</h4>
+                    <p>3 Guests | 2 Bed | 2 Bath</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Facilities -->
+    <section class="facilities">
+        <h2>Hotel Facilities</h2>
+        <div class="row">
+            <div class="facilities-item">
+                <img src="/Content/images/logo1/paking.png">
+                <h3>Parking</h3>
+            </div>
+            <div class="facilities-item">
+                <img src="/Content/images/logo1/be-boi.png">
+                <h3>Swimming Pool</h3>
+            </div>
+            <div class="facilities-item">
+                <img src="/Content/images/logo1/an-sansg.png">
+                <h3>Breakfast</h3>
+            </div>
+            <div class="facilities-item">
+                <img src="/Content/images/logo1/gym.png">
+                <h3>Gym</h3>
+            </div>
+            <div class="facilities-item">
+                <img src="/Content/images/logo1/spa.png">
+                <h3>Spa</h3>
+            </div>
+            <div class="facilities-item">
+                <img src="/Content/images/logo1/wifi.png">
+                <h3>WiFi</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video -->
+    <section class="video-section">
+        <h2>Hotel Video</h2>
+        <iframe width="100%" height="500" src="https://www.youtube.com/embed/US7bGTUkBfg" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+    </section>
+
+    <!-- Famous Facilities -->
+    <section class="service pd-100">
+        <div class="container">
+            <div class="section-title">
+                <h2 class="subtitle add-font">Visit Our Famous Facilities</h2>
+            </div>
+
+            <!-- Item 1: Restaurant -->
+            <div class="service-wrap__item">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <figure class="image">
+                            <a href="/services/2145/restaurant">
+                                <img src="/Content/images/logo1/chef-cook.jpg" alt="">
+                            </a>
+                        </figure>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="desc">
+                            <h3 class="service-title">Restaurant</h3>
+                            <span>
+                                The large, flexible banquet hall system, invested with modern equipment, will always be a great suggestion for high-class weddings and conferences.
+                            </span>
+                            <a href="/services/2145/restaurant" class="link-detail">Learn more ></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2: Sky Bar -->
+            <div class="service-wrap__item mt-5">
+                <div class="row align-items-center flex-row-reverse">
+                    <div class="col-lg-6">
+                        <figure class="image">
+                            <a href="/services/2146/sky-bar">
+                                <img src="/Content/images/logo1/bar.jpg" alt="">
+                            </a>
+                        </figure>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="desc">
+                            <h3 class="service-title">Sky Bar</h3>
+                            <span>
+                                Celebrate your moment with one of our highlights for cocktails or if you prefer, a selection of international teas and locally sourced coffees are available hot or refreshingly iced.
+                            </span>
+                            <a href="/services/2146/sky-bar" class="link-detail">Learn more ></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3: Spa Hotale -->
+            <div class="service-wrap__item mt-5">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <figure class="image">
+                            <a href="/services/2147/spa-hotale">
+                                <img src="/Content/images/logo1/spa.jpg" alt="">
+                            </a>
+                        </figure>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="desc">
+                            <h3 class="service-title">Spa Hotale</h3>
+                            <span>
+                                Get lost in the luxurious and charming Spa Hotale Hotel oasis to enjoy moments of absolute relaxation in the midst of nature. Here, you can immerse yourself in unique spa experiences
+                            </span>
+                            <a href="/services/2147/spa-hotale" class="link-detail">Learn more ></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

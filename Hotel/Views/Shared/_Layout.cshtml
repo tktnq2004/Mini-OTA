@@ -11,6 +11,7 @@
     <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/Content/Site.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -33,7 +34,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        @Html.ActionLink("Home", "HotelMain", "Hotel", new { area = "" }, new { @class = "nav-link custom-hover" })
+                        @Html.ActionLink("Home", "MainMenu", "Menu", new { area = "" }, new { @class = "nav-link custom-hover" })
                     </li>
                     <li class="nav-item">
                         @Html.ActionLink("Destinations", "HotelIndex", "Hotel", new { area = "" }, new { @class = "nav-link custom-hover" })

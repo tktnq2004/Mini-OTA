@@ -86,11 +86,62 @@ namespace Hotel.Controllers
 
             return Json(hotels, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult GetHotelDetail(int hotelId)
+        public ActionResult GetHotelDetail(int hotelID)
         {
-            var hotel = db.Hotels.FirstOrDefault(h => h.HotelID == hotelId);
-            return PartialView("HotelDetail", hotel);
+            var currentHotel = db.Hotels.FirstOrDefault(h => h.HotelID == hotelID);
+            if (currentHotel == null)
+                return HttpNotFound();
+
+            var provinceId = currentHotel.ProvinceID;
+
+            var selectedHotelModel = new HotelModel
+            {
+                HotelID = currentHotel.HotelID,
+                HotelName = currentHotel.HotelName,
+                Address = currentHotel.Address,
+                HotelImage = currentHotel.HotelImage,
+                Latitude = currentHotel.Latitude,
+                Longitude = currentHotel.Longitude,
+                Amenities = db.RoomAmenities
+                    .Where(ra => ra.Room.HotelID == currentHotel.HotelID)
+                    .Select(ra => ra.Amenity)
+                    .Distinct()
+                    .ToList(),
+                Views = db.RoomViews
+                    .Where(rv => rv.Room.HotelID == currentHotel.HotelID)
+                    .Select(rv => rv.View)
+                    .Distinct()
+                    .ToList()
+            };
+
+            var otherHotels = db.Hotels
+                .Where(h => h.ProvinceID == provinceId && h.HotelID != hotelID)
+                .Select(h => new HotelModel
+                {
+                    HotelID = h.HotelID,
+                    HotelName = h.HotelName,
+                    Address = h.Address,
+                    HotelImage = h.HotelImage,
+                    Latitude = h.Latitude,
+                    Longitude = h.Longitude,
+                    Amenities = db.RoomAmenities
+                        .Where(ra => ra.Room.HotelID == h.HotelID)
+                        .Select(ra => ra.Amenity)
+                        .Distinct()
+                        .ToList(),
+                    Views = db.RoomViews
+                        .Where(rv => rv.Room.HotelID == h.HotelID)
+                        .Select(rv => rv.View)
+                        .Distinct()
+                        .ToList()
+                })
+                .ToList();
+
+            ViewBag.CurrentHotel = selectedHotelModel;
+            return PartialView("HotelDetail", otherHotels);
         }
+
+
         [HttpGet]
         public ActionResult GetNearbyHotels(decimal latitude, decimal longitude, decimal radiusKm = 50)
         {

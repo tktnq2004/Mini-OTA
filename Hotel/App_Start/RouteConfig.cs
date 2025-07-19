@@ -17,7 +17,7 @@ namespace Hotel
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Hotel", action = "HotelMain", id = UrlParameter.Optional }
+                defaults: new { controller = "Menu", action = "MainMenu", id = UrlParameter.Optional }
             );
         }
     }

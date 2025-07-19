@@ -12,6 +12,8 @@ namespace Hotel.Models.HotelModel
         public string Address { get; set; }
         public string HotelImage { get; set; }
         public decimal Latitude { get; set; }
+        public List<Amenity> Amenities { get; set; }
+        public List<View> Views { get; set; }
         public decimal Longitude { get; set; }
     }
 }
