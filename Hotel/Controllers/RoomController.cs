@@ -78,7 +78,7 @@ namespace Hotel.Controllers
         {
             try
             {
-                int pageSize = 6; // Số phòng mỗi trang
+                int pageSize = 6;
 
                 var rooms = (from r in db.Rooms
                              join dd in db.DiscountDetails on r.RoomID equals dd.RoomID into discountGroup
@@ -164,12 +164,12 @@ namespace Hotel.Controllers
 
             return new HttpStatusCodeResult(200);
         }
-        public ActionResult GetRoomImage(int? page, int roomId)
+        public ActionResult GetRoomImage( int roomId)
         {
-            var image = db.RoomImages.FirstOrDefault(i => i.RoomID == roomId);
-            if (image != null && !string.IsNullOrEmpty(image.ImageURL))
+            var image = db.Rooms.FirstOrDefault(i => i.RoomID == roomId);
+            if (image != null && !string.IsNullOrEmpty(image.Thumnail))
             {
-                return Redirect(image.ImageURL);
+                return Redirect(image.Thumnail);
             }
             return new EmptyResult();
         }

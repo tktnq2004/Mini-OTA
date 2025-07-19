@@ -7,7 +7,7 @@
     <div class="card mb-2 shadow-sm border border-primary bg-light-subtle">
         <div class="row g-0">
             <div class="col-4">
-                <img src="@currentHotel.HotelImage" class="img-fluid rounded-start" style="height: 100%; object-fit: cover;" />
+                <img src="@currentHotel.HotelImage" class="img-fluid rounded-start hotel-image-fixed" />
             </div>
             <div class="col-8">
                 <div class="card-body py-2 px-2">
@@ -69,7 +69,7 @@
    <div class="card mb-2 shadow-sm border-0 hotel-card" data-hotel-id="@hotel.HotelID" style="cursor: pointer;">
        <div class="row g-0">
            <div class="col-4">
-               <img src="@hotel.HotelImage" class="img-fluid rounded-start" style="height: 100%; object-fit: cover;" />
+               <img src="@hotel.HotelImage" class="img-fluid rounded-start hotel-image-fixed" />
            </div>
            <div class="col-8">
                <div class="card-body py-2 px-2">
@@ -111,3 +111,11 @@
        </div>
    </div>
 }
+<style>
+    .hotel-image-fixed {
+        width: 100%;
+        height: 140px; 
+        object-fit: cover;
+        border-radius: 0.5rem 0 0 0.5rem;
+    }
+</style>
