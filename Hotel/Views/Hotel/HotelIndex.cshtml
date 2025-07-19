@@ -179,113 +179,113 @@
 </style>
 
 @model List<Hotel.Models.HotelModel.RegionModel>
-    <div class="container p-3 bg-light border rounded shadow-sm">
-        <div class="row align-items-center">
-            <div class="col-md-4">
-                <div class="hotel-field">
-                    <label>Destination</label>
-                    <div id="dropdownHotelToggle" class="dropdown-toggle">Select Region</div>
-                    <div id="dropdownHotelMenu" class="dropdown-menu" style="display: none;">
-                        @foreach (var region in Model)
-                        {
-                            <div class="region-box">
-                                <div class="toggle-box region-toggle" data-region-id="@region.RegionID">
-                                    <span class="arrow"></span> @region.RegionName
-                                </div>
-                                <div class="province-box province-submenu" id="region-@region.RegionID" style="display: none;">
-                                    @foreach (var province in region.Provinces)
-                                    {
-                                        <div class="toggle-box province-option"
-                                             data-province-id="@province.ProvinceID">
-                                            <span class="arrow"></span> @province.ProvinceName
-                                        </div>
-                                        <div class="hotel-box hotel-submenu" id="province-hotels-@province.ProvinceID" style="display: none;">
-                                            @foreach (var hotel in province.Hotels)
-                                            {
-                                                <div class="toggle-box dropdown-item"
-                                                     data-hotel-id="@hotel.HotelID"
-                                                     data-latitude="@hotel.Latitude"
-                                                     data-longitude="@hotel.Longitude">
-                                                    @hotel.HotelName
-                                                </div>
-                                            }
-                                        </div>
-                                    }
-                                </div>
+<div class="container p-3 bg-light border rounded shadow-sm">
+    <div class="row align-items-center">
+        <div class="col-md-4">
+            <div class="hotel-field">
+                <label>Destination</label>
+                <div id="dropdownHotelToggle" class="dropdown-toggle">Select Region</div>
+                <div id="dropdownHotelMenu" class="dropdown-menu" style="display: none;">
+                    @foreach (var region in Model)
+                    {
+                        <div class="region-box">
+                            <div class="toggle-box region-toggle" data-region-id="@region.RegionID">
+                                <span class="arrow"></span> @region.RegionName
                             </div>
-                        }
-                        <div class="region-box" id="nearby-region">
-                            <div class="toggle-box province-option" id="nearbyHotelsBtn">
-                                <span class="arrow"></span> Xung quanh vị trí của tôi
-                            </div>
-                            <div class="hotel-box hotel-submenu" id="province-hotels-nearby" style="display: none;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="hotel-field">
-                    <label>Stay Dates</label>
-                    <div class="hotel-stay-dates">
-                        <input type="text" id="dateRange" class="form-control" placeholder="Check in - Check out">
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="hotel-field">
-                    <label>Rooms & Guests</label>
-                    <div id="guestSelector" class="guest-dropdown-toggle">1 Room, 1 Adult, 0 Children</div>
-                    <div class="guest-dropdown-menu" id="guestDropdown">
-                        <div class="guest-row-item">
-                            <span>Rooms</span>
-                            <div class="guest-counter">
-                                <button onclick="changeGuestCount('room', -1)">–</button>
-                                <span id="guestRoomCount">1</span>
-                                <button onclick="changeGuestCount('room', 1)">+</button>
+                            <div class="province-box province-submenu" id="region-@region.RegionID" style="display: none;">
+                                @foreach (var province in region.Provinces)
+                                {
+                                    <div class="toggle-box province-option"
+                                         data-province-id="@province.ProvinceID">
+                                        <span class="arrow"></span> @province.ProvinceName
+                                    </div>
+                                    <div class="hotel-box hotel-submenu" id="province-hotels-@province.ProvinceID" style="display: none;">
+                                        @foreach (var hotel in province.Hotels)
+                                        {
+                                            <div class="toggle-box dropdown-item"
+                                                 data-hotel-id="@hotel.HotelID"
+                                                 data-latitude="@hotel.Latitude"
+                                                 data-longitude="@hotel.Longitude">
+                                                @hotel.HotelName
+                                            </div>
+                                        }
+                                    </div>
+                                }
                             </div>
                         </div>
-                        <div class="guest-row-item">
-                            <span>Adults</span>
-                            <div class="guest-counter">
-                                <button onclick="changeGuestCount('adult', -1)">–</button>
-                                <span id="guestAdultCount">1</span>
-                                <button onclick="changeGuestCount('adult', 1)">+</button>
-                            </div>
+                    }
+                    <div class="region-box" id="nearby-region">
+                        <div class="toggle-box province-option" id="nearbyHotelsBtn">
+                            <span class="arrow"></span> Xung quanh vị trí của tôi
                         </div>
-                        <div class="guest-row-item">
-                            <span>Children</span>
-                            <div class="guest-counter">
-                                <button onclick="changeGuestCount('child', -1)">–</button>
-                                <span id="guestChildCount">0</span>
-                                <button onclick="changeGuestCount('child', 1)">+</button>
-                            </div>
-                        </div>
+                        <div class="hotel-box hotel-submenu" id="province-hotels-nearby" style="display: none;"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div id="mapContainer" class="col-12">
-                <div id="mymap"></div>
+
+        <div class="col-md-4">
+            <div class="hotel-field">
+                <label>Stay Dates</label>
+                <div class="hotel-stay-dates">
+                    <input type="text" id="dateRange" class="form-control" placeholder="Check in - Check out">
+                </div>
             </div>
+        </div>
 
-            <div id="hotelDetailModal" class="col-6">
-                <div id="hotelDetailContent"></div>
+        <div class="col-md-4">
+            <div class="hotel-field">
+                <label>Rooms & Guests</label>
+                <div id="guestSelector" class="guest-dropdown-toggle">1 Room, 1 Adult, 0 Children</div>
+                <div class="guest-dropdown-menu" id="guestDropdown">
+                    <div class="guest-row-item">
+                        <span>Rooms</span>
+                        <div class="guest-counter">
+                            <button onclick="changeGuestCount('room', -1)">–</button>
+                            <span id="guestRoomCount">1</span>
+                            <button onclick="changeGuestCount('room', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="guest-row-item">
+                        <span>Adults</span>
+                        <div class="guest-counter">
+                            <button onclick="changeGuestCount('adult', -1)">–</button>
+                            <span id="guestAdultCount">1</span>
+                            <button onclick="changeGuestCount('adult', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="guest-row-item">
+                        <span>Children</span>
+                        <div class="guest-counter">
+                            <button onclick="changeGuestCount('child', -1)">–</button>
+                            <span id="guestChildCount">0</span>
+                            <button onclick="changeGuestCount('child', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-
         </div>
     </div>
+    <div class="row">
+        <div id="mapContainer" class="col-12">
+            <div id="mymap"></div>
+        </div>
 
-    <script>
+        <div id="hotelDetailModal" class="col-6">
+            <div id="hotelDetailContent"></div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
         let map;
-        let selectedHotelId = null;
         let hasTriggeredNearbySearch = false;
         const initialLatLng = [106.68817, 10.77388];
         const initialZoom = 8;
         const hotelMarkers = {};
+        let selectedMarkerId = null;
 
         document.addEventListener("DOMContentLoaded", function () {
             map = new maplibregl.Map({
@@ -328,10 +328,10 @@
             map.addControl(resetControl, 'top-right');
 
         });
-    </script>
+</script>
 
 
-    <script>
+<script>
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".region-toggle").forEach(region => {
                 region.addEventListener("click", function () {
@@ -348,9 +348,9 @@
                 });
             });
         });
-    </script>
+</script>
 
-    <script>
+<script>
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".dropdown-item").forEach(hotel => {
                 hotel.addEventListener("click", function () {
@@ -375,10 +375,9 @@
                 });
             });
         });
+</script>
 
-    </script>
-
-    <script>
+<script>
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".province-option").forEach(province => {
                 province.addEventListener("click", function () {
@@ -454,12 +453,11 @@
                 });
             }
         });
-    </script>
+</script>
 
 
 
-
-    <script>
+<script>
         function addHotelMarker(hotel) {
             const marker = new maplibregl.Marker()
                 .setLngLat([hotel.Longitude, hotel.Latitude])
@@ -468,7 +466,6 @@
             hotelMarkers[hotel.HotelID] = marker;
 
             marker.getElement().addEventListener("click", () => {
-                selectedProvinceID = hotel.provinceId;
                 document.getElementById("dropdownHotelToggle").textContent = hotel.HotelName;
                 map.flyTo({ center: [hotel.Longitude, hotel.Latitude], zoom: 13 });
 
@@ -499,15 +496,13 @@
             }
         });
 
-
-
         $("#resetViewBtn").on("click", function () {
             map.flyTo({ center: initialLatLng, zoom: initialZoom });
         });
 
-    </script>
+</script>
 
-    <script>
+<script>
         document.addEventListener("DOMContentLoaded", function () {
             const toggle = document.getElementById("dropdownHotelToggle");
             const menu = document.getElementById("dropdownHotelMenu");
@@ -524,9 +519,9 @@
                 }
             });
         });
-    </script>
+</script>
 
-    <script>
+<script>
         flatpickr("#dateRange", {
             mode: "range",
             dateFormat: "d-m-Y",
@@ -558,9 +553,9 @@
                 }
             });
         }
-    </script>
+</script>
 
-    <script>
+<script>
         document.addEventListener("DOMContentLoaded", function () {
             const guestSelector = document.getElementById("guestSelector");
             const guestDropdown = document.getElementById("guestDropdown");
@@ -604,28 +599,51 @@
 
             updateGuestSummary();
         });
-    </script>
+</script>
 
-    <script>
-        document.getElementById("hotelSearchBtn").addEventListener("click", function () {
-            const dateRange = document.getElementById("dateRange")._flatpickr.selectedDates;
-            const fromDate = dateRange[0].toISOString();
-            const toDate = dateRange[1].toISOString();
+<script>
+    $(document).on("click", ".hotel-card", function () {
+        const hotelId = $(this).data("hotel-id");
+        const marker = hotelMarkers[hotelId];
 
-            const rooms = parseInt(document.getElementById("guestRoomCount").innerText);
-            const adults = parseInt(document.getElementById("guestAdultCount").innerText);
-            const children = parseInt(document.getElementById("guestChildCount").innerText);
+        if (marker) {
+            marker.getElement().dispatchEvent(new Event("click"));
+        }
+    });
+</script>
+<script>
+    $(document).on("click", ".hotel-card", function () {
+        const hotelId = $(this).data("hotel-id");
+        const marker = hotelMarkers[hotelId];
 
-            const query = new URLSearchParams({
-                hotelID: selectedHotelId,
-                fromDate,
-                toDate,
-                rooms,
-                adults,
-                children
-            }).toString();
+        if (marker) {
+            marker.getElement().dispatchEvent(new Event("click"));
+        }
+    });
+</script>
 
-            window.open(`/Room/RoomIndex?${query}`, '_blank');
-        });
-    </script>
+<script>
+       $(document).on("click", ".hotelSearchBtn", function () {
+    const hotelId = $(this).data("hotel-id");
 
+    const dateRange = document.getElementById("dateRange")._flatpickr.selectedDates;
+    const fromDate = dateRange[0].toISOString();
+    const toDate = dateRange[1].toISOString();
+
+    const rooms = parseInt(document.getElementById("guestRoomCount").innerText);
+    const adults = parseInt(document.getElementById("guestAdultCount").innerText);
+    const children = parseInt(document.getElementById("guestChildCount").innerText);
+
+    const query = new URLSearchParams({
+        hotelID: hotelId,
+        fromDate,
+        toDate,
+        rooms,
+        adults,
+        children
+    }).toString();
+
+    window.open(`/Room/RoomIndex?${query}`, '_blank');
+});
+
+</script>
