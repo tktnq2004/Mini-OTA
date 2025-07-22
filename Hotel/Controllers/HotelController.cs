@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Mvc;
 using System.Windows.Media.Animation;
@@ -14,7 +15,11 @@ namespace Hotel.Controllers
     {
         // GET: Hotel
         private dbHotelDataContext db = new dbHotelDataContext();
+        public ActionResult HotelMain()
+        {
 
+            return View();
+        }
         public ActionResult HotelIndex()
         {
             var data = db.Regions
@@ -42,37 +47,6 @@ namespace Hotel.Controllers
 
             return View(data);
         }
-        public ActionResult HotelMain()
-        {
-            
-            return View();
-        }
-        public JsonResult GetProvincesByRegionId(int regionId)
-        {
-            var provinces = db.Provinces
-                              .Where(p => p.RegionID == regionId && db.Hotels.Any(h => h.ProvinceID == p.ProvinceID))
-                              .Select(p => new { p.ProvinceID, p.ProvinceName })
-                              .ToList();
-
-            return Json(provinces, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult GetHotelsByProvince(int provinceId)
-        {
-            var hotels = db.Hotels
-                           .Where(h => h.ProvinceID == provinceId)
-                           .Select(h => new
-                           {
-                               h.HotelID,
-                               h.HotelName,
-                               h.Latitude,
-                               h.Longitude
-                           })
-                           .ToList();
-
-            return Json(hotels, JsonRequestBehavior.AllowGet);
-        }
-
         public JsonResult GetAllHotels()
         {
             var hotels = db.Hotels.Select(h => new
@@ -86,13 +60,44 @@ namespace Hotel.Controllers
 
             return Json(hotels, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetProvincesByRegionId(int regionId)
+        {
+            var provinces = db.Provinces
+                              .Where(p => p.RegionID == regionId && db.Hotels.Any(h => h.ProvinceID == p.ProvinceID))
+                              .Select(p => new { p.ProvinceID, p.ProvinceName })
+                              .ToList();
+
+            return Json(provinces, JsonRequestBehavior.AllowGet);
+        }
+        
+        public List<HotelModel> GetHotelsByProvinceId(int provinceId)
+        {
+            var hotels = db.Hotels
+                .Where(h => h.ProvinceID == provinceId)
+                .Select(h => new HotelModel
+                {
+                    HotelID = h.HotelID,
+                    HotelName = h.HotelName,
+                    Address = h.Address,
+                    HotelImage = h.HotelImage,
+                    Latitude = h.Latitude,
+                    Longitude = h.Longitude,
+                    Amenities = db.RoomAmenities
+                        .Where(ra => ra.Room.HotelID == h.HotelID)
+                        .Select(ra => ra.Amenity)
+                        .Distinct()
+                        .ToList(),
+                    Views = db.RoomViews
+                        .Where(rv => rv.Room.HotelID == h.HotelID)
+                        .Select(rv => rv.View)
+                        .Distinct()
+                        .ToList()
+                }).ToList();
+            return hotels;
+        }
         public ActionResult GetHotelDetail(int hotelID)
         {
             var currentHotel = db.Hotels.FirstOrDefault(h => h.HotelID == hotelID);
-            if (currentHotel == null)
-                return HttpNotFound();
-
-            var provinceId = currentHotel.ProvinceID;
 
             var selectedHotelModel = new HotelModel
             {
@@ -114,34 +119,22 @@ namespace Hotel.Controllers
                     .ToList()
             };
 
-            var otherHotels = db.Hotels
-                .Where(h => h.ProvinceID == provinceId && h.HotelID != hotelID)
-                .Select(h => new HotelModel
-                {
-                    HotelID = h.HotelID,
-                    HotelName = h.HotelName,
-                    Address = h.Address,
-                    HotelImage = h.HotelImage,
-                    Latitude = h.Latitude,
-                    Longitude = h.Longitude,
-                    Amenities = db.RoomAmenities
-                        .Where(ra => ra.Room.HotelID == h.HotelID)
-                        .Select(ra => ra.Amenity)
-                        .Distinct()
-                        .ToList(),
-                    Views = db.RoomViews
-                        .Where(rv => rv.Room.HotelID == h.HotelID)
-                        .Select(rv => rv.View)
-                        .Distinct()
-                        .ToList()
-                })
-                .ToList();
+            var otherHotels = GetHotelsByProvinceId(currentHotel.ProvinceID);
 
-            ViewBag.CurrentHotel = selectedHotelModel;
-            return PartialView("HotelDetail", otherHotels);
+            Session["CurrentHotel"] = selectedHotelModel;
+            Session["OtherHotels"] = otherHotels;
+
+            return PartialView("HotelDetail");
         }
 
-
+        public ActionResult SearchHotel(string keyWord)
+        {
+            var allHotels = Session["OtherHotels"] as List<HotelModel>;
+            var filtered = allHotels
+                             .Where(h => h.HotelName.ToLower().Contains(keyWord.ToLower()))
+                             .ToList();
+            return PartialView("OtherHotel", filtered);
+        }
         [HttpGet]
         public ActionResult GetNearbyHotels(decimal latitude, decimal longitude, decimal radiusKm = 10)
         {

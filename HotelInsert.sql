@@ -2,9 +2,9 @@
 GO
 INSERT INTO Regions (RegionName)
 VALUES 
-(N'Mi?n B?c'),
-(N'Mi?n Trung'),
-(N'Mi?n Nam');
+(N'Miền Bắc'),
+(N'Miền Trung'),
+(N'Miền Nam');
 GO
 INSERT INTO Provinces (ProvinceID, ProvinceName, RegionID) VALUES
 -- Mi?n B?c (RegionID = 1)
@@ -227,30 +227,32 @@ DECLARE @HotelID INT = 1;
 WHILE @HotelID <= 100
 BEGIN
     INSERT INTO Rooms (HotelID, RoomTypeId, RoomName, Price, Capacity, Thumnail, Description) VALUES
-    (@HotelID, 1, 'Standard Room ' + CAST(@HotelID AS NVARCHAR), 100.00, 2, '/Content/roomthumbnail/P101/101_1.jpg' + CAST(@HotelID AS NVARCHAR) + '.jpg', 'Cozy standard room with modern amenities'),
-    (@HotelID, 2, 'Deluxe Room ' + CAST(@HotelID AS NVARCHAR), 150.00, 2, '/Content/roomthumbnail/P101/101_2.jpg' + CAST(@HotelID AS NVARCHAR) + '.jpg', 'Spacious deluxe room with city view'),
-    (@HotelID, 3, 'Suite ' + CAST(@HotelID AS NVARCHAR), 250.00, 4, '/Content/roomthumbnail/P101/101_3.jpg' + CAST(@HotelID AS NVARCHAR) + '.jpg', 'Luxurious suite with premium facilities'),
-    (@HotelID, 4, 'Family Room ' + CAST(@HotelID AS NVARCHAR), 200.00, 6, '/Content/roomthumbnail/P101/101_4.jpg' + CAST(@HotelID AS NVARCHAR) + '.jpg', 'Family-friendly room with extra space'),
-    (@HotelID, 5, 'Executive Room ' + CAST(@HotelID AS NVARCHAR), 180.00, 3, '/Content/roomthumbnail/P101/101_5.jpg' + CAST(@HotelID AS NVARCHAR) + '.jpg', 'Elegant room for business travelers');
+    (@HotelID, 1, 'Standard Room ' + CAST(@HotelID AS NVARCHAR), 100.00, 2, '/Content/roomthumbnail/P101/101_1.jpg', 'Cozy standard room with modern amenities'),
+    (@HotelID, 2, 'Deluxe Room ' + CAST(@HotelID AS NVARCHAR), 150.00, 2, '/Content/roomthumbnail/P101/101_2.jpg', 'Spacious deluxe room with city view'),
+    (@HotelID, 3, 'Suite ' + CAST(@HotelID AS NVARCHAR), 250.00, 4, '/Content/roomthumbnail/P101/101_3.jpg', 'Luxurious suite with premium facilities'),
+    (@HotelID, 4, 'Family Room ' + CAST(@HotelID AS NVARCHAR), 200.00, 6, '/Content/roomthumbnail/P101/101_4.jpg', 'Family-friendly room with extra space'),
+    (@HotelID, 5, 'Executive Room ' + CAST(@HotelID AS NVARCHAR), 180.00, 3, '/Content/roomthumbnail/P101/101_5.jpg', 'Elegant room for business travelers');
     SET @HotelID = @HotelID + 1;
 END;
 DECLARE @RoomID INT = 1;
-
-WHILE @RoomID <= 100  -- thay 100 bằng số lượng phòng của bạn
+WHILE @RoomID <= 100
 BEGIN
+	DECLARE @i INT = 1;
+	WHILE @i < 5
+	BEGIN
     DECLARE @RandomFolder INT = FLOOR(RAND() * 10) + 1;     
-    DECLARE @RandomSuffix INT = FLOOR(RAND() * 5) + 1;           -- 1 → 5
+    DECLARE @RandomSuffix INT = FLOOR(RAND() * 5) + 1;          
 
-    DECLARE @ImageURL NVARCHAR(255) = '/Content/images/' + 
-                                      CAST(@RandomFolder AS NVARCHAR) + 
+    DECLARE @ImageURL NVARCHAR(255) = '/Content/images/treesix' + 
                                       '/P' + CAST(@RandomFolder AS NVARCHAR)+
 									  '0'+
                                       CAST(@RandomSuffix AS NVARCHAR) + 
-                                      '.jpg';
+                                      '.jpg'; 
 
     INSERT INTO RoomImages (RoomID, ImageURL)
     VALUES (@RoomID, @ImageURL);
-
+	SET @i = @i + 1;
+	END;
     SET @RoomID = @RoomID + 1;
 END;
 
