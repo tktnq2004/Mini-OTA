@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "Thanh toán thất bại";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // hoặc layout tùy dự án của bạn
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-danger">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="bi bi-x-circle-fill text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="text-danger mb-3">Thanh toán thất bại</h2>
+                    <p class="lead">Rất tiếc! Đã có sự cố khi xử lý thanh toán của bạn.</p>
+                    <p>Vui lòng kiểm tra lại thông tin thanh toán hoặc thử lại sau.</p>
+                    <a href="@Url.Action("HotelIndex", "Hotel")" class="btn btn-outline-danger mt-4">
+                        <i class="bi bi-arrow-left"></i> Quay về trang chủ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

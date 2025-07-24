@@ -1,66 +1,177 @@
 ﻿@model Hotel.Models.Booking
 
 @{
-    ViewBag.Title = "Booking";
+    ViewBag.Title = "Complete Your Booking";
+    var bookingID = Model.BookingID;
+    var soLuong = Model.Quantity;
+    var nguoiLon = Model.Adults;
+    var treEm = Model.Children;
     var soDem = (Model.CheckOut - Model.CheckIn).Days;
     var giaGoc = Model.Amount / soDem / (1 - Model.Discount / 100m);
     var giaSauGiam = Model.Amount / soDem;
     var countdownSeconds = (Model.ExpirationTime - DateTime.Now).TotalSeconds;
 }
 
-<div class="container mt-4 p-4 border rounded shadow">
-    <h2 class="mb-3 text-primary">Đặt phòng thành công!</h2>
-
+<div class="container mt-5">
+    <h2 class="mb-4">Complete Your Booking</h2>
     <div class="row">
-        <div class="col-md-6">
-            <h4>Thông tin đặt phòng</h4>
-            <ul class="list-group">
-                <li class="list-group-item"><strong>Phòng:</strong> @Model.Room.RoomName</li>
-                <li class="list-group-item"><strong>Mô tả:</strong> @Model.Room.Description</li>
-                <li class="list-group-item"><strong>Ngày nhận phòng:</strong> @Model.CheckIn.ToString("dd/MM/yyyy")</li>
-                <li class="list-group-item"><strong>Ngày trả phòng:</strong> @Model.CheckOut.ToString("dd/MM/yyyy")</li>
-                <li class="list-group-item"><strong>Số đêm:</strong> @soDem</li>
-                <li class="list-group-item"><strong>Giá mỗi đêm:</strong> @giaGoc.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</li>
-                <li class="list-group-item"><strong>Giảm giá:</strong> @Model.Discount%</li>
-                <li class="list-group-item text-success"><strong>Giá sau giảm:</strong> @giaSauGiam.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</li>
-                <li class="list-group-item"><strong>Tổng tiền:</strong> @Model.Amount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</li>
-                <li class="list-group-item">
-                    <strong>Trạng thái thanh toán:</strong>
-                    <span class="text-warning">@Model.PaymentStatus</span>
-                </li>
-            </ul>
-        </div>
+        <!-- Left Column: Form -->
+        <div class="col-md-8">
+            <div class="p-4 border rounded shadow-sm bg-white">
+                <h5 class="mb-3">Guest Information</h5>
 
-        <div class="col-md-6">
-            <h4>Thời gian giữ phòng</h4>
-            <div class="alert alert-info">
-                Vui lòng thanh toán trong vòng <span id="timer"></span> để giữ phòng.
+                <form id="userForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label>First Name</label>
+                            <input class="form-control" name="FirstName" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Last Name</label>
+                            <input class="form-control" name="LastName" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label>Email Address</label>
+                            <input class="form-control" name="Email" type="email" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Member Number <span class="text-muted">(Optional)</span></label>
+                            <input class="form-control" name="MemberNumber" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label>Phone Number</label>
+                            <input class="form-control" name="Phone" type="text" required />
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="smsConfirm">
+                        <label class="form-check-label" for="smsConfirm">Send my reservation confirmation by SMS</label>
+                    </div>
+
+                </form>
+                <h5 class="mt-3">Payment Method</h5>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" id="vnpay" value="VNPAY">
+                    <label class="form-check-label" for="vnpay">VNPAY</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" id="creditCard" value="CreditCard">
+                    <label class="form-check-label" for="creditCard">Credit Card / Visa</label>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" id="banking" value="Banking">
+                    <label class="form-check-label" for="banking">Bank Transfer</label>
+                </div>
+
+                <div class="payment-content"></div>
             </div>
+        </div>
 
-            <script>
-                let countdown = @Math.Floor(countdownSeconds);
-
-                function updateTimer() {
-                    if (countdown <= 0) {
-                        document.getElementById("timer").innerText = "Hết thời gian giữ phòng!";
-                        return;
-                    }
-
-                    let minutes = Math.floor(countdown / 60);
-                    let seconds = countdown % 60;
-                    document.getElementById("timer").innerText = minutes + " phút " + seconds + " giây";
-
-                    countdown--;
-                    setTimeout(updateTimer, 1000);
-                }
-
-                updateTimer();
-            </script>
+        <!-- Right Column: Room Info -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="@Model.Room.Thumnail" class="card-img-top" alt="Room Image" />
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Room.RoomName</h5>
+                    <p class="card-text">@Model.Room.Description</p>
+                    <p>
+                        <strong>@Model.CheckIn.ToString("ddd, MMM dd, yyyy")</strong> –
+                        <strong>@Model.CheckOut.ToString("ddd, MMM dd, yyyy")</strong><br />
+                        @soDem Night(s), @nguoiLon Adult(s), @treEm @(treEm > 1 ? "children" : "child")
+                    </p>
+                    <p class="text-success">Member Stay for Breakfast Rate</p>
+                    <hr />
+                    <div class="row">
+                        <div class="col">
+                            <p><strong>Quantity:</strong>@soLuong</p>
+                            <p><strong>Subtotal:</strong> @Model.Amount.ToString("N0") VND</p>
+                        </div>
+                        <div class="col" id="countdownBox">
+                            <span><strong>Time left: </strong></span>
+                            <span id="countdown" class="fw-bold text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="mt-4 text-end">
-        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Quay về trang chủ</a>
-        <a href="@Url.Action("History", "Booking")" class="btn btn-success">Xem lịch sử đặt phòng</a>
-    </div>
 </div>
+<script>
+    let secondsLeft = Math.floor(@countdownSeconds);
+
+    function updateCountdown() {
+        if (secondsLeft <= 0) {
+            document.getElementById("countdown").innerText = "expired";
+            // Optional: redirect or show alert
+            return;
+        }
+        let minutes = Math.floor(secondsLeft / 60);
+        let seconds = secondsLeft % 60;
+        document.getElementById("countdown").innerText =
+            minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        secondsLeft--;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+</script>
+<script>
+    $(document).ready(function () {
+        $("#smsConfirm").on("change", function () {
+            if (this.checked) {
+                const formData = {
+                    BookingID: '@bookingID',
+                    FirstName: $("input[name='FirstName']").val(),
+                    LastName: $("input[name='LastName']").val(),
+                    Email: $("input[name='Email']").val(),
+                    MemberNumber: $("input[name='MemberNumber']").val(),
+                    Phone: $("input[name='Phone']").val(),
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Booking/AddUserToBooking", // đúng đường dẫn Controller/Action
+                    data: formData,
+                    success: function (res) {
+                        alert("Thông tin đã được gửi thành công!");
+                        console.log(res); // hoặc xử lý tiếp
+                    },
+                    error: function (err) {
+                        alert("Đã xảy ra lỗi khi gửi thông tin.");
+                        console.log(err);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+    var bookingID = '@bookingID';
+    var amount = parseFloat('@giaSauGiam.ToString(System.Globalization.CultureInfo.InvariantCulture)');
+
+    function loadPaymentContent(method) {
+        $.get("/Booking/LoadPaymentPartial", {
+            method: method,
+            bookingID: bookingID,
+            amount: amount
+        }, function (data) {
+            $(".payment-content").html(data);
+        });
+    }
+
+    $("input[name='PaymentMethod']").on("change", function () {
+        const selectedMethod = $(this).val();
+        loadPaymentContent(selectedMethod);
+    });
+});
+
+</script>

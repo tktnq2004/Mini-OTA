@@ -1,0 +1,65 @@
+﻿@model Hotel.Models.HotelModel.HotelModel
+
+@if (Model != null)
+{
+    <div class="card shadow-sm border border-primary bg-light-subtle">
+        <div class="row g-0">
+            <div class="col-4">
+                <img src="@Model.HotelImage" class="img-fluid rounded-start hotel-image-fixed" />
+            </div>
+            <div class="col-8">
+                <div class="card-body py-2 px-2">
+                    <h6 class="card-title text-primary mb-1">
+                        @Model.HotelName
+                        <span class="badge bg-primary">Selected</span>
+                    </h6>
+                    <p class="text-muted small mb-1">
+                        <i class="bi bi-geo-alt-fill"></i> @Model.Address
+                    </p>
+                    @if (Model.Amenities?.Any() == true)
+                    {
+                        <div class="small text-muted mb-1">
+                            <strong>Amenities:</strong>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                @foreach (var a in Model.Amenities.Take(3))
+                                {
+                                    <span title="@a.AmenityName">
+                                        <i class="bi @a.AmenityIcon"></i>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    }
+                    <div class="d-flex justify-content-between align-items-center mt-1">
+                        @if (Model.Views?.Any() == true)
+                        {
+                            <div class="small text-muted">
+                                <strong>View:</strong>
+                                <div class="d-flex flex-wrap gap-1 mt-1">
+                                    @foreach (var v in Model.Views.Take(2))
+                                    {
+                                        <span title="@v.ViewName">
+                                            <i class="bi @v.ViewIcon"></i>
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        <button class="hotelSearchBtn btn btn-sm btn-outline-primary ms-2"
+                                data-hotel-id="@Model.HotelID">
+                            Check
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<style>
+    .hotel-image-fixed {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 0.5rem 0 0 0.5rem;
+    }
+</style>

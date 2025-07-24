@@ -1,0 +1,19 @@
+﻿<div class="mt-3">
+    <p>Total to Pay: <strong>@ViewBag.Amount.ToString("N0") VND</strong></p>
+    <button id="btnVnPay" class="btn btn-danger">Thanh toán qua VNPay</button>
+</div>
+
+<script>
+    $("#btnVnPay").on("click", function () {
+        $.post("/Booking/CreateVnPayUrl", {
+            bookingID: '@ViewBag.BookingID',
+            amount: '@ViewBag.Amount'
+        }, function (response) {
+            if (response.success) {
+                window.open(response.vnpUrl, "_blank");
+            } else {
+                alert("Lỗi tạo thanh toán VNPay: " + response.message);
+            }
+        });
+    });
+</script>

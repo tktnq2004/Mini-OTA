@@ -163,7 +163,11 @@
                 border-radius: 20px;
                 object-fit: cover;
             }
-
+        .service {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
         .section-title .subtitle {
             font-family: 'Dancing Script', cursive;
             font-size: 36px;
@@ -236,39 +240,45 @@
                 max-width: 100%;
             }
 
-        .service {
-            padding: 80px 20px;
-        }
-
-        .service-wrap__item {
-            margin-bottom: 60px;
-        }
-
-        .service-item-flex {
+        .service-grid {
             display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .service-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
             align-items: center;
-            justify-content: center;
         }
 
-        .service-image, .service-desc {
-            flex: 1;
-            min-width: 300px;
-        }
-
-            .service-image img {
-                width: 100%;
-                height: auto;
-                border-radius: 10px;
-                object-fit: cover;
-                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            .service-item:nth-child(even) {
+                direction: rtl;
             }
 
+                .service-item:nth-child(even) .service-text {
+                    direction: ltr;
+                }
+
+        .service-img img {
+            width: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
         .service-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: #002060;
+            margin-bottom: 15px;
+        }
+
+        .service-desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
             margin-bottom: 15px;
         }
 
@@ -303,30 +313,32 @@
         <div class="booking-overlay">
             <h1>Book Your Vacation</h1>
             <p>Explore new experiences with Hotale</p>
-            <form class="booking-form">
+            <form class="booking-form" method="get" action="/Hotel/HotelIndexFromMenu">
                 <div class="form-group">
                     <label>Check In</label>
-                    <input type="date" id="checkin" value="2025-07-16" />
+                    <input type="date" id="checkin" name="checkin" />
                 </div>
                 <div class="form-group">
                     <label>Check Out</label>
-                    <input type="date" id="checkout" value="2025-07-17" />
+                    <input type="date" id="checkout" name="checkout" />
                 </div>
+
                 <div class="form-group">
                     <label>Adults</label>
-                    <select id="adults">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                    </select>
+                    <div class="d-flex align-items-center">
+                        <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="changeGuest('adults', -1)">−</button>
+                        <input type="text" id="adults" name="adults" class="text-center form-control form-control-sm" value="1" readonly />
+                        <button type="button" class="btn btn-outline-secondary btn-sm ms-2" onclick="changeGuest('adults', 1)">+</button>
+                    </div>
                 </div>
+
                 <div class="form-group">
                     <label>Child</label>
-                    <select id="children">
-                        <option>0</option>
-                        <option>1</option>
-                        <option>2</option>
-                    </select>
+                    <div class="d-flex align-items-center">
+                        <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="changeGuest('children', -1)">−</button>
+                        <input type="text" id="children" name="children" class="text-center form-control form-control-sm" value="0" readonly />
+                        <button type="button" class="btn btn-outline-secondary btn-sm ms-2" onclick="changeGuest('children', 1)">+</button>
+                    </div>
                 </div>
                 <button type="submit" class="book-btn">Book Rooms</button>
             </form>
@@ -421,45 +433,46 @@
 
     <!-- Services -->
     <section class="service">
-        <div class="section-title">
-            <h2 class="subtitle">Visit Our Famous Facilities</h2>
+        <div class="sub-title">
+            <h2 style="font-family: 'Dancing Script', cursive; font-size: 32px; font-weight: bold;">
+                Visit Our Famous Facilities
+            </h2>
         </div>
 
-        <div class="service-wrap__item">
-            <div class="service-item-flex">
-                <div class="service-image">
-                    <img src="/Content/images/logo1/chef-cook.jpg" alt="Restaurant" />
+        <div class="service-grid">
+            <!-- Restaurant -->
+            <div class="service-item">
+                <div class="service-img">
+                    <img src="/Content/images/logo1/chef-cook.jpg" alt="Restaurant">
                 </div>
-                <div class="service-desc">
+                <div class="service-text">
                     <h3 class="service-title">Restaurant</h3>
-                    <span>Flexible banquet hall system for weddings and conferences.</span>
-                    <a class="link-detail" href="#">Learn more ></a>
+                    <p class="service-desc">The large, flexible banquet hall system, invested with modern equipment, will always be a great suggestion for high-class weddings and conferences.</p>
+                    <a href="/services/2145/restaurant" class="link-detail">Learn more &gt;</a>
                 </div>
             </div>
-        </div>
 
-        <div class="service-wrap__item">
-            <div class="service-item-flex">
-                <div class="service-image">
-                    <img src="/Content/images/logo1/bar.jpg" alt="Sky Bar" />
+            <!-- Sky Bar -->
+            <div class="service-item">
+                <div class="service-img">
+                    <img src="/Content/images/logo1/bar.jpg" alt="Sky Bar">
                 </div>
-                <div class="service-desc">
+                <div class="service-text">
                     <h3 class="service-title">Sky Bar</h3>
-                    <span>Perfect for cocktails, teas, and coffees.</span>
-                    <a class="link-detail" href="#">Learn more ></a>
+                    <p class="service-desc">Celebrate your moment with one of our highlights for cocktails or if you prefer, a selection of international teas and locally sourced coffees are available hot or refreshingly iced.</p>
+                    <a href="/services/2146/sky-bar" class="link-detail">Learn more &gt;</a>
                 </div>
             </div>
-        </div>
 
-        <div class="service-wrap__item">
-            <div class="service-item-flex">
-                <div class="service-image">
-                    <img src="/Content/images/logo1/spa.jpg" alt="Spa Hotale" />
+            <!-- Spa Hotale -->
+            <div class="service-item">
+                <div class="service-img">
+                    <img src="/Content/images/logo1/spa.jpg" alt="Spa Hotale">
                 </div>
-                <div class="service-desc">
+                <div class="service-text">
                     <h3 class="service-title">Spa Hotale</h3>
-                    <span>Enjoy luxurious spa experiences amidst nature.</span>
-                    <a class="link-detail" href="#">Learn more ></a>
+                    <p class="service-desc">Get lost in the luxurious and charming Spa Hotale Hotel oasis to enjoy moments of absolute relaxation in the midst of nature. Here, you can immerse yourself in unique spa experiences.</p>
+                    <a href="/services/2147/spa-hotale" class="link-detail">Learn more &gt;</a>
                 </div>
             </div>
         </div>
@@ -467,3 +480,43 @@
 
 </body>
 </html>
+
+<script>
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    // Format YYYY-MM-DD
+    const formatDate = (d) => {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    document.getElementById("checkin").value = formatDate(today);
+    document.getElementById("checkout").value = formatDate(tomorrow);
+</script>
+<script>
+    function changeGuest(id, delta) {
+        const adultsInput = document.getElementById("adults");
+        const childrenInput = document.getElementById("children");
+
+        let adults = parseInt(adultsInput.value);
+        let children = parseInt(childrenInput.value);
+
+        if (id === "adults") {
+            const newAdults = Math.max(1, Math.min(adults + delta, 5));
+            const total = newAdults + children;
+            if (total <= 5) {
+                adultsInput.value = newAdults;
+            }
+        } else if (id === "children") {
+            const newChildren = Math.max(0, Math.min(children + delta, 5));
+            const total = adults + newChildren;
+            if (total <= 5) {
+                childrenInput.value = newChildren;
+            }
+        }
+    }
+</script>

@@ -145,7 +145,7 @@ GO
 -- Tạo bảng đặt phòng
 CREATE TABLE Bookings (
     BookingID INT PRIMARY KEY IDENTITY(1,1),
-    UserID INT NOT NULL,
+    UserID INT,
 	RoomID INT NOT NULL,
 	Discount INT NOT NULL DEFAULT 0,
     CheckIn DATE NOT NULL,

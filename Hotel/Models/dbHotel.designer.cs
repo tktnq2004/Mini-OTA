@@ -577,7 +577,7 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		
 		private int _BookingID;
 		
-		private int _UserID;
+		private System.Nullable<int> _UserID;
 		
 		private int _RoomID;
 		
@@ -586,6 +586,12 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 		private System.DateTime _CheckIn;
 		
 		private System.DateTime _CheckOut;
+		
+		private int _Quantity;
+		
+		private int _Adults;
+		
+		private int _Children;
 		
 		private decimal _Amount;
 		
@@ -605,7 +611,7 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     partial void OnCreated();
     partial void OnBookingIDChanging(int value);
     partial void OnBookingIDChanged();
-    partial void OnUserIDChanging(int value);
+    partial void OnUserIDChanging(System.Nullable<int> value);
     partial void OnUserIDChanged();
     partial void OnRoomIDChanging(int value);
     partial void OnRoomIDChanged();
@@ -615,6 +621,12 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
     partial void OnCheckInChanged();
     partial void OnCheckOutChanging(System.DateTime value);
     partial void OnCheckOutChanged();
+    partial void OnQuantityChanging(int value);
+    partial void OnQuantityChanged();
+    partial void OnAdultsChanging(int value);
+    partial void OnAdultsChanged();
+    partial void OnChildrenChanging(int value);
+    partial void OnChildrenChanged();
     partial void OnAmountChanging(decimal value);
     partial void OnAmountChanged();
     partial void OnPaymentStatusChanging(string value);
@@ -652,8 +664,8 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="Int NOT NULL")]
-		public int UserID
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="Int")]
+		public System.Nullable<int> UserID
 		{
 			get
 			{
@@ -756,6 +768,66 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 					this._CheckOut = value;
 					this.SendPropertyChanged("CheckOut");
 					this.OnCheckOutChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Int NOT NULL")]
+		public int Quantity
+		{
+			get
+			{
+				return this._Quantity;
+			}
+			set
+			{
+				if ((this._Quantity != value))
+				{
+					this.OnQuantityChanging(value);
+					this.SendPropertyChanging();
+					this._Quantity = value;
+					this.SendPropertyChanged("Quantity");
+					this.OnQuantityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Adults", DbType="Int NOT NULL")]
+		public int Adults
+		{
+			get
+			{
+				return this._Adults;
+			}
+			set
+			{
+				if ((this._Adults != value))
+				{
+					this.OnAdultsChanging(value);
+					this.SendPropertyChanging();
+					this._Adults = value;
+					this.SendPropertyChanged("Adults");
+					this.OnAdultsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Children", DbType="Int NOT NULL")]
+		public int Children
+		{
+			get
+			{
+				return this._Children;
+			}
+			set
+			{
+				if ((this._Children != value))
+				{
+					this.OnChildrenChanging(value);
+					this.SendPropertyChanging();
+					this._Children = value;
+					this.SendPropertyChanged("Children");
+					this.OnChildrenChanged();
 				}
 			}
 		}
@@ -874,7 +946,7 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Booking", Storage="_User", ThisKey="UserID", OtherKey="UserID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Booking", Storage="_User", ThisKey="UserID", OtherKey="UserID", IsForeignKey=true, DeleteRule="CASCADE")]
 		public User User
 		{
 			get
@@ -901,7 +973,7 @@ base(global::System.Configuration.ConfigurationManager.ConnectionStrings["HotelC
 					}
 					else
 					{
-						this._UserID = default(int);
+						this._UserID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("User");
 				}

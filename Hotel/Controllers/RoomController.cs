@@ -17,10 +17,20 @@ namespace Hotel.Controllers
         // GET: Room
         private List<RoomDisplay> GetAvailableRooms(int hotelID, DateTime? fromDate, DateTime? toDate)
         {
+            var expired = db.Bookings
+            .Where(b => b.PaymentStatus == "Pending" && b.ExpirationTime < DateTime.Now)
+            .ToList();
+
+            foreach (var b in expired)
+            {
+                b.PaymentStatus = "Cancelled";
+            }
+            db.SubmitChanges();
+
             var bookedRoomIds = db.Bookings
                 .Where(bd => db.Bookings.Any(b =>
                     b.BookingID == bd.BookingID &&
-                    b.CheckIn < toDate && b.CheckOut > fromDate))
+                    b.CheckIn < toDate && b.CheckOut > fromDate && b.PaymentStatus == "Cancelled"))
                 .Select(bd => bd.RoomID)
                 .Distinct()
                 .ToList();

@@ -45,35 +45,6 @@
                 <p><strong>Total Amount:</strong> @payment.Amount.ToString("N0") VND</p>
                 <p><strong>Last Update:</strong> @payment.LastUpdate.ToString("dd/MM/yyyy")</p>
 
-                 Xử lý trạng thái thanh toán 
-                @if (payment.Status == "Pending")
-                {
-                    <div class="d-flex justify-content-between">
-                         Nút Proceed to Payment, sẽ thay thành Paid khi nhấn 
-                        <a href="javascript:void(0);" class="btn btn-success mt-3 proceedToPayment">Proceed to Payment</a>
-
-                         Nút Cancel Order 
-                        <a href="javascript:void(0);" class="btn btn-danger mt-3 cancelOrder">Cancel Order</a>
-                    </div>
-
-                     Mã QR và Nút Confirm Payment Success, ban đầu ẩn 
-                    <div class="qrCodeContainer" style="display: none; text-align:center;">
-                        <img src="@payment.QRCode" alt="QR Code" style="width:300px; height:300px;">
-                    </div>
-
-                     Nút Succeed Payment, ban đầu ẩn 
-                    <div class="succeedPaymentContainer" style="display: none; text-align:center;">
-                        <button class="btn btn-primary mt-3">Succeed Payment</button>
-                    </div>
-                }
-                else if (payment.Status == "Confirm")
-                {
-                     Nếu thanh toán đã xác nhận, hiển thị nút Paid 
-                    <button class="btn btn-secondary mt-3" disabled>Paid</button>
-                }
-
-
-
             </div>
         </div>
     </div>

@@ -19,17 +19,20 @@
   <Table Name="dbo.Bookings" Member="Bookings">
     <Type Name="Booking">
       <Column Name="BookingID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="RoomID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Discount" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="CheckIn" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
       <Column Name="CheckOut" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="Quantity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Adults" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Children" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Amount" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
       <Column Name="PaymentStatus" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Column Name="BookingDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="ExpirationTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Association Name="Room_Booking" Member="Room" ThisKey="RoomID" OtherKey="RoomID" Type="Room" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
-      <Association Name="User_Booking" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="User_Booking" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" />
     </Type>
   </Table>
   <Table Name="dbo.DiscountDetails" Member="DiscountDetails">

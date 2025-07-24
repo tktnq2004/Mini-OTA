@@ -61,7 +61,7 @@
         </div>
     </div>
 
-    <div class="container mb-3">
+    @*<div class="container mb-3">
         <ul class="nav nav-pills justify-content-center navbar-custom2">
             <li class="nav-item">
                 <a class="nav-link filter-khuyenmai selected" href="#">Promotion</a>
@@ -82,7 +82,7 @@
             </li>
 
         </ul>
-    </div>
+    </div>*@
 
 
     <div class="container my-4">
@@ -133,7 +133,7 @@
                                     <a href="@Url.Action("AddWishlist", "Room", new { id = item.ID })" class="btn btn-dark px-4 py-2 rounded-pill">
                                         Wish List
                                     </a>
-                                    <a href="@Url.Action("Booking", "Booking", new { roomID = item.ID,fromDate = from,toDate=to })" class="btn btn-dark px-4 py-2 rounded-pill">
+                                    <a href="@Url.Action("Booking", "Booking", new { roomID = item.ID,fromDate = from,toDate=to,rooms=rooms, adults=adults,children = children })" class="btn btn-dark px-4 py-2 rounded-pill">
                                         Select
                                     </a>
                                 </div>

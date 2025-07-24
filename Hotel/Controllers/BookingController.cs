@@ -1,10 +1,11 @@
 ﻿using Hotel.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
+using System.Configuration;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace Hotel.Controllers
 {
@@ -33,11 +34,8 @@ namespace Hotel.Controllers
                               }).ToList();
             return View("DisplayCart", cartDetail);
         }
-        public ActionResult Booking(int roomID,string fromDate,string toDate)
+        public ActionResult Booking(int roomID,string fromDate,string toDate,int rooms,int adults,int children)
         {
-            var user = Session["user"] as User;
-            if (user == null)
-                return new HttpStatusCodeResult(401, "Chưa đăng nhập.");
             var room = db.Rooms.FirstOrDefault(r => r.RoomID == roomID);
             int percent = db.DiscountDetails.Where(dd => dd.RoomID == roomID)
                                             .Select(dd => (int?)dd.Discount.DiscountPercent)
@@ -46,207 +44,238 @@ namespace Hotel.Controllers
             var booking = new Booking
             {
                 RoomID = roomID,
-                UserID = user.UserID,
                 BookingDate = DateTime.Now,
                 ExpirationTime = DateTime.Now.AddMinutes(20),
-                Amount = (room.Price - (room.Price * ((decimal)percent / 100m))) 
+                Amount = ((room.Price - (room.Price * ((decimal)percent / 100m))) 
                         * 
                         (DateTime.ParseExact(toDate, "dd-MM-yyyy", CultureInfo.InvariantCulture) 
-                        - DateTime.ParseExact(fromDate, "dd-MM-yyyy", CultureInfo.InvariantCulture)).Days,
+                        - DateTime.ParseExact(fromDate, "dd-MM-yyyy", CultureInfo.InvariantCulture)).Days) * rooms,
                 Discount = percent,
                 CheckIn = DateTime.ParseExact(fromDate, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                 CheckOut = DateTime.ParseExact(toDate, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                 PaymentStatus = "Pending",
+                Quantity = rooms,
+                Adults = adults,
+                Children = children,
             };
             db.Bookings.InsertOnSubmit(booking);
             db.SubmitChanges();
             return View(booking);
         }
-
-        [HttpPost]
-        public async Task<ActionResult> ConfirmBooking(FormCollection form)
+        private string GenerateRandomPassword(int length)
         {
-            var user = (User)Session["user"];
-            if (user == null) return new HttpStatusCodeResult(401, "Chưa đăng nhập.");
-
-            var ListRoomId = form.GetValues("roomIds")?.Select(int.Parse).ToList();
-            if (ListRoomId == null || !ListRoomId.Any())
+            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+        public ActionResult AddUserToBooking(int bookingID, string FirstName, string LastName, string Email, string Phone)
+        {
+            string rawPassword = GenerateRandomPassword(10);
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(rawPassword);
+            var user = db.Users.FirstOrDefault(u => u.Email == Email);
+            if (user == null)
             {
-                return new HttpStatusCodeResult(400, "Không có phòng nào được chọn.");
-            }
-
-            string dateRange = form["dateRange"];
-            if (string.IsNullOrEmpty(dateRange))
-            {
-                return new HttpStatusCodeResult(402, "Không có ngày đặt phòng.");
-            }
-
-            var dates = dateRange.Split(new[] { " - ", " to " }, StringSplitOptions.RemoveEmptyEntries);
-            if (dates.Length != 2)
-            {
-                return new HttpStatusCodeResult(403, "Định dạng ngày không hợp lệ.");
-            }
-
-            DateTime checkIn, checkOut;
-            string[] formats = { "dd-MM-yyyy" };
-
-            bool isCheckInValid = DateTime.TryParseExact(dates[0].Trim(), formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out checkIn);
-            bool isCheckOutValid = DateTime.TryParseExact(dates[1].Trim(), formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out checkOut);
-
-            if (!isCheckInValid || !isCheckOutValid)
-            {
-                return new HttpStatusCodeResult(404, "Lỗi chuyển đổi ngày.");
-            }
-
-            if (checkIn >= checkOut)
-            {
-                return new HttpStatusCodeResult(405, "Check-in phải trước Check-out.");
-            }
-
-            // Tạo Booking mới
-            Booking newBooking = new Booking
-            {
-                UserID = user.UserID,
-                CheckIn = checkIn,
-                CheckOut = checkOut,
-                BookingDate = DateTime.Now
-            };
-
-            db.Bookings.InsertOnSubmit(newBooking);
-            db.SubmitChanges(); // Lưu lại để lấy BookingID
-
-            decimal tongTien = 0;
-            string danhSachPhong = "";
-            int span = ListRoomId.Count;
-            foreach (var roomId in ListRoomId)
-            {
-
-                var room = db.Rooms.FirstOrDefault(r => r.RoomID == roomId);
-                int percent = db.DiscountDetails.Where(dd => dd.RoomID == roomId)
-                                                .Select(dd => (int?)dd.Discount.DiscountPercent)
-                                                .FirstOrDefault() ?? 0;
-                if (room == null) continue; // Nếu phòng không tồn tại, bỏ qua
-
-                // Thêm vào BookingDetail
-                var bookingDetail = new Booking
+                var newUser = new User
                 {
-                    RoomID = roomId,
-                    BookingID = newBooking.BookingID,
-                    Discount = percent
+                    FullName = $"{FirstName} {LastName}",
+                    Username = Email,
+                    Email = Email,
+                    Phone = Phone,
+                    Password = hashedPassword,
+                    Role = "Customer",
                 };
-                db.Bookings.InsertOnSubmit(bookingDetail);
 
-                // Tính tiền
-                tongTien += ( room.Price - ( room.Price * ((decimal)percent /100m) )) * (newBooking.CheckOut - newBooking.CheckIn).Days;
-                
-                if (span == ListRoomId.Count)
+                db.Users.InsertOnSubmit(newUser);
+                db.SubmitChanges();
+
+                var booking = db.Bookings.FirstOrDefault(b => b.BookingID == bookingID);
+                if (booking != null)
                 {
-                    danhSachPhong += $@"
-                <tr>
-                    <td>{room.RoomName}</td>
-                    <td>{room.RoomType.RoomTypeName}</td>
-                    <td>{(room.Price - (room.Price * (percent / 100m))):N0} VND</td>
-                    <td rowspan=""{span}""> {newBooking.CheckIn:dd/MM/yyyy}</td>
-                    <td rowspan=""{span}""> {newBooking.CheckOut:dd/MM/yyyy}</td>
-                    <td rowspan=""{span}""> {(newBooking.CheckOut - newBooking.CheckIn).Days} đêm</td>
-                </tr>";
-                    span = 0;
+                    booking.UserID = user.UserID;
+                    db.SubmitChanges();
+                }
+            }
+            return Json(new { success = true });
+        }
+
+        public ActionResult LoadPaymentPartial(string method,int bookingID,decimal amount)
+        {
+            switch (method)
+            {
+                case "CreditCard":
+                    return PartialView("CreditCard");
+                case "Banking":
+                    ViewBag.BookingID = bookingID;
+                    ViewBag.Amount = amount;
+                    var QRcode = new GenQRCode().QRCode(amount, bookingID);
+                    return PartialView("Banking",QRcode);
+                default:
+                    ViewBag.BookingID = bookingID;
+                    ViewBag.Amount = amount;
+                    return PartialView("VNPay");
+            }
+        }
+
+        public JsonResult CreateVnPayUrl(int bookingID, decimal amount)
+        {
+            try
+            {
+                var booking = db.Bookings.FirstOrDefault(b => b.BookingID == bookingID);
+                if (booking == null)
+                    return Json(new { success = false, message = "Không tìm thấy booking." });
+
+                var vnPay = new VNPAY_CS_ASPX.VnPayLibrary();
+
+                string vnp_Returnurl = ConfigurationManager.AppSettings["vnp_Returnurl"];
+                string vnp_Url = ConfigurationManager.AppSettings["vnp_Url"];
+                string vnp_TmnCode = ConfigurationManager.AppSettings["vnp_TmnCode"];
+                string vnp_HashSecret = ConfigurationManager.AppSettings["vnp_HashSecret"];
+
+                string orderId = booking.BookingID.ToString();
+                string amountStr = ((long)(amount * 100)).ToString(); // VNPay yêu cầu nhân 100
+                string bankCode = ""; // Tùy chọn
+
+                vnPay.AddRequestData("vnp_Version", "2.1.0");
+                vnPay.AddRequestData("vnp_Command", "pay");
+                vnPay.AddRequestData("vnp_TmnCode", vnp_TmnCode);
+                vnPay.AddRequestData("vnp_Amount", amountStr);
+                vnPay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+                vnPay.AddRequestData("vnp_CurrCode", "VND");
+                vnPay.AddRequestData("vnp_IpAddr", Request.UserHostAddress);
+                vnPay.AddRequestData("vnp_Locale", "vn");
+                vnPay.AddRequestData("vnp_OrderInfo", $"Thanh toán đơn #{orderId}");
+                vnPay.AddRequestData("vnp_OrderType", "other");
+                vnPay.AddRequestData("vnp_ReturnUrl", vnp_Returnurl);
+                vnPay.AddRequestData("vnp_TxnRef", orderId);
+
+                if (!string.IsNullOrEmpty(bankCode))
+                {
+                    vnPay.AddRequestData("vnp_BankCode", bankCode);
+                }
+
+                string paymentUrl = vnPay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
+                return Json(new { success = true, vnpUrl = paymentUrl });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+        public ActionResult VnPayReturn()
+        {
+            try
+            {
+                var responseData = Request.QueryString;
+                var vnpay = new VNPAY_CS_ASPX.VnPayLibrary();
+
+                string responseLog = string.Join("\n", responseData.AllKeys.Select(k => $"{k}: {responseData[k]}"));
+                System.IO.File.AppendAllText(Server.MapPath("~/Logs/vnpay_response.log"),
+                    $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] VNPay Response:\n{responseLog}\n");
+
+                foreach (string key in responseData.AllKeys)
+                {
+                    vnpay.AddResponseData(key, responseData[key]);
+                }
+
+                string hashSecret = ConfigurationManager.AppSettings["vnp_HashSecret"];
+                string vnp_SecureHash = responseData["vnp_SecureHash"];
+                bool isValidSignature = vnpay.ValidateSignature(vnp_SecureHash, hashSecret);
+
+
+                string responseCode = responseData["vnp_ResponseCode"];
+                string bookingId = responseData["vnp_TxnRef"];
+
+                if (isValidSignature)
+                {
+                    System.IO.File.AppendAllText(Server.MapPath("~/Logs/vnpay_response.log"),
+                        $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Signature Valid, ResponseCode: {responseCode}, BookingID: {bookingId}\n");
+
+                    if (responseCode == "00") // Thanh toán thành công
+                    {
+                        var booking = db.Bookings.FirstOrDefault(b => b.BookingID == int.Parse(bookingId));
+                        if (booking != null)
+                        {
+                            booking.PaymentStatus = "Paid";
+                            db.SubmitChanges();
+
+                            var user = booking.User;
+                            string templatePath = Server.MapPath("~/Content/templates/send3.html");
+                            if (System.IO.File.Exists(templatePath))
+                            {
+                                var room = db.Rooms.FirstOrDefault(r => r.RoomID == booking.RoomID);
+                                if (room != null)
+                                {
+                                    var percent = booking.Discount;
+                                    var priceAfterDiscount = room.Price - (room.Price * percent / 100m);
+
+                                    string danhSachPhong = $@"
+                            <tr>
+                                <td>{room.RoomName}</td>
+                                <td>{room.RoomType.RoomTypeName}</td>
+                                <td>{priceAfterDiscount:N0} VND</td>
+                                <td>{booking.CheckIn:dd/MM/yyyy}</td>
+                                <td>{booking.CheckOut:dd/MM/yyyy}</td>
+                                <td>{(booking.CheckOut - booking.CheckIn).Days} đêm</td>
+                            </tr>";
+
+                                    string qrUrl = new GenQRCode().QRCode(booking.Amount, booking.BookingID);
+
+                                    string content = System.IO.File.ReadAllText(templatePath)
+                                        .Replace("{{MaDon}}", booking.BookingID.ToString())
+                                        .Replace("{{NgayDatHang}}", booking.BookingDate.ToString("dd/MM/yyyy"))
+                                        .Replace("{{DanhSachPhong}}", danhSachPhong)
+                                        .Replace("{{TenKhachHang}}", user.FullName)
+                                        .Replace("{{Phone}}", user.Phone)
+                                        .Replace("{{Email}}", user.Email)
+                                        .Replace("{{TongTien}}", booking.Amount.ToString("N0"))
+                                        .Replace("{{QRCode}}", qrUrl);
+
+                                    _ = Task.Run(() =>
+                                    {
+                                        try
+                                        {
+                                            Common.Common.sendEmail("Wengg Hotel", $"[Thanh toán thành công] Đơn #{booking.BookingID}", content, user.Email);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            System.IO.File.AppendAllText(Server.MapPath("~/Logs/email_error.log"),
+                                                $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Email Error: {ex.Message}\n{ex.StackTrace}\n");
+                                        }
+                                    });
+                                }
+                            }
+                            return View("Success");
+                        }
+                        return Content("Không tìm thấy booking.");
+                    }
+                    else
+                    {
+                        System.IO.File.AppendAllText(Server.MapPath("~/Logs/vnpay_response.log"),
+                            $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Payment Failed, ResponseCode: {responseCode}, BookingID: {bookingId}\n");
+                        return View("Fail");
+                    }
                 }
                 else
                 {
-                    danhSachPhong += $@"
-                <tr>
-                    <td>{room.RoomName}</td>
-                    <td>{room.RoomType.RoomTypeName}</td>
-                    <td>{room.Price:N0} VND</td>
-                </tr>";
+                    System.IO.File.AppendAllText(Server.MapPath("~/Logs/vnpay_response.log"),
+                        $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Invalid Signature\n");
+                    return Content($"Sai chữ ký VNPay! ResponseCode: {responseData["vnp_ResponseCode"]}, TxnRef: {responseData["vnp_TxnRef"]}");
                 }
             }
-
-            db.SubmitChanges(); // Lưu BookingDetails
-
-            // Tạo QR Code
-            string qrUrl = new GenQRCode().QRCode(tongTien, newBooking.BookingID);
-
-            // Load template email
-            string templatePath = Server.MapPath("~/Content/templates/send3.html");
-            if (!System.IO.File.Exists(templatePath))
+            catch (Exception ex)
             {
-                return new HttpStatusCodeResult(500, "Không tìm thấy template email.");
+                System.IO.File.AppendAllText(Server.MapPath("~/Logs/vnpay_error.log"),
+                    $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Error in VnPayReturn: {ex.Message}\n{ex.StackTrace}\n");
+                return Content($"Lỗi xử lý phản hồi VNPay: {ex.Message}");
             }
-
-            string contentCustomer = System.IO.File.ReadAllText(templatePath);
-
-            contentCustomer = contentCustomer.Replace("{{MaDon}}", newBooking.BookingID.ToString())
-                                             .Replace("{{NgayDatHang}}", newBooking.BookingDate.ToString("dd/MM/yyyy"))
-                                             .Replace("{{DanhSachPhong}}", danhSachPhong)
-                                             .Replace("{{TenKhachHang}}", newBooking.User.FullName)
-                                             .Replace("{{Phone}}", newBooking.User.Phone)
-                                             .Replace("{{Email}}", newBooking.User.Email)
-                                             .Replace("{{TongTien}}", tongTien.ToString("N0"))
-                                             .Replace("{{QRCode}}", qrUrl);
-
-            // Gửi email bất đồng bộ
-            _ = Task.Run(() =>
-            {
-                try
-                {
-                    Common.Common.sendEmail("Wengg Hotel", $"Booking Confirmation #{newBooking.BookingID}", contentCustomer, newBooking.User.Email);
-                }
-                catch (Exception ex)
-                {
-                    System.IO.File.AppendAllText(Server.MapPath("~/Logs/email_error.log"), ex.ToString());
-                }
-            });
-
-            // Tạo thanh toán
-            var payment = new Booking
-            {
-                BookingID = newBooking.BookingID,
-                BookingDate = DateTime.Now,
-                Amount = tongTien,
-                PaymentStatus = "Pending",
-            };
-
-            db.Bookings.InsertOnSubmit(payment);
-            db.SubmitChanges();
-
-            return new HttpStatusCodeResult(202, "Đặt phòng thành công.");
-
         }
-        public ActionResult History()
-        {
-            var user = (User)Session["user"];
-            if (user == null)
-                return RedirectToAction("Login", "User");
 
-            var paymentDisplay = (from b in db.Bookings
-                                  where b.UserID == user.UserID
-                                  join r in db.Rooms on b.RoomID equals r.RoomID
-                                  select new PaymentDisplay
-                                  {
-                                      PaymentId = b.BookingID, // Dùng BookingID làm mã thanh toán
-                                      Amount = b.Amount,
-                                      Status = b.PaymentStatus,
-                                      CheckIn = b.CheckIn,
-                                      CheckOut = b.CheckOut,
-                                      SoDem = (b.CheckOut - b.CheckIn).Days,
-                                      LastUpdate = b.BookingDate,
-                                      RoomDetails = new List<RoomDetail> {
-                                  new RoomDetail {
-                                      RoomID = r.RoomID,
-                                      RoomName = r.RoomName,
-                                      Price = r.Price,
-                                      Percent = b.Discount,
-                                      RoomImages = db.RoomImages
-                                          .Where(img => img.RoomID == r.RoomID).ToList()
-                                  }
-                              },
-                                      QRCode = new GenQRCode().QRCode(b.Amount, b.BookingID)
-                                  }).ToList();
 
-            return View("History", paymentDisplay);
-        }
+
+
 
 
     }

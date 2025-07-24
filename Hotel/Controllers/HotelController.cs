@@ -20,9 +20,9 @@ namespace Hotel.Controllers
 
             return View();
         }
-        public ActionResult HotelIndex()
+        private List<RegionModel> GetHotelIndexData()
         {
-            var data = db.Regions
+            return db.Regions
                 .Select(r => new RegionModel
                 {
                     RegionID = r.RegionID,
@@ -44,9 +44,30 @@ namespace Hotel.Controllers
                             }).ToList()
                         }).ToList()
                 }).ToList();
+        }
 
+        public ActionResult HotelIndex()
+        {
+            var data = GetHotelIndexData();
             return View(data);
         }
+        public ActionResult HotelIndexFromMenu(DateTime? checkin, DateTime? checkout, int adults, int children)
+        {
+            if (checkin == null || checkout == null || checkin >= checkout)
+            {
+                ViewBag.Error = "Ngày nhận phòng và trả phòng không hợp lệ.";
+            }
+            else
+            {
+                ViewBag.CheckIn = checkin.Value.ToString();
+                ViewBag.CheckOut = checkout.Value.ToString();
+                ViewBag.Adults = adults;
+                ViewBag.Children = children;
+            }
+            var data = GetHotelIndexData();
+            return View("HotelIndex", data);
+        }
+
         public JsonResult GetAllHotels()
         {
             var hotels = db.Hotels.Select(h => new

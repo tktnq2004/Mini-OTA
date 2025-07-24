@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Credit Card Payment";
+}
+            <h5 class="mb-4">Credit Card Payment</h5>
+            <form method="post" action="@Url.Action("ProcessCreditCard", "Payment")" >
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="NameOnTheCard" class="form-label">Name on the card</label>
+                        <input type="text" class="form-control" id="NameOnTheCard" name="NameOnTheCard" placeholder="Name on the card" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="CardNumber" class="form-label">Card Number</label>
+                        <input type="text" class="form-control" id="CardNumber" name="CardNumber" maxlength="19" placeholder="xxxx xxxx xxxx xxxx" required />
+                    </div>
+                </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="Expiration" class="form-label">Expiration</label>
+                            <input type="text" class="form-control" id="Expiration" name="Expiration" placeholder="MM/YY" maxlength="4" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="CVV" class="form-label">CVV</label>
+                            <input type="text" class="form-control" id="CVV" name="CVV" maxlength="3" placeholder="CVV" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                         <div class="col-md-10"></div>
+                    <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Submit Payment</button>
+                     </div>
+                    </div>
+            </form>

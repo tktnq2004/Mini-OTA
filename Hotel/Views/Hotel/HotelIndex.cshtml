@@ -1,7 +1,9 @@
 ﻿@{
-    ViewBag.Title = "HotelIndex";
+    string checkin = ViewBag.CheckIn ?? DateTime.Today.ToString();
+    string checkout = ViewBag.CheckOut ?? DateTime.Today.AddDays(1).ToString();
+    int adults = ViewBag.Adults ?? 1;
+    int children = ViewBag.Children ?? 0;
 }
-
 <style>
 
     #mapContainer {
@@ -236,7 +238,9 @@
         <div class="col-md-4">
             <div class="hotel-field">
                 <label>Rooms & Guests</label>
-                <div id="guestSelector" class="guest-dropdown-toggle">1 Room, 1 Adult, 0 Children</div>
+                <div id="guestSelector" class="guest-dropdown-toggle">
+                    1 Room, @($"{adults} Adult{(adults > 1 ? "s" : "")}, {children} Children")
+                </div>
                 <div class="guest-dropdown-menu" id="guestDropdown">
                     <div class="guest-row-item">
                         <span>Rooms</span>
@@ -250,7 +254,7 @@
                         <span>Adults</span>
                         <div class="guest-counter">
                             <button onclick="changeGuestCount('adult', -1)">–</button>
-                            <span id="guestAdultCount">1</span>
+                            <span id="guestAdultCount">@adults</span>
                             <button onclick="changeGuestCount('adult', 1)">+</button>
                         </div>
                     </div>
@@ -258,13 +262,14 @@
                         <span>Children</span>
                         <div class="guest-counter">
                             <button onclick="changeGuestCount('child', -1)">–</button>
-                            <span id="guestChildCount">0</span>
+                            <span id="guestChildCount">@children</span>
                             <button onclick="changeGuestCount('child', 1)">+</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
     <div class="row">
         <div id="mapContainer" class="col-12">
@@ -280,326 +285,325 @@
 </div>
 
 <script>
-        let map;
-        let hasTriggeredNearbySearch = false;
-        const initialLatLng = [106.68817, 10.77388];
-        const initialZoom = 8;
-        const hotelMarkers = {};
-        let selectedMarkerId = null;
+    let map;
+    let hasTriggeredNearbySearch = false;
+    const initialLatLng = [106.68817, 10.77388];
+    const initialZoom = 8;
+    const hotelMarkers = {};
+    let selectedMarkerId = null;
 
-        document.addEventListener("DOMContentLoaded", function () {
-            map = new maplibregl.Map({
-                container: 'mymap',
-                style: 'https://api.maptiler.com/maps/0198050d-cbcf-7d16-96e7-c0eaad407048/style.json?key=Q1UYZtDwYA1YJ2lZ4bMM',
-                center: initialLatLng,
-                zoom: initialZoom,
-                maxZoom: 19,
-                minZoom: 8,
-                attributionControl: false
+    document.addEventListener("DOMContentLoaded", function () {
+        map = new maplibregl.Map({
+            container: 'mymap',
+            style: 'https://api.maptiler.com/maps/0198050d-cbcf-7d16-96e7-c0eaad407048/style.json?key=Q1UYZtDwYA1YJ2lZ4bMM',
+            center: initialLatLng,
+            zoom: initialZoom,
+            maxZoom: 19,
+            minZoom: 8,
+            attributionControl: false
+        });
+
+        map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+        fetch("/Hotel/GetAllHotels")
+            .then(res => res.json())
+            .then(hotels => {
+                hotels.forEach(h => addHotelMarker(h));
             });
 
-            map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
-            fetch("/Hotel/GetAllHotels")
-                .then(res => res.json())
-                .then(hotels => {
-                    hotels.forEach(h => addHotelMarker(h));
-                });
+        map.scrollZoom.disable();
 
-            map.scrollZoom.disable();
+        const resetContainer = document.createElement("div");
+        resetContainer.className = "mapboxgl-ctrl mapboxgl-ctrl-group mt-10";
 
-            const resetContainer = document.createElement("div");
-            resetContainer.className = "mapboxgl-ctrl mapboxgl-ctrl-group mt-10";
+        const resetButton = document.createElement("button");
+        resetButton.className = "mapboxgl-ctrl-icon";
+        resetButton.type = "button";
+        resetButton.title = "Reset View";
+        resetButton.innerHTML = '<i class="bi bi-cursor"></i>';
 
-            const resetButton = document.createElement("button");
-            resetButton.className = "mapboxgl-ctrl-icon";
-            resetButton.type = "button";
-            resetButton.title = "Reset View";
-            resetButton.innerHTML = '<i class="bi bi-cursor"></i>';
+        resetButton.onclick = () => {
+            map.flyTo({ center: initialLatLng, zoom: initialZoom, bearing: 0, pitch: 0 });
+        };
 
-            resetButton.onclick = () => {
-                map.flyTo({ center: initialLatLng, zoom: initialZoom, bearing: 0, pitch: 0 });
-            };
+        resetContainer.appendChild(resetButton);
+        const resetControl = {
+            onAdd: () => resetContainer,
+            onRemove: () => resetContainer.remove()
+        };
+        map.addControl(resetControl, 'top-right');
 
-            resetContainer.appendChild(resetButton);
-            const resetControl = {
-                onAdd: () => resetContainer,
-                onRemove: () => resetContainer.remove()
-            };
-            map.addControl(resetControl, 'top-right');
-
-        });
+    });
 </script>
 
 
 <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".region-toggle").forEach(region => {
-                region.addEventListener("click", function () {
-                    const regionId = region.dataset.regionId;
-                    const submenu = document.getElementById("region-" + regionId);
-                    const isVisible = submenu.style.display === "block";
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".region-toggle").forEach(region => {
+            region.addEventListener("click", function () {
+                const regionId = region.dataset.regionId;
+                const submenu = document.getElementById("region-" + regionId);
+                const isVisible = submenu.style.display === "block";
 
-                    document.querySelectorAll(".province-submenu").forEach(el => el.style.display = "none");
-                    document.querySelectorAll(".hotel-submenu").forEach(el => el.style.display = "none");
+                document.querySelectorAll(".province-submenu").forEach(el => el.style.display = "none");
+                document.querySelectorAll(".hotel-submenu").forEach(el => el.style.display = "none");
 
-                    if (!isVisible) {
-                        submenu.style.display = "block";
-                    }
-                });
+                if (!isVisible) {
+                    submenu.style.display = "block";
+                }
             });
         });
+    });
 </script>
 
 <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".dropdown-item").forEach(hotel => {
-                hotel.addEventListener("click", function () {
-                    const hotelId = parseInt(hotel.dataset.hotelId);
-                    const provinceId = hotel.closest(".hotel-submenu")?.id?.replace("province-hotels-", "");
-                    if (!provinceId) return;
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".dropdown-item").forEach(hotel => {
+            hotel.addEventListener("click", function () {
+                const hotelId = parseInt(hotel.dataset.hotelId);
+                const provinceId = hotel.closest(".hotel-submenu")?.id?.replace("province-hotels-", "");
+                if (!provinceId) return;
 
-                    fetch(`/Hotel/GetHotelsByProvince?provinceId=${provinceId}`)
-                        .then(res => res.json())
-                        .then(hotels => {
-                            clearAllMarkers();
+                fetch(`/Hotel/GetHotelsByProvince?provinceId=${provinceId}`)
+                    .then(res => res.json())
+                    .then(hotels => {
+                        clearAllMarkers();
 
-                            hotels.forEach(h => addHotelMarker(h));
+                        hotels.forEach(h => addHotelMarker(h));
 
-                            const marker = hotelMarkers[hotelId];
-                            if (marker) {
-                                marker.getElement().dispatchEvent(new Event("click"));
-                            }
-                        });
-
-                    document.getElementById("dropdownHotelMenu").style.display = "none";
-                });
-            });
-        });
-</script>
-
-<script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".province-option").forEach(province => {
-                province.addEventListener("click", function () {
-                    const provinceId = province.dataset.provinceId;
-                    const hotelList = document.getElementById("province-hotels-" + provinceId);
-                    const isVisible = hotelList.style.display === "block";
-
-                    const provinceList = province.closest(".province-submenu");
-                    if (provinceList) {
-                        provinceList.querySelectorAll(".hotel-submenu").forEach(el => el.style.display = "none");
-                    }
-
-                    if (!isVisible) {
-                        hotelList.style.display = "block";
-                    }
-                    const provinceID = provinceId;
-                    document.getElementById("dropdownHotelToggle").innerText = province.innerText;
-
-                });
-            });
-
-            const nearbyBtn = document.getElementById("nearbyHotelsBtn");
-            if (nearbyBtn) {
-                nearbyBtn.addEventListener("click", function () {
-                    if (hasTriggeredNearbySearch) return;
-                    hasTriggeredNearbySearch = true;
-
-                    if (!navigator.geolocation) {
-                        alert("Trình duyệt không hỗ trợ định vị.");
-                        return;
-                    }
-
-                    navigator.geolocation.getCurrentPosition(
-                        function (position) {
-                            const userLat = position.coords.latitude;
-                            const userLng = position.coords.longitude;
-
-                            fetch(`/Hotel/GetNearbyHotels?latitude=${userLat}&longitude=${userLng}`)
-                                .then(response => response.json())
-                                .then(hotels => {
-                                    if (hotels.length === 0) {
-                                        alert("Không tìm thấy khách sạn nào gần bạn.");
-                                        return;
-                                    }
-
-                                    document.querySelectorAll(".province-submenu, .hotel-submenu").forEach(el => el.style.display = "none");
-
-                                    const hotelList = document.getElementById("province-hotels-nearby");
-                                    hotelList.innerHTML = "";
-                                    hotelList.style.display = "block";
-
-                                    clearAllMarkers();
-                                    map.flyTo({ center: [userLng, userLat], zoom: 15 });
-
-                                    hotels.forEach(hotel => {
-                                        addHotelMarker(hotel);
-                                        const div = document.createElement("div");
-                                        div.className = "toggle-box dropdown-item";
-                                        div.innerText = hotel.HotelName ?? "Khách sạn không tên";
-                                        div.dataset.hotelId = hotel.HotelID;
-                                        hotelList.appendChild(div);
-                                    });
-
-                                    document.getElementById("dropdownHotelToggle").innerText = "Gần vị trí của tôi";
-                                    bindHotelDropdownEvents();
-                                });
-                        },
-                        function (error) {
-                            alert("Không thể lấy vị trí: " + error.message);
-                            hasTriggeredNearbySearch = false;
+                        const marker = hotelMarkers[hotelId];
+                        if (marker) {
+                            marker.getElement().dispatchEvent(new Event("click"));
                         }
-                    );
-                });
-            }
-        });
-</script>
-
-<script>
-        function addHotelMarker(hotel) {
-            const marker = new maplibregl.Marker()
-                .setLngLat([hotel.Longitude, hotel.Latitude])
-                .addTo(map);
-
-            hotelMarkers[hotel.HotelID] = marker;
-
-            marker.getElement().addEventListener("click", () => {
-                document.getElementById("dropdownHotelToggle").textContent = hotel.HotelName;
-                map.flyTo({ center: [hotel.Longitude, hotel.Latitude], zoom: 13 });
-
-                $.get("/Hotel/GetHotelDetail", { hotelID: hotel.HotelID }, html => {
-                    $("#hotelDetailContent").html(html);
-                    $("#hotelDetailModal").fadeIn();
-                    $("#mapContainer").removeClass("col-12").addClass("col-6");
-                    $("#hotelDetailModal").scrollTop(0);
-
-                   
-                });
+                    });
 
                 document.getElementById("dropdownHotelMenu").style.display = "none";
             });
-        }
-
-        function clearAllMarkers() {
-            for (const id in hotelMarkers) {
-                hotelMarkers[id].remove();
-            }
-        }
-        $(document).on("click", function (e) {
-            if (
-                !$(e.target).closest(
-                    "#hotelDetailModal, .maplibregl-marker, #dropdownHotelToggle, #dropdownHotelMenu, #resetButton"
-                ).length) {
-                if ($("#hotelDetailModal").is(":visible")) {
-                    $("#hotelDetailModal").fadeOut();
-                    $("#mapContainer").removeClass("col-6").addClass("col-12");
-                }
-            }
         });
-
-        $("#resetViewBtn").on("click", function () {
-            map.flyTo({ center: initialLatLng, zoom: initialZoom });
-        });
-
+    });
 </script>
 
 <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const toggle = document.getElementById("dropdownHotelToggle");
-            const menu = document.getElementById("dropdownHotelMenu");
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".province-option").forEach(province => {
+            province.addEventListener("click", function () {
+                const provinceId = province.dataset.provinceId;
+                const hotelList = document.getElementById("province-hotels-" + provinceId);
+                const isVisible = hotelList.style.display === "block";
 
-            toggle.addEventListener("click", function (e) {
-                e.stopPropagation();
-                menu.style.display = menu.style.display === "block" ? "none" : "block";
-                document.getElementById("hotelDetailModal").style.display = "none";
-            });
-
-            document.addEventListener("click", function (e) {
-                if (!menu.contains(e.target) && e.target !== toggle) {
-                    menu.style.display = "none";
+                const provinceList = province.closest(".province-submenu");
+                if (provinceList) {
+                    provinceList.querySelectorAll(".hotel-submenu").forEach(el => el.style.display = "none");
                 }
+
+                if (!isVisible) {
+                    hotelList.style.display = "block";
+                }
+                const provinceID = provinceId;
+                document.getElementById("dropdownHotelToggle").innerText = province.innerText;
+
             });
         });
-</script>
 
-<script>
-        flatpickr("#dateRange", {
-            mode: "range",
-            dateFormat: "d-m-Y",
-            minDate: "today",
-            closeOnSelect: false,
-            defaultDate: [new Date(), new Date(Date.now() + 86400000)],
-            onChange: function (selectedDates, dateStr, instance) {
-                let currentMonth = instance.currentMonth;
-                let currentYear = instance.currentYear;
-                if (selectedDates.length === 1) {
-                    highlightSelectedDate(selectedDates[0], "#007bff", "white");
-                } else if (selectedDates.length === 2) {
-                    if (selectedDates[0].getTime() === selectedDates[1].getTime()) {
-                        instance.clear();
-                        instance.jumpToDate(new Date(currentYear, currentMonth));
-                    } else {
-                        highlightSelectedDate(selectedDates[1], "#ffc107", "black");
-                        instance.close();
+        const nearbyBtn = document.getElementById("nearbyHotelsBtn");
+        if (nearbyBtn) {
+            nearbyBtn.addEventListener("click", function () {
+                if (hasTriggeredNearbySearch) return;
+                hasTriggeredNearbySearch = true;
+
+                if (!navigator.geolocation) {
+                    alert("Trình duyệt không hỗ trợ định vị.");
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+
+                        fetch(`/Hotel/GetNearbyHotels?latitude=${userLat}&longitude=${userLng}`)
+                            .then(response => response.json())
+                            .then(hotels => {
+                                if (hotels.length === 0) {
+                                    alert("Không tìm thấy khách sạn nào gần bạn.");
+                                    return;
+                                }
+
+                                document.querySelectorAll(".province-submenu, .hotel-submenu").forEach(el => el.style.display = "none");
+
+                                const hotelList = document.getElementById("province-hotels-nearby");
+                                hotelList.innerHTML = "";
+                                hotelList.style.display = "block";
+
+                                clearAllMarkers();
+                                map.flyTo({ center: [userLng, userLat], zoom: 15 });
+
+                                hotels.forEach(hotel => {
+                                    addHotelMarker(hotel);
+                                    const div = document.createElement("div");
+                                    div.className = "toggle-box dropdown-item";
+                                    div.innerText = hotel.HotelName ?? "Khách sạn không tên";
+                                    div.dataset.hotelId = hotel.HotelID;
+                                    hotelList.appendChild(div);
+                                });
+
+                                document.getElementById("dropdownHotelToggle").innerText = "Gần vị trí của tôi";
+                                bindHotelDropdownEvents();
+                            });
+                    },
+                    function (error) {
+                        alert("Không thể lấy vị trí: " + error.message);
+                        hasTriggeredNearbySearch = false;
                     }
-                }
-            }
-        });
-
-        function highlightSelectedDate(date, bgColor, textColor) {
-            document.querySelectorAll(".flatpickr-day").forEach(day => {
-                if (day.dateObj && day.dateObj.getTime() === date.getTime()) {
-                    day.style.backgroundColor = bgColor;
-                    day.style.color = textColor;
-                }
+                );
             });
         }
+    });
 </script>
 
 <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const guestSelector = document.getElementById("guestSelector");
-            const guestDropdown = document.getElementById("guestDropdown");
+    function addHotelMarker(hotel) {
+        const marker = new maplibregl.Marker()
+            .setLngLat([hotel.Longitude, hotel.Latitude])
+            .addTo(map);
 
-            guestSelector.addEventListener("click", function (e) {
-                e.stopPropagation();
-                guestDropdown.style.display = guestDropdown.style.display === "block" ? "none" : "block";
+        hotelMarkers[hotel.HotelID] = marker;
+
+        marker.getElement().addEventListener("click", () => {
+            document.getElementById("dropdownHotelToggle").textContent = hotel.HotelName;
+            map.flyTo({ center: [hotel.Longitude, hotel.Latitude], zoom: 13 });
+
+            $.get("/Hotel/GetHotelDetail", { hotelID: hotel.HotelID }, html => {
+                $("#hotelDetailContent").html(html);
+                $("#hotelDetailModal").fadeIn();
+                $("#mapContainer").removeClass("col-12").addClass("col-6");
+                $("#hotelDetailModal").scrollTop(0);
+
             });
 
-            document.addEventListener("click", function (e) {
-                if (!guestDropdown.contains(e.target) && !guestSelector.contains(e.target)) {
-                    guestDropdown.style.display = "none";
-                }
-            });
+            document.getElementById("dropdownHotelMenu").style.display = "none";
+        });
+    }
 
-            window.changeGuestCount = function (type, delta) {
-                let room = parseInt(document.getElementById("guestRoomCount").innerText);
-                let adult = parseInt(document.getElementById("guestAdultCount").innerText);
-                let child = parseInt(document.getElementById("guestChildCount").innerText);
+    function clearAllMarkers() {
+        for (const id in hotelMarkers) {
+            hotelMarkers[id].remove();
+        }
+    }
+    $(document).on("click", function (e) {
+        if (
+            !$(e.target).closest(
+                "#hotelDetailModal, .maplibregl-marker, #dropdownHotelToggle, #dropdownHotelMenu, #resetButton"
+            ).length) {
+            if ($("#hotelDetailModal").is(":visible")) {
+                $("#hotelDetailModal").fadeOut();
+                $("#mapContainer").removeClass("col-6").addClass("col-12");
+            }
+        }
+    });
 
-                if (type === "room" && room + delta >= 1 && room + delta <= 5) {
-                    document.getElementById("guestRoomCount").innerText = room + delta;
-                }
-                if (type === "adult" && adult + delta >= 1 && adult + delta + child <= 5) {
-                    document.getElementById("guestAdultCount").innerText = adult + delta;
-                }
-                if (type === "child" && child + delta >= 0 && adult + child + delta <= 5) {
-                    document.getElementById("guestChildCount").innerText = child + delta;
-                }
+    $("#resetViewBtn").on("click", function () {
+        map.flyTo({ center: initialLatLng, zoom: initialZoom });
+    });
 
-                updateGuestSummary();
-            };
+</script>
 
-            function updateGuestSummary() {
-                const room = parseInt(document.getElementById("guestRoomCount").innerText);
-                const adult = parseInt(document.getElementById("guestAdultCount").innerText);
-                const child = parseInt(document.getElementById("guestChildCount").innerText);
-                document.getElementById("guestSelector").innerText =
-                    `${room} Room${room > 1 ? "s" : ""}, ${adult} Adult${adult > 1 ? "s" : ""}, ${child} Child${child !== 1 ? "ren" : ""}`;
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggle = document.getElementById("dropdownHotelToggle");
+        const menu = document.getElementById("dropdownHotelMenu");
+
+        toggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+            document.getElementById("hotelDetailModal").style.display = "none";
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!menu.contains(e.target) && e.target !== toggle) {
+                menu.style.display = "none";
+            }
+        });
+    });
+</script>
+
+<script>
+    flatpickr("#dateRange", {
+        mode: "range",
+        dateFormat: "d-m-Y",
+        minDate: "today",
+        closeOnSelect: false,
+        defaultDate: ["@checkin", "@checkout"],
+        onChange: function (selectedDates, dateStr, instance) {
+            let currentMonth = instance.currentMonth;
+            let currentYear = instance.currentYear;
+            if (selectedDates.length === 1) {
+                highlightSelectedDate(selectedDates[0], "#007bff", "white");
+            } else if (selectedDates.length === 2) {
+                if (selectedDates[0].getTime() === selectedDates[1].getTime()) {
+                    instance.clear();
+                    instance.jumpToDate(new Date(currentYear, currentMonth));
+                } else {
+                    highlightSelectedDate(selectedDates[1], "#ffc107", "black");
+                    instance.close();
+                }
+            }
+        }
+    });
+
+    function highlightSelectedDate(date, bgColor, textColor) {
+        document.querySelectorAll(".flatpickr-day").forEach(day => {
+            if (day.dateObj && day.dateObj.getTime() === date.getTime()) {
+                day.style.backgroundColor = bgColor;
+                day.style.color = textColor;
+            }
+        });
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const guestSelector = document.getElementById("guestSelector");
+        const guestDropdown = document.getElementById("guestDropdown");
+
+        guestSelector.addEventListener("click", function (e) {
+            e.stopPropagation();
+            guestDropdown.style.display = guestDropdown.style.display === "block" ? "none" : "block";
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!guestDropdown.contains(e.target) && !guestSelector.contains(e.target)) {
+                guestDropdown.style.display = "none";
+            }
+        });
+
+        window.changeGuestCount = function (type, delta) {
+            let room = parseInt(document.getElementById("guestRoomCount").innerText);
+            let adult = parseInt(document.getElementById("guestAdultCount").innerText);
+            let child = parseInt(document.getElementById("guestChildCount").innerText);
+
+            if (type === "room" && room + delta >= 1 && room + delta <= 5) {
+                document.getElementById("guestRoomCount").innerText = room + delta;
+            }
+            if (type === "adult" && adult + delta >= 1 && adult + delta + child <= 5) {
+                document.getElementById("guestAdultCount").innerText = adult + delta;
+            }
+            if (type === "child" && child + delta >= 0 && adult + child + delta <= 5) {
+                document.getElementById("guestChildCount").innerText = child + delta;
             }
 
             updateGuestSummary();
-        });
+        };
+
+        function updateGuestSummary() {
+            const room = parseInt(document.getElementById("guestRoomCount").innerText);
+            const adult = parseInt(document.getElementById("guestAdultCount").innerText);
+            const child = parseInt(document.getElementById("guestChildCount").innerText);
+            document.getElementById("guestSelector").innerText =
+                `${room} Room${room > 1 ? "s" : ""}, ${adult} Adult${adult > 1 ? "s" : ""}, ${child} Child${child !== 1 ? "ren" : ""}`;
+        }
+
+        updateGuestSummary();
+    });
 </script>
 
 <script>
@@ -612,6 +616,7 @@
         }
     });
 </script>
+
 <script>
     $(document).on("click", ".hotel-card", function () {
         const hotelId = $(this).data("hotel-id");
@@ -624,27 +629,27 @@
 </script>
 
 <script>
-       $(document).on("click", ".hotelSearchBtn", function () {
-    const hotelId = $(this).data("hotel-id");
+    $(document).on("click", ".hotelSearchBtn", function () {
+        const hotelId = $(this).data("hotel-id");
 
-    const dateRange = document.getElementById("dateRange")._flatpickr.selectedDates;
-    const fromDate = dateRange[0].toISOString();
-    const toDate = dateRange[1].toISOString();
+        const dateRange = document.getElementById("dateRange")._flatpickr.selectedDates;
+        const fromDate = dateRange[0].toISOString();
+        const toDate = dateRange[1].toISOString();
 
-    const rooms = parseInt(document.getElementById("guestRoomCount").innerText);
-    const adults = parseInt(document.getElementById("guestAdultCount").innerText);
-    const children = parseInt(document.getElementById("guestChildCount").innerText);
+        const rooms = parseInt(document.getElementById("guestRoomCount").innerText);
+        const adults = parseInt(document.getElementById("guestAdultCount").innerText);
+        const children = parseInt(document.getElementById("guestChildCount").innerText);
 
-    const query = new URLSearchParams({
-        hotelID: hotelId,
-        fromDate,
-        toDate,
-        rooms,
-        adults,
-        children
-    }).toString();
+        const query = new URLSearchParams({
+            hotelID: hotelId,
+            fromDate,
+            toDate,
+            rooms,
+            adults,
+            children
+        }).toString();
 
-    window.open(`/Room/RoomIndex?${query}`, '_blank');
-});
+        window.open(`/Room/RoomIndex?${query}`, '_blank');
+    });
 
 </script>
